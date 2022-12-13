@@ -42,7 +42,6 @@ const configDev = pojoFromSync(new AppConfigPojoConstructor(), {
 });
 console.log(JSON.stringify(configDev, null, 2));
 /**
- *
  * {
  *  "appName": "awesome-app-in-dev",
  *  "listenOnPort": 3003,
