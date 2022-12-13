@@ -1,6 +1,6 @@
 {
   "name": "pojo-constructor",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "More declarative constructor. Synchronous or otherwise ...",
   "main": "./index.js",
   "scripts": {
@@ -15,7 +15,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/dany-fedorov/configurable-tree-traversal.git"
+    "url": "git://github.com/dany-fedorov/pojo-constructor.git"
   },
   "publishConfig": {
     "access": "public"

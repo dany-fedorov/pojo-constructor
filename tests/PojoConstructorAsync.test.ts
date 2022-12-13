@@ -1,5 +1,5 @@
-import type { PojoConstructorAsync } from './PojoConstructorAsync';
-import { pojoFromAsync } from './PojoConstructorAsync';
+import type { PojoConstructorAsync } from '../src';
+import { pojoFromAsync } from '../src';
 
 describe('PojoConstructorAsync + pojoFromAsync', function () {
   it('should construct from plain', async () => {

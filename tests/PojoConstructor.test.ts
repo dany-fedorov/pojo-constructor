@@ -1,5 +1,5 @@
-import type { PojoConstructor } from './PojoConstructor';
-import { pojoFrom } from './PojoConstructor';
+import type { PojoConstructor } from '../src';
+import { pojoFrom } from '../src';
 
 describe('PojoConstructor + pojoFrom', function () {
   it('should construct from plain', () => {

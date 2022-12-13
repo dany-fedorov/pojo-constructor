@@ -1,5 +1,5 @@
-import type { PojoConstructorSync } from './PojoConstructorSync';
-import { pojoFromSync } from './PojoConstructorSync';
+import type { PojoConstructorSync } from '../src';
+import { pojoFromSync } from '../src';
 
 describe('PojoConstructorSync + pojoFromSync', function () {
   it('should construct from plain', () => {

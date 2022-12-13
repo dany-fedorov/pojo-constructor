@@ -1,12 +1,5 @@
-# POJO Constructor
+import { PojoConstructorSync, pojoFromSync } from '../src/PojoConstructorSync';
 
-Please use fixed version (remove ^ from package.json).
-
-## Examples
-
-### 1. [Simple sync example](./examples/simple-sync-example.ts) (run with `npm run tsfile ./examples/simple-sync-example.ts`)
-
-```ts
 type AppConfig = {
   appName: string;
   listenOnPort: number;
@@ -14,7 +7,7 @@ type AppConfig = {
 };
 
 class AppConfigPojoConstructor
-  implements PojoConstructorSync<AppConfig, 'dev' | 'staging' | 'production'> 
+  implements PojoConstructorSync<AppConfig, 'dev' | 'staging' | 'production'>
 {
   appName(env) {
     return ['awesome-app-in', env].join('-');
@@ -37,7 +30,18 @@ class AppConfigPojoConstructor
   }
 }
 
+console.log('--- dev ---');
 const configDev = pojoFromSync(new AppConfigPojoConstructor(), {
   input: 'dev',
 });
-```
+console.log(JSON.stringify(configDev, null, 2));
+console.log('--- staging ---');
+const configStaging = pojoFromSync(new AppConfigPojoConstructor(), {
+  input: 'staging',
+});
+console.log(JSON.stringify(configStaging, null, 2));
+console.log('--- production ---');
+const configProd = pojoFromSync(new AppConfigPojoConstructor(), {
+  input: 'production',
+});
+console.log(JSON.stringify(configProd, null, 2));
