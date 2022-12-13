@@ -15,8 +15,7 @@ type AppConfig = {
 };
 
 class AppConfigPojoConstructor
-  implements PojoConstructorSync<AppConfig, 'dev' | 'staging' | 'production'> 
-{
+  implements PojoConstructorSync<AppConfig, 'dev' | 'staging' | 'production'> {
   appName(env) {
     return ['awesome-app-in', env].join('-');
   }
@@ -41,4 +40,13 @@ class AppConfigPojoConstructor
 const configDev = pojoFromSync(new AppConfigPojoConstructor(), {
   input: 'dev',
 });
+console.log(JSON.stringify(configDev, null, 2));
+/**
+ *
+ * {
+ *  "appName": "awesome-app-in-dev",
+ *  "listenOnPort": 3003,
+ *  "thirdPartyApiEndpoint": "https://sandbox.thrird-party-api.example.com"
+ * }
+ */
 ```
