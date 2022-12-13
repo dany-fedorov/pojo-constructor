@@ -1,4 +1,4 @@
-import { PojoConstructorSync, pojoFromSync } from '../src/PojoConstructorSync';
+import { PojoConstructorSync, constructPojoSync } from '../src/PojoConstructorSync';
 
 type AppConfig = {
   appName: string;
@@ -31,17 +31,17 @@ class AppConfigPojoConstructor
 }
 
 console.log('--- dev ---');
-const configDev = pojoFromSync(new AppConfigPojoConstructor(), {
+const configDev = constructPojoSync(new AppConfigPojoConstructor(), {
   input: 'dev',
 });
 console.log(JSON.stringify(configDev, null, 2));
 console.log('--- staging ---');
-const configStaging = pojoFromSync(new AppConfigPojoConstructor(), {
+const configStaging = constructPojoSync(new AppConfigPojoConstructor(), {
   input: 'staging',
 });
 console.log(JSON.stringify(configStaging, null, 2));
 console.log('--- production ---');
-const configProd = pojoFromSync(new AppConfigPojoConstructor(), {
+const configProd = constructPojoSync(new AppConfigPojoConstructor(), {
   input: 'production',
 });
 console.log(JSON.stringify(configProd, null, 2));

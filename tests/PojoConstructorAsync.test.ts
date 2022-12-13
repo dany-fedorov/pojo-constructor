@@ -1,5 +1,5 @@
 import type { PojoConstructorAsync } from '../src';
-import { pojoFromAsync } from '../src';
+import { constructPojoAsync } from '../src';
 
 describe('PojoConstructorAsync + pojoFromAsync', function () {
   it('should construct from plain', async () => {
@@ -7,7 +7,7 @@ describe('PojoConstructorAsync + pojoFromAsync', function () {
       a: async () => 'a-string',
       b: async () => 123,
     };
-    const pojo = await pojoFromAsync(c);
+    const pojo = await constructPojoAsync(c);
     expect(pojo).toMatchInlineSnapshot(`
       Object {
         "a": "a-string",
@@ -28,7 +28,7 @@ describe('PojoConstructorAsync + pojoFromAsync', function () {
     }
 
     const c = new C();
-    const pojo = await pojoFromAsync(c);
+    const pojo = await constructPojoAsync(c);
     expect(pojo).toMatchInlineSnapshot(`
       Object {
         "a": "a-string",
@@ -53,7 +53,7 @@ describe('PojoConstructorAsync + pojoFromAsync', function () {
     }
 
     const c = new C();
-    const pojo = await pojoFromAsync(c);
+    const pojo = await constructPojoAsync(c);
     expect(pojo).toMatchInlineSnapshot(`
       Object {
         "a": "a-string",
@@ -68,14 +68,14 @@ describe('PojoConstructorAsync + pojoFromAsync', function () {
         input ? 'a-string-truthy-variant' : 'a-string-falsy-variant',
       b: async (input) => (input ? 123 : 321),
     };
-    const pojo1 = await pojoFromAsync(c, { input: true });
+    const pojo1 = await constructPojoAsync(c, true);
     expect(pojo1).toMatchInlineSnapshot(`
       Object {
         "a": "a-string-truthy-variant",
         "b": 123,
       }
     `);
-    const pojo2 = await pojoFromAsync(c, { input: false });
+    const pojo2 = await constructPojoAsync(c, false);
     expect(pojo2).toMatchInlineSnapshot(`
       Object {
         "a": "a-string-falsy-variant",
@@ -109,7 +109,7 @@ describe('PojoConstructorAsync + pojoFromAsync', function () {
     }
 
     const c = new C();
-    const pojo = await pojoFromAsync(c);
+    const pojo = await constructPojoAsync(c);
     expect(pojo).toMatchInlineSnapshot(`
       Object {
         "a": "a-string",

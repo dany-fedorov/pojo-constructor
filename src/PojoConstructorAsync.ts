@@ -2,8 +2,22 @@ import pMap from '@esm2cjs/p-map';
 import type { ConstructPojoOptions } from './PojoConstructor';
 import { obtainSortedKeys } from './obtainSortedKeys';
 
+export type PojoCachingProxyAsync<T extends object, Input = unknown> = {
+  [K in keyof T]: (input?: Input) => Promise<T[K]>;
+};
+
+export type PojoConstructorAsyncMethodCallOptions<
+  T extends object,
+  Input = unknown,
+> = {
+  cachingProxy: PojoCachingProxyAsync<T, Input>;
+};
+
 export type PojoConstructorAsync<T extends object, Input = unknown> = {
-  [K in keyof T]: (input: Input) => Promise<T[K]>;
+  [K in keyof T]: (
+    input: Input,
+    options: PojoConstructorAsyncMethodCallOptions<T, Input>,
+  ) => Promise<T[K]>;
 };
 
 export type ConstructPojoAsyncOptions<
@@ -11,11 +25,16 @@ export type ConstructPojoAsyncOptions<
   Input,
 > = ConstructPojoOptions<T, Input>;
 
-export async function pojoFromAsync<T extends object, Input = unknown>(
+export async function constructPojoAsync<T extends object, Input = unknown>(
   ctor: PojoConstructorAsync<T, Input>,
+  input?: Input,
   options?: ConstructPojoAsyncOptions<T, Input>,
 ): Promise<T> {
   const sortedKeys = obtainSortedKeys(ctor, options);
+  const cacheKeyFn =
+    typeof options?.cacheKey === 'function'
+      ? options?.cacheKey
+      : (x?: Input) => x;
 
   const resolvedMap: any = {};
   const promisesMap: any = {};
@@ -23,16 +42,28 @@ export async function pojoFromAsync<T extends object, Input = unknown>(
     get(target: PojoConstructorAsync<T, Input>, p: string | symbol): any {
       const syncRes = Object.prototype.hasOwnProperty.call(resolvedMap, p);
       const promiseRes = Object.prototype.hasOwnProperty.call(promisesMap, p);
-      if (syncRes) {
-        return function pojoFromAsync_proxyIntercepted_syncFound() {
-          return Promise.resolve(resolvedMap[p]);
-        };
-      } else if (promiseRes) {
-        return function pojoFromAsync_proxyIntercepted_promiseFound() {
-          return promisesMap[p];
-        };
-      }
-      return (target as any)[p];
+      return async function constructPojoAsync_proxyIntercepted(input: Input) {
+        const key = cacheKeyFn(input);
+        if (syncRes && resolvedMap?.[p]?.has?.(key)) {
+          return resolvedMap?.[p]?.get?.(key);
+        }
+        if (promiseRes && promisesMap?.[p]?.has?.(key)) {
+          return promisesMap?.[p]?.get?.(key);
+        }
+        const vpromise = (target as any)[p].call(proxy, input, {
+          cachingProxy: proxy,
+        });
+        if (!promisesMap[p]) {
+          promisesMap[p] = new Map();
+        }
+        promisesMap[p].set(cacheKeyFn(input), vpromise);
+        const v = await vpromise;
+        if (!resolvedMap[p]) {
+          resolvedMap[p] = new Map();
+        }
+        resolvedMap[p].set(cacheKeyFn(input), v);
+        return v;
+      };
     },
   });
 
@@ -42,10 +73,10 @@ export async function pojoFromAsync<T extends object, Input = unknown>(
       await pMap(
         sortedKeys as string[],
         async (k) => {
-          const fnp = (proxy as any)[k](options?.input);
-          promisesMap[k] = fnp;
+          const fnp = (proxy as any)[k].call(proxy, input, {
+            cachingProxy: proxy,
+          });
           const v = await fnp;
-          resolvedMap[k] = v;
           return [k, v];
         },
         {
@@ -57,10 +88,10 @@ export async function pojoFromAsync<T extends object, Input = unknown>(
   } else {
     const pojo: any = {};
     for (const k of sortedKeys) {
-      const fnp = (proxy as any)[k](options?.input);
-      promisesMap[k] = fnp;
+      const fnp = (proxy as any)[k].call(proxy, input, {
+        cachingProxy: proxy,
+      });
       const v = await fnp;
-      resolvedMap[k] = v;
       pojo[k] = v;
     }
     return pojo as T;
