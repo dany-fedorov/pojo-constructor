@@ -1,7 +1,7 @@
 {
   "name": "pojo-constructor",
-  "version": "0.0.5",
-  "description": "More declarative constructor. Synchronous or otherwise ...",
+  "version": "0.0.6",
+  "description": "More declarative constructor. Sync or async.",
   "main": "./index.js",
   "scripts": {
     "test": "NODE_OPTIONS='--stack-trace-limit=1000' ./node_modules/.bin/jest",
