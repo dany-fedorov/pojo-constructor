@@ -1,6 +1,6 @@
 {
   "name": "pojo-constructor",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "More declarative constructor. Sync or async.",
   "main": "./index.js",
   "scripts": {
@@ -8,7 +8,7 @@
     "build": "tsc -p ./tsconfig.build.json && tsconfig-replace-paths --project tsconfig.paths.json -s ./src",
     "prepare-me": "rm -rf ./dist && npm run build",
     "prepublish-me": "npm run prepare-me && rm -fr ./npm-module && mv dist ./npm-module && cp package.json ./npm-module && cp README.md ./npm-module",
-    "publish-me": "npm run prepublish-me && cd npm-module && npm publish --access public",
+    "publish-me": "npm run prepublish-me && cd npm-module && npm publish --access public --registry https://registry.npmjs.org/",
     "postpublish-me": "rm -fr npm-module",
     "build-watch": "chokidar './src/**/*.ts' -c 'npm run build' -i './node_modules/**/*' --initial",
     "tsfile": "ts-node -r tsconfig-paths/register -T -s"
