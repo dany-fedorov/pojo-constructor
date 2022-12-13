@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./src",
+    "outDir": "./dist",
+    "paths": {
+      "@core/*": [
+        "core/*"
+      ],
+      "@rewrite-object/*": [
+        "tools/rewrite-object/*"
+      ],
+      "@traversable-object-tree/*": [
+        "traversable-tree-implementations/traversable-object-tree/*"
+      ],
+      "@depth-first-traversal/*": [
+        "traversals/depth-first-traversal/*"
+      ],
+      "@utils/*": [
+        "utils/*"
+      ]
+    }
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "name": "pojo-constructor",
+  "version": "0.0.1",
+  "description": "More declarative constructor. Synchronous or otherwise ...",
+  "main": "./index.js",
+  "scripts": {
+    "test": "NODE_OPTIONS='--stack-trace-limit=1000' ./node_modules/.bin/jest",
+    "build": "tsc -p ./tsconfig.build.json && tsconfig-replace-paths --project tsconfig.paths.json -s ./src",
+    "prepare-me": "rm -rf ./dist && npm run build",
+    "prepublish-me": "npm run prepare-me && rm -fr ./npm-module && mv dist ./npm-module && cp package.json ./npm-module && cp README.md ./npm-module",
+    "publish-me": "npm run prepublish-me && cd npm-module && npm publish --access public",
+    "postpublish-me": "rm -fr npm-module",
+    "build-watch": "chokidar './src/**/*.ts' -c 'npm run build' -i './node_modules/**/*' --initial",
+    "tsfile": "ts-node -r tsconfig-paths/register -T -s"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/dany-fedorov/configurable-tree-traversal.git"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "pojo",
+    "constructor",
+    "plain object",
+    "plain old javascript object",
+    "async object constructor"
+  ],
+  "author": "Dany Fedorov",
+  "license": "MIT",
+  "devDependencies": {
+    "@jest/types": "^28.1.3",
+    "@tsconfig/node16-strictest": "^1.0.3",
+    "@types/jest": "^28.1.4",
+    "@types/node": "^18.7.3",
+    "@types/uuid": "^8.3.4",
+    "@typescript-eslint/eslint-plugin": "5.29.0",
+    "@typescript-eslint/parser": "5.29.0",
+    "chokidar": "^3.5.3",
+    "eslint": "8.18.0",
+    "eslint-config-prettier": "8.5.0",
+    "eslint-plugin-import": "2.26.0",
+    "jest": "^28.1.2",
+    "prettier": "2.7.1",
+    "ts-jest": "^28.0.5",
+    "ts-node": "^10.8.2",
+    "tsconfig-paths": "^4.1.0",
+    "tsconfig-replace-paths": "^0.0.11",
+    "typescript": "^4.7.4"
+  },
+  "dependencies": {
+    "@esm2cjs/p-map": "^5.5.0",
+    "safe-stable-stringify": "^2.4.1"
+  }
+}
