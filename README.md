@@ -1,6 +1,7 @@
 # POJO Constructor
 
-Please use fixed version (remove ^ from package.json).
+> **Warning**
+> Please use fixed version (remove ^ from package.json).
 
 ## Examples
 

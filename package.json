@@ -1,6 +1,6 @@
 {
   "name": "pojo-constructor",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "More declarative constructor. Synchronous or otherwise ...",
   "main": "./index.js",
   "scripts": {
