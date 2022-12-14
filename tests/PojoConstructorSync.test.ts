@@ -5,12 +5,12 @@ import type {
 import { constructPojoSync } from '../src';
 
 describe('PojoConstructorSync + pojoFromSync', function () {
-  it('should construct from plain', () => {
+  test('it should construct from plain', () => {
     const c: PojoConstructorSync<{ a: string; b: number }> = {
       a: () => 'a-string',
       b: () => 123,
     };
-    const pojo = constructPojoSync(c);
+    const { value: pojo } = constructPojoSync(c);
     expect(pojo).toMatchInlineSnapshot(`
       Object {
         "a": "a-string",
@@ -19,7 +19,7 @@ describe('PojoConstructorSync + pojoFromSync', function () {
     `);
   });
 
-  it('should construct from class instance', () => {
+  test('it should construct from class instance', () => {
     class C implements PojoConstructorSync<{ a: string; b: number }> {
       a() {
         return 'a-string';
@@ -31,7 +31,7 @@ describe('PojoConstructorSync + pojoFromSync', function () {
     }
 
     const c = new C();
-    const pojo = constructPojoSync(c);
+    const { value: pojo } = constructPojoSync(c);
     expect(pojo).toMatchInlineSnapshot(`
       Object {
         "a": "a-string",
@@ -40,7 +40,7 @@ describe('PojoConstructorSync + pojoFromSync', function () {
     `);
   });
 
-  it('should construct from nested class instance', () => {
+  test('it should construct from nested class instance', () => {
     type PojoC = PojoConstructorSync<{ a: string; b: number }>;
 
     class Base implements Pick<PojoC, 'a'> {
@@ -56,7 +56,7 @@ describe('PojoConstructorSync + pojoFromSync', function () {
     }
 
     const c = new C();
-    const pojo = constructPojoSync(c);
+    const { value: pojo } = constructPojoSync(c);
     expect(pojo).toMatchInlineSnapshot(`
       Object {
         "a": "a-string",
@@ -65,20 +65,20 @@ describe('PojoConstructorSync + pojoFromSync', function () {
     `);
   });
 
-  it('should pass input', () => {
+  test('it should pass input', () => {
     const c: PojoConstructorSync<{ a: string; b: number }, boolean> = {
       a: (input) =>
         input ? 'a-string-truthy-variant' : 'a-string-falsy-variant',
       b: (input) => (input ? 123 : 321),
     };
-    const pojo1 = constructPojoSync(c, true);
+    const { value: pojo1 } = constructPojoSync(c, true);
     expect(pojo1).toMatchInlineSnapshot(`
       Object {
         "a": "a-string-truthy-variant",
         "b": 123,
       }
     `);
-    const pojo2 = constructPojoSync(c, false);
+    const { value: pojo2 } = constructPojoSync(c, false);
     expect(pojo2).toMatchInlineSnapshot(`
       Object {
         "a": "a-string-falsy-variant",
@@ -87,7 +87,7 @@ describe('PojoConstructorSync + pojoFromSync', function () {
     `);
   });
 
-  it('only evaluated once', async () => {
+  test('only evaluated once', async () => {
     let acounter = 0;
     let bcounter = 0;
     let ccounter = 0;
@@ -112,7 +112,7 @@ describe('PojoConstructorSync + pojoFromSync', function () {
     }
 
     const c = new C();
-    const pojo = constructPojoSync(c);
+    const { value: pojo } = constructPojoSync(c);
     expect(pojo).toMatchInlineSnapshot(`
       Object {
         "a": "a-string",
@@ -125,7 +125,7 @@ describe('PojoConstructorSync + pojoFromSync', function () {
     expect(ccounter).toBe(1);
   });
 
-  it('using cachingProxy', () => {
+  test('using cachingProxy', () => {
     let acount = 0;
     type T = { a: string; b: string; c: string };
     type Input = null;
@@ -139,7 +139,7 @@ describe('PojoConstructorSync + pojoFromSync', function () {
       c: (_, cachingProxy: PojoConstructorSyncCachingProxy<T, Input>) =>
         cachingProxy.b(),
     };
-    const pojo = constructPojoSync(c);
+    const { value: pojo } = constructPojoSync(c);
     expect(pojo).toMatchInlineSnapshot(`
       Object {
         "a": "a-string",
@@ -150,7 +150,7 @@ describe('PojoConstructorSync + pojoFromSync', function () {
     expect(acount).toBe(1);
   });
 
-  it('eval order - default sorting', async () => {
+  test('eval order - default sorting', async () => {
     const evalOrder: string[] = [];
     const counts: any = {};
 
@@ -213,7 +213,7 @@ describe('PojoConstructorSync + pojoFromSync', function () {
       }
     }
 
-    const pojo = constructPojoSync(new C(), true);
+    const { value: pojo } = constructPojoSync(new C(), true);
     expect(pojo).toMatchInlineSnapshot(`
       Object {
         "a": "a-string-true",
@@ -246,7 +246,7 @@ describe('PojoConstructorSync + pojoFromSync', function () {
     `);
   });
 
-  it('eval order - reversed sorting', async () => {
+  test('eval order - reversed sorting', async () => {
     const evalOrder: string[] = [];
     const counts: any = {};
 
@@ -309,7 +309,7 @@ describe('PojoConstructorSync + pojoFromSync', function () {
       }
     }
 
-    const pojo = constructPojoSync(new C(), true, {
+    const { value: pojo } = constructPojoSync(new C(), true, {
       sortKeys: (keys) => keys.slice().sort((a, b) => (a > b ? -1 : 1)),
     });
     expect(pojo).toMatchInlineSnapshot(`
@@ -344,7 +344,7 @@ describe('PojoConstructorSync + pojoFromSync', function () {
     `);
   });
 
-  it('caching by input - using cachingProxy argument', async () => {
+  test('caching by input - using cachingProxy argument', async () => {
     let acounter = 0;
     const c: PojoConstructorSync<{ a: string; b: string; c: string }, boolean> =
       {
@@ -361,7 +361,7 @@ describe('PojoConstructorSync + pojoFromSync', function () {
           return cachingProxy.a(input);
         },
       };
-    const pojo1 = await constructPojoSync(c, true);
+    const { value: pojo1 } = await constructPojoSync(c, true);
     expect(pojo1).toMatchInlineSnapshot(`
       Object {
         "a": "a-string-truthy-variant",
@@ -370,7 +370,7 @@ describe('PojoConstructorSync + pojoFromSync', function () {
       }
     `);
     expect(acounter).toBe(2);
-    const pojo2 = constructPojoSync(c, false);
+    const { value: pojo2 } = constructPojoSync(c, false);
     expect(pojo2).toMatchInlineSnapshot(`
       Object {
         "a": "a-string-falsy-variant",
@@ -381,7 +381,7 @@ describe('PojoConstructorSync + pojoFromSync', function () {
     expect(acounter).toBe(4);
   });
 
-  it('caching by input - using this', async () => {
+  test('caching by input - using this', async () => {
     let acounter = 0;
     let bcounter = 0;
     let ccounter = 0;
@@ -406,7 +406,7 @@ describe('PojoConstructorSync + pojoFromSync', function () {
       }
     }
 
-    const pojo = constructPojoSync(new C(), true);
+    const { value: pojo } = constructPojoSync(new C(), true);
     expect(pojo).toMatchInlineSnapshot(`
       Object {
         "a": "a-string-true",
@@ -417,5 +417,96 @@ describe('PojoConstructorSync + pojoFromSync', function () {
     expect(acounter).toBe(1);
     expect(bcounter).toBe(1);
     expect(ccounter).toBe(1);
+  });
+
+  test('limit keys', () => {
+    const c: PojoConstructorSync<{ a: string; b: number; c: string }> = {
+      a: () => 'a-string',
+      b: () => {
+        throw new Error('b-error');
+      },
+      c: () => 'c-string',
+    };
+    const { value: pojo } = constructPojoSync(c, null, {
+      keys: () => ['a'],
+    });
+    expect(pojo).toMatchInlineSnapshot(`
+      Object {
+        "a": "a-string",
+      }
+    `);
+  });
+  test('it should use cache key from input option', async () => {
+    const counters = {
+      a: 0,
+      b: 0,
+      c: 0,
+      d: 0,
+    };
+    const c: PojoConstructorSync<
+      { a: string; b: string; c: string; d: string },
+      { key: boolean }
+    > = {
+      a: (input) => {
+        counters.a++;
+        return `a-${input.key}`;
+      },
+      b: (input, cache) => {
+        counters.b++;
+        return cache.a({ key: !input.key });
+      },
+      c: (input, cache) => {
+        counters.c++;
+        return cache.b({ key: !input.key });
+      },
+      d: (input, cache) => {
+        counters.d++;
+        return cache.c({ key: !input.key });
+      },
+    };
+    const { value: pojoControl } = constructPojoSync(c, { key: true });
+    expect(pojoControl).toMatchInlineSnapshot(`
+      Object {
+        "a": "a-true",
+        "b": "a-false",
+        "c": "a-true",
+        "d": "a-false",
+      }
+    `);
+    expect(counters).toMatchInlineSnapshot(`
+      Object {
+        "a": 4,
+        "b": 3,
+        "c": 2,
+        "d": 1,
+      }
+    `);
+    counters.a = 0;
+    counters.b = 0;
+    counters.c = 0;
+    counters.d = 0;
+    const { value: pojoTest } = constructPojoSync(
+      c,
+      { key: true },
+      {
+        cacheKeyFromInput: (input) => input?.key,
+      },
+    );
+    expect(pojoTest).toMatchInlineSnapshot(`
+      Object {
+        "a": "a-true",
+        "b": "a-false",
+        "c": "a-true",
+        "d": "a-false",
+      }
+    `);
+    expect(counters).toMatchInlineSnapshot(`
+      Object {
+        "a": 2,
+        "b": 2,
+        "c": 2,
+        "d": 1,
+      }
+    `);
   });
 });

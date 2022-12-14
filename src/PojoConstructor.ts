@@ -41,23 +41,27 @@ export type ConstructPojoOptions<T extends object, Input> = {
   keys?: () => (keyof T)[];
   sortKeys?: (keys: (keyof T)[]) => (keyof T)[];
   concurrency?: number;
-  cacheKey?: (input?: Input) => unknown;
+  cacheKeyFromInput?: (input?: Input) => unknown;
+};
+
+export type ConstructPojoResult<T extends object> = {
+  value: T;
 };
 
 export function constructPojo<T extends object, Input = unknown>(
   ctor: PojoConstructor<T, Input>,
   constructPojoInput?: Input,
   constructPojoOptions?: ConstructPojoOptions<T, Input>,
-): PojoSyncAndPromiseResult<T> {
+): PojoSyncAndPromiseResult<ConstructPojoResult<T>> {
   const sortedKeys = obtainSortedKeys(ctor, constructPojoOptions);
   const cacheKeyFn =
-    typeof constructPojoOptions?.cacheKey === 'function'
-      ? constructPojoOptions?.cacheKey
+    typeof constructPojoOptions?.cacheKeyFromInput === 'function'
+      ? constructPojoOptions?.cacheKeyFromInput
       : (x?: Input) => x;
 
   const resolvedCache = new PojoConstructorCacheMap();
   const promisesCache = new PojoConstructorCacheMap();
-  const proxy = (proxyInput?: Input) =>
+  const makeCachingProxy = (proxyInput?: Input) =>
     new Proxy(ctor, {
       get(target: PojoConstructor<T, Input>, p: string | symbol): any {
         return function constructPojo_proxyIntercepted(
@@ -68,7 +72,7 @@ export function constructPojo<T extends object, Input = unknown>(
               ? proxyInput
               : interceptedInputArg;
           const key = cacheKeyFn(resolvedInterceptedInput);
-          const thisProxy = proxy(resolvedInterceptedInput);
+          const thisProxy = makeCachingProxy(resolvedInterceptedInput);
           return {
             sync: () => {
               if (resolvedCache.has(p, key)) {
@@ -124,22 +128,15 @@ export function constructPojo<T extends object, Input = unknown>(
         };
       },
     });
-  const allPropsProxy = proxy(constructPojoInput);
+  const allPropsProxy = makeCachingProxy(constructPojoInput);
   const constructPojoSync = () => {
     const pojo: any = {};
     for (const k of sortedKeys) {
       const res = (allPropsProxy as any)[k]();
-      if (typeof res?.sync !== 'function') {
-        throw new PojoConstructorCannotSyncResolveError(
-          `${constructPojo.name}->sync`,
-          k as string,
-          res,
-        );
-      }
       const v = res.sync();
       pojo[k] = v;
     }
-    return pojo as T;
+    return { value: pojo as T };
   };
   const constructPojoPromise = async () => {
     const concurrency = constructPojoOptions?.concurrency;
@@ -156,14 +153,14 @@ export function constructPojo<T extends object, Input = unknown>(
           },
         ),
       );
-      return pojo as T;
+      return { value: pojo as T };
     } else {
       const pojo: any = {};
       for (const k of sortedKeys) {
         const v = await (allPropsProxy as any)[k]().promise();
         pojo[k] = v;
       }
-      return pojo as T;
+      return { value: pojo as T };
     }
   };
   return {

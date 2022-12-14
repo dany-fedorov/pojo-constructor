@@ -1,4 +1,7 @@
-import type { ConstructPojoOptions } from './PojoConstructor';
+import type {
+  ConstructPojoOptions,
+  ConstructPojoResult,
+} from './PojoConstructor';
 import { obtainSortedKeys } from './obtainSortedKeys';
 import { PojoConstructorCacheMap } from './PojoConstructorCacheMap';
 
@@ -25,15 +28,15 @@ export function constructPojoSync<T extends object, Input = unknown>(
   ctor: PojoConstructorSync<T, Input>,
   constructPojoInput?: Input,
   constructPojoOptions?: ConstructPojoSyncOptions<T, Input>,
-): T {
+): ConstructPojoResult<T> {
   const sortedKeys = obtainSortedKeys(ctor, constructPojoOptions);
   const cacheKeyFn =
-    typeof constructPojoOptions?.cacheKey === 'function'
-      ? constructPojoOptions?.cacheKey
+    typeof constructPojoOptions?.cacheKeyFromInput === 'function'
+      ? constructPojoOptions?.cacheKeyFromInput
       : (x?: Input) => x;
 
   const resolvedCache = new PojoConstructorCacheMap();
-  const proxy = (proxyInput?: Input) =>
+  const makeCachingProxy = (proxyInput?: Input) =>
     new Proxy(ctor, {
       get(target: PojoConstructorSync<T, Input>, p: string | symbol): any {
         return function constructPojoSync_proxyIntercepted(
@@ -44,7 +47,7 @@ export function constructPojoSync<T extends object, Input = unknown>(
               ? proxyInput
               : interceptedInputArg;
           const key = cacheKeyFn(resolvedInterceptedInput);
-          const thisProxy = proxy(resolvedInterceptedInput);
+          const thisProxy = makeCachingProxy(resolvedInterceptedInput);
 
           if (resolvedCache.has(p, key)) {
             return resolvedCache.get(p, key);
@@ -60,11 +63,11 @@ export function constructPojoSync<T extends object, Input = unknown>(
       },
     });
 
-  const allPropsProxy = proxy(constructPojoInput);
+  const allPropsProxy = makeCachingProxy(constructPojoInput);
   const pojo: any = {};
   for (const k of sortedKeys) {
     const v = (allPropsProxy as any)[k]();
     pojo[k] = v;
   }
-  return pojo as T;
+  return { value: pojo as T };
 }

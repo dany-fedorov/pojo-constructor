@@ -1,6 +1,6 @@
 {
   "name": "pojo-constructor",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Configuration as code helper for TypeScript.",
   "main": "./index.js",
   "scripts": {
@@ -11,7 +11,8 @@
     "publish-me": "npm run prepublish-me && cd npm-module && npm publish --access public --registry https://registry.npmjs.org/",
     "postpublish-me": "rm -fr npm-module",
     "build-watch": "chokidar './src/**/*.ts' -c 'npm run build' -i './node_modules/**/*' --initial",
-    "tsfile": "ts-node -r tsconfig-paths/register -T -s"
+    "tsfile": "ts-node -r tsconfig-paths/register -T -s",
+    "test-ci": "npm run test -- --ci --coverage"
   },
   "repository": {
     "type": "git",
