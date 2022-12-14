@@ -31,5 +31,5 @@ jobs:
       - uses: JS-DevTools/npm-publish@v1
         with:
           token: ${{secrets.NPM_TOKEN}}
-          package: npm-module
+          package: ./npm-module/package.json
           greater-version-only: true
