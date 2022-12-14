@@ -1,5 +1,7 @@
 # POJO Constructor
 
+![Jest coverage](./badges/coverage-jest%20coverage.svg)
+
 Configuration as code helper for TypeScript.
 
 > **Warning**
