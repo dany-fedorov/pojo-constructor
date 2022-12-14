@@ -8,7 +8,7 @@ const config: Config.InitialOptions = {
   },
   testRegex: '/(tests|src)/.*.test(\\..+)?\\.ts$',
   'collectCoverageFrom': ['src/**/*.ts'],
-  coverageReporters: ['json-summary'],
+  coverageReporters: ['json-summary', 'text'],
 };
 
 export default config;
