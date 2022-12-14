@@ -1,7 +1,7 @@
 {
   "name": "pojo-constructor",
-  "version": "0.1.0",
-  "description": "More declarative constructor. Sync or async.",
+  "version": "0.1.1",
+  "description": "Configuration as code helper for TypeScript.",
   "main": "./index.js",
   "scripts": {
     "test": "NODE_OPTIONS='--stack-trace-limit=1000' ./node_modules/.bin/jest",
@@ -26,7 +26,10 @@
     "plain object",
     "plain object constructor",
     "plain old javascript object",
-    "async object constructor"
+    "async object constructor",
+    "typescript",
+    "configuration as code",
+    "typescript configuration as code"
   ],
   "author": "Dany Fedorov",
   "license": "MIT",

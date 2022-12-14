@@ -1,5 +1,7 @@
 # POJO Constructor
 
+Configuration as code helper for TypeScript.
+
 > **Warning**
 > Please use fixed version (remove ^ from package.json).
 
