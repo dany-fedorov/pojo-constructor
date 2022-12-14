@@ -1,4 +1,4 @@
-name: Run Test
+name: Run Tests
 on: [ push ]
 jobs:
   tests:
@@ -7,7 +7,10 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v2
 
-      - name: Tests
+      - name: Install
+        run: npm i
+
+      - name: Run tests
         run: npm run test-ci
 
       - name: Generating coverage badges
