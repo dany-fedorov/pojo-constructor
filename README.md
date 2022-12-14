@@ -14,9 +14,10 @@ type AppConfig = {
   thirdPartyApiEndpoint: string;
 };
 
-class AppConfigPojoConstructor
-  implements PojoConstructorSync<AppConfig, 'dev' | 'staging' | 'production'> {
-  appName(env) {
+type Env = 'dev' | 'staging' | 'production';
+
+class AppConfigPojoConstructor implements PojoConstructorSync<AppConfig, Env> {
+  appName(env: Env) {
     return ['awesome-app-in', env].join('-');
   }
 
@@ -24,7 +25,7 @@ class AppConfigPojoConstructor
     return 3003;
   }
 
-  thirdPartyApiEndpoint(env) {
+  thirdPartyApiEndpoint(env: Env) {
     switch (env) {
       case 'dev':
       case 'staging':
@@ -37,15 +38,16 @@ class AppConfigPojoConstructor
   }
 }
 
-const configDev = pojoFromSync(new AppConfigPojoConstructor(), {
-  input: 'dev',
-});
+const configDev = constructPojoSync<AppConfig, Env>(
+  new AppConfigPojoConstructor(),
+  'dev',
+);
 console.log(JSON.stringify(configDev, null, 2));
 /**
  * {
- *  "appName": "awesome-app-in-dev",
- *  "listenOnPort": 3003,
- *  "thirdPartyApiEndpoint": "https://sandbox.thrird-party-api.example.com"
+ *   "appName": "awesome-app-in-dev",
+ *   "listenOnPort": 3003,
+ *   "thirdPartyApiEndpoint": "https://sandbox.thrird-party-api.example.com"
  * }
  */
 ```
