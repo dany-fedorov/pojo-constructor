@@ -1,4 +1,7 @@
-import type { PojoConstructorAsync } from '../src';
+import type {
+  PojoConstructorAsync,
+  PojoConstructorAsyncCachingProxy,
+} from '../src';
 import { constructPojoAsync } from '../src';
 
 describe('PojoConstructorAsync + pojoFromAsync', function () {
@@ -120,5 +123,433 @@ describe('PojoConstructorAsync + pojoFromAsync', function () {
     expect(acounter).toBe(1);
     expect(bcounter).toBe(1);
     expect(ccounter).toBe(1);
+  });
+
+  it('using cachingProxy', async () => {
+    let acount = 0;
+    type T = { a: string; b: string; c: string };
+    type Input = null;
+    const c: PojoConstructorAsync<T, Input> = {
+      a: async () => {
+        acount++;
+        return new Promise((r) => setTimeout(() => r('a-string'), 10));
+      },
+      b: async (_, cachingProxy: PojoConstructorAsyncCachingProxy<T, Input>) =>
+        cachingProxy.a(),
+      c: async (_, cachingProxy: PojoConstructorAsyncCachingProxy<T, Input>) =>
+        cachingProxy.b(),
+    };
+    const pojo = await constructPojoAsync(c);
+    expect(pojo).toMatchInlineSnapshot(`
+      Object {
+        "a": "a-string",
+        "b": "a-string",
+        "c": "a-string",
+      }
+    `);
+    expect(acount).toBe(1);
+  });
+
+  it('caching by input - using cachingProxy argument', async () => {
+    let acounter = 0;
+    const c: PojoConstructorAsync<
+      { a: string; b: string; c: string },
+      boolean
+    > = {
+      a: async (input) => {
+        acounter++;
+        return input ? 'a-string-truthy-variant' : 'a-string-falsy-variant';
+      },
+      b: async (input, cachingProxy) => {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        return cachingProxy.a(!input);
+      },
+      c: async (input, cachingProxy) => {
+        return cachingProxy.a(input);
+      },
+    };
+    const pojo1 = await constructPojoAsync(c, true);
+    expect(pojo1).toMatchInlineSnapshot(`
+      Object {
+        "a": "a-string-truthy-variant",
+        "b": "a-string-falsy-variant",
+        "c": "a-string-truthy-variant",
+      }
+    `);
+    expect(acounter).toBe(2);
+    const pojo2 = await constructPojoAsync(c, false);
+    expect(pojo2).toMatchInlineSnapshot(`
+      Object {
+        "a": "a-string-falsy-variant",
+        "b": "a-string-truthy-variant",
+        "c": "a-string-falsy-variant",
+      }
+    `);
+    expect(acounter).toBe(4);
+  });
+
+  it('caching by input - using this', async () => {
+    let acounter = 0;
+    let bcounter = 0;
+    let ccounter = 0;
+
+    class C
+      implements
+        PojoConstructorAsync<{ a: string; b: string; c: string }, boolean>
+    {
+      async a(input?: boolean) {
+        acounter++;
+        return `a-string-${input}`;
+      }
+
+      b(input?: boolean) {
+        bcounter++;
+        return this.a(input);
+      }
+
+      c(input?: boolean) {
+        ccounter++;
+        return this.b(input);
+      }
+    }
+
+    const pojo = await constructPojoAsync(new C(), true);
+    expect(pojo).toMatchInlineSnapshot(`
+      Object {
+        "a": "a-string-true",
+        "b": "a-string-true",
+        "c": "a-string-true",
+      }
+    `);
+    expect(acounter).toBe(1);
+    expect(bcounter).toBe(1);
+    expect(ccounter).toBe(1);
+  });
+
+  it('should use default input - using cachingProxy argument', async () => {
+    let acounter = 0;
+    const c: PojoConstructorAsync<
+      { a: string; b: string; c: string; d: string },
+      boolean
+    > = {
+      a: async (input) => {
+        acounter++;
+        return input ? 'a-string-truthy-variant' : 'a-string-falsy-variant';
+      },
+      b: async (_, cachingProxy) => {
+        return cachingProxy.a();
+      },
+      c: async (input, cachingProxy) => {
+        return cachingProxy.a(!input);
+      },
+      d: async (input, cachingProxy) => {
+        return cachingProxy.a(input);
+      },
+    };
+    const pojo1 = await constructPojoAsync(c, true);
+    expect(pojo1).toMatchInlineSnapshot(`
+      Object {
+        "a": "a-string-truthy-variant",
+        "b": "a-string-truthy-variant",
+        "c": "a-string-falsy-variant",
+        "d": "a-string-truthy-variant",
+      }
+    `);
+    expect(acounter).toBe(2);
+  });
+
+  it('should use default input - using this', async () => {
+    let acounter = 0;
+    let bcounter = 0;
+    let ccounter = 0;
+    let dcounter = 0;
+
+    class C
+      implements
+        PojoConstructorAsync<{ a: string; b: string; c: string }, boolean>
+    {
+      async a(input?: boolean) {
+        acounter++;
+        return `a-string-${input}`;
+      }
+
+      b() {
+        bcounter++;
+        return this.a();
+      }
+
+      c(input: boolean) {
+        ccounter++;
+        return this.a(!input);
+      }
+
+      d(input: boolean) {
+        dcounter++;
+        return this.a(input);
+      }
+    }
+
+    const pojo = await constructPojoAsync(new C(), true);
+    expect(pojo).toMatchInlineSnapshot(`
+      Object {
+        "a": "a-string-true",
+        "b": "a-string-true",
+        "c": "a-string-false",
+        "d": "a-string-true",
+      }
+    `);
+    expect(acounter).toBe(2);
+    expect(bcounter).toBe(1);
+    expect(ccounter).toBe(1);
+    expect(dcounter).toBe(1);
+  });
+
+  it('should resolve with concurrency setting', async () => {
+    const c: PojoConstructorAsync<{ a: string; b: number }> = {
+      a: async () => 'a-string',
+      b: async () => 123,
+    };
+    const pojo = await constructPojoAsync(c, null, {
+      concurrency: 100,
+    });
+    expect(pojo).toMatchInlineSnapshot(`
+      Object {
+        "a": "a-string",
+        "b": 123,
+      }
+    `);
+  });
+  it('only evaluated once - concur', async () => {
+    let acounter = 0;
+    let bcounter = 0;
+    let ccounter = 0;
+
+    class C
+      implements PojoConstructorAsync<{ a: string; b: string; c: string }>
+    {
+      async a() {
+        acounter++;
+        return 'a-string';
+      }
+
+      async b() {
+        bcounter++;
+        return this.a();
+      }
+
+      async c() {
+        ccounter++;
+        return this.b();
+      }
+    }
+
+    const c = new C();
+    const pojo = await constructPojoAsync(c, null, {
+      concurrency: 100,
+    });
+    expect(pojo).toMatchInlineSnapshot(`
+      Object {
+        "a": "a-string",
+        "b": "a-string",
+        "c": "a-string",
+      }
+    `);
+    expect(acounter).toBe(1);
+    expect(bcounter).toBe(1);
+    expect(ccounter).toBe(1);
+  });
+  it('eval order - default sorting', async () => {
+    const evalOrder: string[] = [];
+    const counts: any = {};
+
+    class C
+      implements
+        PojoConstructorAsync<{ a: string; b: string; c: string }, boolean>
+    {
+      async b(input: boolean) {
+        evalOrder.push('b');
+        if (!counts['b']) {
+          counts['b'] = 0;
+        }
+        counts['b']++;
+        return this.a(input);
+      }
+
+      async a(input: boolean) {
+        evalOrder.push('a');
+        if (!counts['a']) {
+          counts['a'] = 0;
+        }
+        counts['a']++;
+        return `a-string-${input}`;
+      }
+
+      async c(input: boolean) {
+        evalOrder.push('c');
+        if (!counts['c']) {
+          counts['c'] = 0;
+        }
+        counts['c']++;
+        return this.b(input);
+      }
+
+      async d99(input: boolean) {
+        evalOrder.push('d99');
+        if (!counts['d99']) {
+          counts['d99'] = 0;
+        }
+        counts['d99']++;
+        return this.b(input);
+      }
+
+      async d10(input: boolean) {
+        evalOrder.push('d10');
+        if (!counts['d10']) {
+          counts['d10'] = 0;
+        }
+        counts['d10']++;
+        return this.b(input);
+      }
+
+      async d101(input: boolean) {
+        evalOrder.push('d101');
+        if (!counts['d101']) {
+          counts['d101'] = 0;
+        }
+        counts['d101']++;
+        return this.b(input);
+      }
+    }
+
+    const pojo = await constructPojoAsync(new C(), true);
+    expect(pojo).toMatchInlineSnapshot(`
+      Object {
+        "a": "a-string-true",
+        "b": "a-string-true",
+        "c": "a-string-true",
+        "d10": "a-string-true",
+        "d101": "a-string-true",
+        "d99": "a-string-true",
+      }
+    `);
+    expect(evalOrder).toMatchInlineSnapshot(`
+      Array [
+        "a",
+        "b",
+        "c",
+        "d10",
+        "d101",
+        "d99",
+      ]
+    `);
+    expect(counts).toMatchInlineSnapshot(`
+      Object {
+        "a": 1,
+        "b": 1,
+        "c": 1,
+        "d10": 1,
+        "d101": 1,
+        "d99": 1,
+      }
+    `);
+  });
+
+  it('eval order - reversed sorting', async () => {
+    const evalOrder: string[] = [];
+    const counts: any = {};
+
+    class C
+      implements
+        PojoConstructorAsync<{ a: string; b: string; c: string }, boolean>
+    {
+      async b(input: boolean) {
+        evalOrder.push('b');
+        if (!counts['b']) {
+          counts['b'] = 0;
+        }
+        counts['b']++;
+        return this.a(input);
+      }
+
+      async a(input: boolean) {
+        evalOrder.push('a');
+        if (!counts['a']) {
+          counts['a'] = 0;
+        }
+        counts['a']++;
+        return `a-string-${input}`;
+      }
+
+      async c(input: boolean) {
+        evalOrder.push('c');
+        if (!counts['c']) {
+          counts['c'] = 0;
+        }
+        counts['c']++;
+        return this.b(input);
+      }
+
+      async d99(input: boolean) {
+        evalOrder.push('d99');
+        if (!counts['d99']) {
+          counts['d99'] = 0;
+        }
+        counts['d99']++;
+        return this.b(input);
+      }
+
+      async d10(input: boolean) {
+        evalOrder.push('d10');
+        if (!counts['d10']) {
+          counts['d10'] = 0;
+        }
+        counts['d10']++;
+        return this.b(input);
+      }
+
+      async d101(input: boolean) {
+        evalOrder.push('d101');
+        if (!counts['d101']) {
+          counts['d101'] = 0;
+        }
+        counts['d101']++;
+        return this.b(input);
+      }
+    }
+
+    const pojo = await constructPojoAsync(new C(), true, {
+      sortKeys: (keys) => keys.slice().sort((a, b) => (a > b ? -1 : 1)),
+    });
+    expect(pojo).toMatchInlineSnapshot(`
+      Object {
+        "a": "a-string-true",
+        "b": "a-string-true",
+        "c": "a-string-true",
+        "d10": "a-string-true",
+        "d101": "a-string-true",
+        "d99": "a-string-true",
+      }
+    `);
+    expect(evalOrder).toMatchInlineSnapshot(`
+      Array [
+        "d99",
+        "b",
+        "a",
+        "d101",
+        "d10",
+        "c",
+      ]
+    `);
+    expect(counts).toMatchInlineSnapshot(`
+      Object {
+        "a": 1,
+        "b": 1,
+        "c": 1,
+        "d10": 1,
+        "d101": 1,
+        "d99": 1,
+      }
+    `);
   });
 });
