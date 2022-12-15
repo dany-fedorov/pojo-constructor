@@ -50,11 +50,11 @@ class AppCfgCtor implements PojoConstructorSync<AppCfg, Env> {
   }
 }
 
-console.log('--- dev ---');
 const { value: configDev } = constructPojoSync<AppCfg, Env>(
   new AppCfgCtor(),
   'dev',
 );
+console.log(JSON.stringify(configDev, null, 2));
 /**
  * {
  *   "appName": "awesome-app-in-dev",
