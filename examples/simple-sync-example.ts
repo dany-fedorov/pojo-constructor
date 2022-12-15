@@ -1,6 +1,5 @@
 import {
   PojoConstructorSync,
-  constructPojoFromInstanceSync,
   constructPojoSync,
 } from '../src/PojoConstructorSync';
 
