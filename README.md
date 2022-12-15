@@ -7,12 +7,20 @@ Configuration as code helper for TypeScript.
 > **Warning**
 > Please use fixed version (remove ^ from package.json).
 
+## API
+
+WIP. Please check out
+
+- type `PojoConstructorSync` + function `constructPojoSync` - for use with sync methods
+- type `PojoConstructorAsync` + function  `constructPojoAsync` - for use with async methods
+- type `PojoConstructor` + function `constructPojo` - allows to combine sync and async methods
+
 ## Examples
 
 ### 1. [Simple sync example](./examples/simple-sync-example.ts) (run with `npm run tsfile ./examples/simple-sync-example.ts`)
 
 ```ts
-type AppConfig = {
+type AppCfg = {
   appName: string;
   listenOnPort: number;
   thirdPartyApiEndpoint: string;
@@ -20,9 +28,9 @@ type AppConfig = {
 
 type Env = 'dev' | 'staging' | 'production';
 
-class AppConfigPojoConstructor implements PojoConstructorSync<AppConfig, Env> {
+class AppCfgCtor implements PojoConstructorSync<AppCfg, Env> {
   appName(env: Env) {
-    return ['awesome-app-in', env].join('-');
+    return `awesome-app-in-${env}`;
   }
 
   listenOnPort() {
@@ -42,11 +50,11 @@ class AppConfigPojoConstructor implements PojoConstructorSync<AppConfig, Env> {
   }
 }
 
-const configDev = constructPojoSync<AppConfig, Env>(
-  new AppConfigPojoConstructor(),
+console.log('--- dev ---');
+const { value: configDev } = constructPojoSync<AppCfg, Env>(
+  new AppCfgCtor(),
   'dev',
 );
-console.log(JSON.stringify(configDev, null, 2));
 /**
  * {
  *   "appName": "awesome-app-in-dev",

@@ -2,9 +2,11 @@ import pMap from '@esm2cjs/p-map';
 import {
   PojoConstructorCannotAsyncResolveError,
   PojoConstructorCannotSyncResolveError,
+  PojoKeyProcessingStage,
 } from './errors';
 import { obtainSortedKeys } from './obtainSortedKeys';
 import { PojoConstructorCacheMap } from './PojoConstructorCacheMap';
+import { processCaughtInCachingProxy } from './processCaughtInCachingProxy';
 
 export type PojoSyncAndPromiseResult<T> = {
   sync: () => T;
@@ -37,11 +39,17 @@ export type PojoConstructor<T extends object, Input = unknown> = {
   ) => PojoSyncOrPromiseResult<T[K]>;
 };
 
+export type ConstructPojoCatchFnOptions = {
+  thrownIn: [string, PojoKeyProcessingStage][];
+  sequentialIndex: number | null;
+};
+
 export type ConstructPojoOptions<T extends object, Input> = {
   keys?: () => (keyof T)[];
   sortKeys?: (keys: (keyof T)[]) => (keyof T)[];
   concurrency?: number;
-  cacheKeyFromInput?: (input?: Input) => unknown;
+  cacheKeyFromConstructorInput?: (input?: Input) => unknown;
+  catch?: (caught: unknown, options: ConstructPojoCatchFnOptions) => unknown;
 };
 
 export type ConstructPojoResult<T extends object> = {
@@ -55,15 +63,15 @@ export function constructPojo<T extends object, Input = unknown>(
 ): PojoSyncAndPromiseResult<ConstructPojoResult<T>> {
   const sortedKeys = obtainSortedKeys(ctor, constructPojoOptions);
   const cacheKeyFn =
-    typeof constructPojoOptions?.cacheKeyFromInput === 'function'
-      ? constructPojoOptions?.cacheKeyFromInput
+    typeof constructPojoOptions?.cacheKeyFromConstructorInput === 'function'
+      ? constructPojoOptions?.cacheKeyFromConstructorInput
       : (x?: Input) => x;
 
   const resolvedCache = new PojoConstructorCacheMap();
   const promisesCache = new PojoConstructorCacheMap();
   const makeCachingProxy = (proxyInput?: Input) =>
     new Proxy(ctor, {
-      get(target: PojoConstructor<T, Input>, p: string | symbol): any {
+      get(target: PojoConstructor<T, Input>, key: string | symbol): any {
         return function constructPojo_proxyIntercepted(
           interceptedInputArg?: Input,
         ) {
@@ -71,54 +79,100 @@ export function constructPojo<T extends object, Input = unknown>(
             interceptedInputArg === undefined
               ? proxyInput
               : interceptedInputArg;
-          const key = cacheKeyFn(resolvedInterceptedInput);
+          const cacheKey = cacheKeyFn(resolvedInterceptedInput);
           const thisProxy = makeCachingProxy(resolvedInterceptedInput);
           return {
             sync: () => {
-              if (resolvedCache.has(p, key)) {
-                return resolvedCache.get(p, key);
+              if (resolvedCache.has(key, cacheKey)) {
+                return resolvedCache.get(key, cacheKey);
               }
-              const res = (target as any)[p].call(
-                thisProxy,
-                resolvedInterceptedInput,
-                thisProxy,
-              );
+              let res;
+              try {
+                res = (target as any)[key].call(
+                  thisProxy,
+                  resolvedInterceptedInput,
+                  thisProxy,
+                );
+              } catch (caught) {
+                throw processCaughtInCachingProxy(caught, [
+                  key as string,
+                  'key-method',
+                ]);
+              }
               if (!res.sync) {
                 throw new PojoConstructorCannotSyncResolveError(
                   `${constructPojo_proxyIntercepted.name}->sync`,
-                  p as string,
+                  key as string,
                   res,
                 );
               }
-              const v = res.sync();
-              resolvedCache.set(p, key, v);
+              let v;
+              try {
+                v = res.sync();
+              } catch (caught: unknown) {
+                throw processCaughtInCachingProxy(caught, [
+                  key as string,
+                  'sync-result-method',
+                ]);
+              }
+              resolvedCache.set(key, cacheKey, v);
               return v;
             },
             promise: async () => {
-              if (resolvedCache.has(p, key)) {
-                return resolvedCache.get(p, key);
+              if (resolvedCache.has(key, cacheKey)) {
+                return resolvedCache.get(key, cacheKey);
               }
-              if (promisesCache.has(p, key)) {
-                return promisesCache.get(p, key);
+              if (promisesCache.has(key, cacheKey)) {
+                return promisesCache.get(key, cacheKey);
               }
-              const res = (target as any)[p].call(
-                thisProxy,
-                resolvedInterceptedInput,
-                thisProxy,
-              );
+              let res;
+              try {
+                res = (target as any)[key].call(
+                  thisProxy,
+                  resolvedInterceptedInput,
+                  thisProxy,
+                );
+              } catch (caught: unknown) {
+                throw processCaughtInCachingProxy(caught, [
+                  key as string,
+                  'key-method',
+                ]);
+              }
               let v;
               if (typeof res?.promise === 'function') {
-                const vpromise = res?.promise();
-                promisesCache.set(p, key, vpromise);
-                v = await vpromise;
-                resolvedCache.set(p, key, v);
+                let vpromise;
+                try {
+                  vpromise = res?.promise();
+                } catch (caught: unknown) {
+                  throw processCaughtInCachingProxy(caught, [
+                    key as string,
+                    'promise-result-method',
+                  ]);
+                }
+                promisesCache.set(key, cacheKey, vpromise);
+                try {
+                  v = await vpromise;
+                } catch (caught: unknown) {
+                  throw processCaughtInCachingProxy(caught, [
+                    key as string,
+                    'promise',
+                  ]);
+                }
+                resolvedCache.set(key, cacheKey, v);
               } else if (typeof res?.sync === 'function') {
-                v = res?.sync();
-                resolvedCache.set(p, key, v);
+                try {
+                  v = res?.sync();
+                } catch (caught: unknown) {
+                  throw processCaughtInCachingProxy(caught, [
+                    key as string,
+                    'sync-result-method',
+                  ]);
+                }
+                resolvedCache.set(key, cacheKey, v);
               } else {
                 throw new PojoConstructorCannotAsyncResolveError(
                   `${constructPojo_proxyIntercepted.name}->promise`,
-                  p as string,
+                  key as string,
                   res,
                 );
               }
@@ -129,12 +183,30 @@ export function constructPojo<T extends object, Input = unknown>(
       },
     });
   const allPropsProxy = makeCachingProxy(constructPojoInput);
+  const doCatch = (caught: unknown, i: number | null, key: string) => {
+    if (typeof constructPojoOptions?.catch !== 'function') {
+      throw caught;
+    }
+    return constructPojoOptions?.catch(caught, {
+      thrownIn: (caught as any)?.thrownIn ?? [key, 'unknown'],
+      sequentialIndex: i,
+    });
+  };
   const constructPojoSync = () => {
     const pojo: any = {};
+    let i = 0;
     for (const k of sortedKeys) {
-      const res = (allPropsProxy as any)[k]();
-      const v = res.sync();
+      if (typeof k !== 'string') {
+        continue;
+      }
+      let v;
+      try {
+        v = (allPropsProxy as any)[k]().sync();
+      } catch (caught: unknown) {
+        doCatch(caught, i, k);
+      }
       pojo[k] = v;
+      i++;
     }
     return { value: pojo as T };
   };
@@ -142,23 +214,43 @@ export function constructPojo<T extends object, Input = unknown>(
     const concurrency = constructPojoOptions?.concurrency;
     if (concurrency) {
       const pojo = Object.fromEntries(
-        await pMap(
-          sortedKeys as string[],
-          async (k) => {
-            const v = await (allPropsProxy as any)[k]().promise();
-            return [k, v];
-          },
-          {
-            concurrency,
-          },
-        ),
+        (
+          await pMap(
+            sortedKeys as string[],
+            async (k) => {
+              if (typeof k !== 'string') {
+                return [];
+              }
+              let v;
+              try {
+                v = await (allPropsProxy as any)[k]().promise();
+              } catch (caught) {
+                await doCatch(caught, null, k);
+              }
+              return [[k, v]];
+            },
+            {
+              concurrency,
+            },
+          )
+        ).flat(),
       );
       return { value: pojo as T };
     } else {
       const pojo: any = {};
+      let i = 0;
       for (const k of sortedKeys) {
-        const v = await (allPropsProxy as any)[k]().promise();
+        if (typeof k !== 'string') {
+          continue;
+        }
+        let v;
+        try {
+          v = await (allPropsProxy as any)[k]().promise();
+        } catch (caught) {
+          await doCatch(caught, i, k);
+        }
         pojo[k] = v;
+        i++;
       }
       return { value: pojo as T };
     }

@@ -3,7 +3,7 @@ import {
   constructPojoSync,
 } from '../src/PojoConstructorSync';
 
-type AppConfig = {
+type AppCfg = {
   appName: string;
   listenOnPort: number;
   thirdPartyApiEndpoint: string;
@@ -11,9 +11,9 @@ type AppConfig = {
 
 type Env = 'dev' | 'staging' | 'production';
 
-class AppConfigPojoConstructor implements PojoConstructorSync<AppConfig, Env> {
+class AppCfgCtor implements PojoConstructorSync<AppCfg, Env> {
   appName(env: Env) {
-    return ['awesome-app-in', env].join('-');
+    return `awesome-app-in-${env}`;
   }
 
   listenOnPort() {
@@ -34,20 +34,22 @@ class AppConfigPojoConstructor implements PojoConstructorSync<AppConfig, Env> {
 }
 
 console.log('--- dev ---');
-const configDev = constructPojoSync<AppConfig, Env>(
-  new AppConfigPojoConstructor(),
+const { value: configDev } = constructPojoSync<AppCfg, Env>(
+  new AppCfgCtor(),
   'dev',
 );
 console.log(JSON.stringify(configDev, null, 2));
+
 console.log('--- staging ---');
-const configStaging = constructPojoSync<AppConfig, Env>(
-  new AppConfigPojoConstructor(),
+const { value: configStaging } = constructPojoSync<AppCfg, Env>(
+  new AppCfgCtor(),
   'staging',
 );
 console.log(JSON.stringify(configStaging, null, 2));
+
 console.log('--- production ---');
-const configProd = constructPojoSync<AppConfig, Env>(
-  new AppConfigPojoConstructor(),
+const { value: configProduction } = constructPojoSync<AppCfg, Env>(
+  new AppCfgCtor(),
   'production',
 );
-console.log(JSON.stringify(configProd, null, 2));
+console.log(JSON.stringify(configProduction, null, 2));

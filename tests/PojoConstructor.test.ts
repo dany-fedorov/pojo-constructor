@@ -1108,7 +1108,7 @@ describe('PojoConstructor + pojoFrom', function () {
       c,
       { key: true },
       {
-        cacheKeyFromInput: (input) => input?.key,
+        cacheKeyFromConstructorInput: (input) => input?.key,
       },
     ).sync();
     expect(pojoTest).toMatchInlineSnapshot(`
@@ -1187,5 +1187,366 @@ describe('PojoConstructor + pojoFrom', function () {
         constructPojo_proxyIntercepted->sync: - Result - {}]
       `);
     }
+  });
+
+  test('sync custom catch - thrownIn: key-method', () => {
+    const c: PojoConstructor<{ a: string; b: string }> = {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      a: () => {
+        throw new Error('Error!');
+      },
+      b: (_, cache) => {
+        return { sync: () => cache.a().sync!() };
+      },
+    };
+    expect.assertions(2);
+    try {
+      constructPojo(c, null).sync();
+    } catch (caught) {
+      expect(caught).toMatchInlineSnapshot(`[Error: Error!]`);
+    }
+
+    const caughtArr: any[] = [];
+    constructPojo(c, null, {
+      catch: (caught, options) => {
+        caughtArr.push({ caught, options });
+      },
+    }).sync();
+    expect(caughtArr).toMatchInlineSnapshot(`
+      Array [
+        Object {
+          "caught": [Error: Error!],
+          "options": Object {
+            "sequentialIndex": 0,
+            "thrownIn": Array [
+              Array [
+                "a",
+                "key-method",
+              ],
+            ],
+          },
+        },
+        Object {
+          "caught": [Error: Error!],
+          "options": Object {
+            "sequentialIndex": 1,
+            "thrownIn": Array [
+              Array [
+                "a",
+                "key-method",
+              ],
+              Array [
+                "b",
+                "sync-result-method",
+              ],
+            ],
+          },
+        },
+      ]
+    `);
+  });
+
+  test('sync custom catch - thrownIn: sync-result-method', () => {
+    const c: PojoConstructor<{ a: string; b: string }> = {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      a: () => {
+        return {
+          sync: () => {
+            throw new Error('Error!');
+          },
+        };
+      },
+      b: (_, cache) => {
+        return { sync: () => cache.a().sync!() };
+      },
+    };
+    expect.assertions(2);
+    try {
+      constructPojo(c, null).sync();
+    } catch (caught) {
+      expect(caught).toMatchInlineSnapshot(`[Error: Error!]`);
+    }
+
+    const caughtArr: any[] = [];
+    constructPojo(c, null, {
+      catch: (caught, options) => {
+        caughtArr.push({ caught, options });
+      },
+    }).sync();
+    expect(caughtArr).toMatchInlineSnapshot(`
+      Array [
+        Object {
+          "caught": [Error: Error!],
+          "options": Object {
+            "sequentialIndex": 0,
+            "thrownIn": Array [
+              Array [
+                "a",
+                "sync-result-method",
+              ],
+            ],
+          },
+        },
+        Object {
+          "caught": [Error: Error!],
+          "options": Object {
+            "sequentialIndex": 1,
+            "thrownIn": Array [
+              Array [
+                "a",
+                "sync-result-method",
+              ],
+              Array [
+                "b",
+                "sync-result-method",
+              ],
+            ],
+          },
+        },
+      ]
+    `);
+  });
+
+  test('async custom catch - thrownIn: key-method', async () => {
+    const c: PojoConstructor<{ a: string; b: string }> = {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      a: () => {
+        throw new Error('Error!');
+      },
+      b: (_, cache) => {
+        return { promise: () => cache.a().promise!() };
+      },
+    };
+    expect.assertions(2);
+    try {
+      await constructPojo(c, null).promise();
+    } catch (caught) {
+      expect(caught).toMatchInlineSnapshot(`[Error: Error!]`);
+    }
+
+    const caughtArr: any[] = [];
+    await constructPojo(c, null, {
+      catch: (caught, options) => {
+        caughtArr.push({ caught, options });
+      },
+    }).promise();
+    expect(caughtArr).toMatchInlineSnapshot(`
+      Array [
+        Object {
+          "caught": [Error: Error!],
+          "options": Object {
+            "sequentialIndex": 0,
+            "thrownIn": Array [
+              Array [
+                "a",
+                "key-method",
+              ],
+            ],
+          },
+        },
+        Object {
+          "caught": [Error: Error!],
+          "options": Object {
+            "sequentialIndex": 1,
+            "thrownIn": Array [
+              Array [
+                "a",
+                "key-method",
+              ],
+              Array [
+                "b",
+                "promise",
+              ],
+            ],
+          },
+        },
+      ]
+    `);
+  });
+
+  test('async concur custom catch - thrownIn: key-method', async () => {
+    const c: PojoConstructor<{ a: string; b: string }> = {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      a: () => {
+        throw new Error('Error!');
+      },
+      b: (_, cache) => {
+        return { promise: () => cache.a().promise!() };
+      },
+    };
+    expect.assertions(2);
+    try {
+      await constructPojo(c, null, {
+        concurrency: 10,
+      }).promise();
+    } catch (caught) {
+      expect(caught).toMatchInlineSnapshot(`[Error: Error!]`);
+    }
+
+    const caughtArr: any[] = [];
+    await constructPojo(c, null, {
+      concurrency: 10,
+      catch: (caught, options) => {
+        caughtArr.push({ caught, options });
+      },
+    }).promise();
+    expect(caughtArr).toMatchInlineSnapshot(`
+      Array [
+        Object {
+          "caught": [Error: Error!],
+          "options": Object {
+            "sequentialIndex": null,
+            "thrownIn": Array [
+              Array [
+                "a",
+                "key-method",
+              ],
+            ],
+          },
+        },
+        Object {
+          "caught": [Error: Error!],
+          "options": Object {
+            "sequentialIndex": null,
+            "thrownIn": Array [
+              Array [
+                "a",
+                "key-method",
+              ],
+              Array [
+                "b",
+                "promise",
+              ],
+            ],
+          },
+        },
+      ]
+    `);
+  });
+
+  test('async concur custom catch - thrownIn: key-method -- throws not error', async () => {
+    const c: PojoConstructor<{ a: string; b: string }> = {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      a: () => {
+        throw `I'm thrown, but I'm not an error`;
+      },
+      b: (_, cache) => {
+        return { promise: () => cache.a().promise!() };
+      },
+    };
+    expect.assertions(2);
+    try {
+      await constructPojo(c, null).promise();
+    } catch (caught) {
+      expect(caught).toMatchInlineSnapshot(
+        `[Error: Caught non error object when resolving "a" key in "key-method"]`,
+      );
+    }
+
+    const caughtArr: any[] = [];
+    await constructPojo(c, null, {
+      concurrency: 10,
+      catch: (caught, options) => {
+        caughtArr.push({ caught, options });
+      },
+    }).promise();
+    expect(caughtArr).toMatchInlineSnapshot(`
+      Array [
+        Object {
+          "caught": [Error: Caught non error object when resolving "a" key in "key-method"],
+          "options": Object {
+            "sequentialIndex": null,
+            "thrownIn": Array [
+              Array [
+                "a",
+                "key-method",
+              ],
+            ],
+          },
+        },
+        Object {
+          "caught": [Error: Caught non error object when resolving "a" key in "key-method"],
+          "options": Object {
+            "sequentialIndex": null,
+            "thrownIn": Array [
+              Array [
+                "a",
+                "key-method",
+              ],
+              Array [
+                "b",
+                "promise",
+              ],
+            ],
+          },
+        },
+      ]
+    `);
+  });
+
+  test('async concur custom catch - thrownIn: key-method -- throws in promise synchronously', async () => {
+    const c: PojoConstructor<{ a: string; b: string }> = {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      a: () => {
+        throw `I'm thrown, but I'm not an error`;
+      },
+      b: (_) => {
+        return {
+          promise: () => {
+            throw new Error('Hey');
+          },
+        };
+      },
+    };
+    expect.assertions(2);
+    try {
+      await constructPojo(c, null).promise();
+    } catch (caught) {
+      expect(caught).toMatchInlineSnapshot(
+        `[Error: Caught non error object when resolving "a" key in "key-method"]`,
+      );
+    }
+
+    const caughtArr: any[] = [];
+    await constructPojo(c, null, {
+      concurrency: 10,
+      catch: (caught, options) => {
+        caughtArr.push({ caught, options });
+      },
+    }).promise();
+    expect(caughtArr).toMatchInlineSnapshot(`
+      Array [
+        Object {
+          "caught": [Error: Caught non error object when resolving "a" key in "key-method"],
+          "options": Object {
+            "sequentialIndex": null,
+            "thrownIn": Array [
+              Array [
+                "a",
+                "key-method",
+              ],
+            ],
+          },
+        },
+        Object {
+          "caught": [Error: Hey],
+          "options": Object {
+            "sequentialIndex": null,
+            "thrownIn": Array [
+              Array [
+                "b",
+                "promise-result-method",
+              ],
+            ],
+          },
+        },
+      ]
+    `);
   });
 });

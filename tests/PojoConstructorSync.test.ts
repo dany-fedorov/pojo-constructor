@@ -489,7 +489,7 @@ describe('PojoConstructorSync + pojoFromSync', function () {
       c,
       { key: true },
       {
-        cacheKeyFromInput: (input) => input?.key,
+        cacheKeyFromConstructorInput: (input) => input?.key,
       },
     );
     expect(pojoTest).toMatchInlineSnapshot(`
