@@ -1443,9 +1443,10 @@ describe('PojoConstructor + pojoFrom', function () {
     try {
       await constructPojo(c, null).promise();
     } catch (caught) {
-      expect(caught).toMatchInlineSnapshot(
-        `[Error: Caught non error object when resolving "a" key in "key-method"]`,
-      );
+      expect(caught).toMatchInlineSnapshot(`
+        [Error: PojoConstructorNonErrorCaughtWrapperError: Caught non error object when resolving "a" key in "key-method"
+        PojoConstructorNonErrorCaughtWrapperError: - Caught object: "I'm thrown, but I'm not an error"]
+      `);
     }
 
     const caughtArr: any[] = [];
@@ -1458,7 +1459,8 @@ describe('PojoConstructor + pojoFrom', function () {
     expect(caughtArr).toMatchInlineSnapshot(`
       Array [
         Object {
-          "caught": [Error: Caught non error object when resolving "a" key in "key-method"],
+          "caught": [Error: PojoConstructorNonErrorCaughtWrapperError: Caught non error object when resolving "a" key in "key-method"
+      PojoConstructorNonErrorCaughtWrapperError: - Caught object: "I'm thrown, but I'm not an error"],
           "options": Object {
             "sequentialIndex": null,
             "thrownIn": Array [
@@ -1470,7 +1472,8 @@ describe('PojoConstructor + pojoFrom', function () {
           },
         },
         Object {
-          "caught": [Error: Caught non error object when resolving "a" key in "key-method"],
+          "caught": [Error: PojoConstructorNonErrorCaughtWrapperError: Caught non error object when resolving "a" key in "key-method"
+      PojoConstructorNonErrorCaughtWrapperError: - Caught object: "I'm thrown, but I'm not an error"],
           "options": Object {
             "sequentialIndex": null,
             "thrownIn": Array [
@@ -1508,9 +1511,10 @@ describe('PojoConstructor + pojoFrom', function () {
     try {
       await constructPojo(c, null).promise();
     } catch (caught) {
-      expect(caught).toMatchInlineSnapshot(
-        `[Error: Caught non error object when resolving "a" key in "key-method"]`,
-      );
+      expect(caught).toMatchInlineSnapshot(`
+        [Error: PojoConstructorNonErrorCaughtWrapperError: Caught non error object when resolving "a" key in "key-method"
+        PojoConstructorNonErrorCaughtWrapperError: - Caught object: "I'm thrown, but I'm not an error"]
+      `);
     }
 
     const caughtArr: any[] = [];
@@ -1523,7 +1527,8 @@ describe('PojoConstructor + pojoFrom', function () {
     expect(caughtArr).toMatchInlineSnapshot(`
       Array [
         Object {
-          "caught": [Error: Caught non error object when resolving "a" key in "key-method"],
+          "caught": [Error: PojoConstructorNonErrorCaughtWrapperError: Caught non error object when resolving "a" key in "key-method"
+      PojoConstructorNonErrorCaughtWrapperError: - Caught object: "I'm thrown, but I'm not an error"],
           "options": Object {
             "sequentialIndex": null,
             "thrownIn": Array [

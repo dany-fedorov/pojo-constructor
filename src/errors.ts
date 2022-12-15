@@ -50,7 +50,11 @@ export class PojoConstructorNonErrorCaughtWrapperError extends Error {
   thrownIn: [string, PojoKeyProcessingStage][];
 
   constructor(caught: unknown, thrownIn: [string, PojoKeyProcessingStage]) {
-    const msg = `Caught non error object when resolving "${thrownIn[0]}" key in "${thrownIn[1]}"`;
+    const msg = plines(
+      'PojoConstructorNonErrorCaughtWrapperError',
+      `Caught non error object when resolving "${thrownIn[0]}" key in "${thrownIn[1]}"`,
+      `- Caught object: ${_pojo_jsonStringifySafe(caught)}`,
+    );
     super(msg);
     this.origCaught = caught;
     this.thrownIn = [thrownIn];
