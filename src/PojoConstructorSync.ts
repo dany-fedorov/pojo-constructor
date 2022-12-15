@@ -1,10 +1,8 @@
-import type {
-  ConstructPojoOptions,
-  ConstructPojoResult,
-} from './PojoConstructor';
+import type { ConstructPojoOptions } from './PojoConstructor';
 import { obtainSortedKeys } from './obtainSortedKeys';
 import { PojoConstructorCacheMap } from './PojoConstructorCacheMap';
 import { processCaughtInCachingProxy } from './processCaughtInCachingProxy';
+import type { ConstructPojoAsyncOptions } from './PojoConstructorAsync';
 
 export type PojoConstructorSyncCachingProxy<
   T extends object,
@@ -25,11 +23,14 @@ export type ConstructPojoSyncOptions<T extends object, Input> = Omit<
   'concurrency'
 >;
 
-export function constructPojoSync<T extends object, Input = unknown>(
+export function constructPojoFromInstanceSync<
+  T extends object,
+  Input = unknown,
+>(
   ctor: PojoConstructorSync<T, Input>,
   constructPojoInput?: Input,
   constructPojoOptions?: ConstructPojoSyncOptions<T, Input>,
-): ConstructPojoResult<T> {
+): T {
   const sortedKeys = obtainSortedKeys(ctor, constructPojoOptions);
   const cacheKeyFn =
     typeof constructPojoOptions?.cacheKeyFromConstructorInput === 'function'
@@ -37,42 +38,35 @@ export function constructPojoSync<T extends object, Input = unknown>(
       : (x?: Input) => x;
 
   const resolvedCache = new PojoConstructorCacheMap();
-  const makeCachingProxy = (proxyInput?: Input) =>
-    new Proxy(ctor, {
-      get(target: PojoConstructorSync<T, Input>, key: string | symbol): any {
-        return function constructPojoSync_proxyIntercepted(
-          interceptedInputArg?: Input,
-        ) {
-          const resolvedInterceptedInput =
-            interceptedInputArg === undefined
-              ? proxyInput
-              : interceptedInputArg;
-          const cacheKey = cacheKeyFn(resolvedInterceptedInput);
-          const thisProxy = makeCachingProxy(resolvedInterceptedInput);
+  const cachingProxy = new Proxy(ctor, {
+    get(target: PojoConstructorSync<T, Input>, key: string | symbol): any {
+      return function constructPojoSync_proxyIntercepted(
+        interceptedInputArg?: Input,
+      ) {
+        const inputCacheKey = cacheKeyFn(interceptedInputArg);
 
-          if (resolvedCache.has(key, cacheKey)) {
-            return resolvedCache.get(key, cacheKey);
-          }
-          let v;
-          try {
-            v = (target as any)[key].call(
-              thisProxy,
-              resolvedInterceptedInput,
-              thisProxy,
-            );
-          } catch (caught) {
-            throw processCaughtInCachingProxy(caught, [
-              key as string,
-              'key-method',
-            ]);
-          }
-          resolvedCache.set(key, cacheKey, v);
-          return v;
-        };
-      },
-    });
+        if (resolvedCache.has(key, inputCacheKey)) {
+          return resolvedCache.get(key, inputCacheKey);
+        }
+        let v;
+        try {
+          v = (target as any)[key].call(
+            cachingProxy,
+            interceptedInputArg,
+            cachingProxy,
+          );
+        } catch (caught) {
+          throw processCaughtInCachingProxy(caught, [
+            key as string,
+            'key-method',
+          ]);
+        }
+        resolvedCache.set(key, inputCacheKey, v);
+        return v;
+      };
+    },
+  });
 
-  const allPropsProxy = makeCachingProxy(constructPojoInput);
   const doCatch = (caught: unknown, i: number | null, key: string) => {
     if (typeof constructPojoOptions?.catch !== 'function') {
       throw caught;
@@ -90,12 +84,24 @@ export function constructPojoSync<T extends object, Input = unknown>(
     }
     let v;
     try {
-      v = (allPropsProxy as any)[k]();
+      v = (cachingProxy as any)[k](constructPojoInput);
     } catch (caught) {
       doCatch(caught, i, k);
     }
     pojo[k] = v;
     i++;
   }
-  return { value: pojo as T };
+  return pojo as T;
+}
+
+export function constructPojoSync<T extends object, Input = unknown>(
+  CTorClass: { new (input?: Input): PojoConstructorSync<T, Input> },
+  constructPojoInput?: Input,
+  constructPojoOptions?: ConstructPojoAsyncOptions<T, Input>,
+): T {
+  return constructPojoFromInstanceSync(
+    new CTorClass(constructPojoInput),
+    constructPojoInput,
+    constructPojoOptions,
+  );
 }

@@ -2,7 +2,7 @@ import type {
   PojoConstructorAsync,
   PojoConstructorAsyncCachingProxy,
 } from '../src';
-import { constructPojoAsync } from '../src';
+import { constructPojoAsync, constructPojoFromInstanceAsync } from '../src';
 
 describe('PojoConstructorAsync + pojoFromAsync', function () {
   test('it should construct from plain', async () => {
@@ -10,7 +10,7 @@ describe('PojoConstructorAsync + pojoFromAsync', function () {
       a: async () => 'a-string',
       b: async () => 123,
     };
-    const { value: pojo } = await constructPojoAsync(c);
+    const pojo = await constructPojoFromInstanceAsync(c);
     expect(pojo).toMatchInlineSnapshot(`
       Object {
         "a": "a-string",
@@ -31,7 +31,7 @@ describe('PojoConstructorAsync + pojoFromAsync', function () {
     }
 
     const c = new C();
-    const { value: pojo } = await constructPojoAsync(c);
+    const pojo = await constructPojoFromInstanceAsync(c);
     expect(pojo).toMatchInlineSnapshot(`
       Object {
         "a": "a-string",
@@ -56,7 +56,7 @@ describe('PojoConstructorAsync + pojoFromAsync', function () {
     }
 
     const c = new C();
-    const { value: pojo } = await constructPojoAsync(c);
+    const pojo = await constructPojoFromInstanceAsync(c);
     expect(pojo).toMatchInlineSnapshot(`
       Object {
         "a": "a-string",
@@ -71,14 +71,14 @@ describe('PojoConstructorAsync + pojoFromAsync', function () {
         input ? 'a-string-truthy-variant' : 'a-string-falsy-variant',
       b: async (input) => (input ? 123 : 321),
     };
-    const { value: pojo1 } = await constructPojoAsync(c, true);
+    const pojo1 = await constructPojoFromInstanceAsync(c, true);
     expect(pojo1).toMatchInlineSnapshot(`
       Object {
         "a": "a-string-truthy-variant",
         "b": 123,
       }
     `);
-    const { value: pojo2 } = await constructPojoAsync(c, false);
+    const pojo2 = await constructPojoFromInstanceAsync(c, false);
     expect(pojo2).toMatchInlineSnapshot(`
       Object {
         "a": "a-string-falsy-variant",
@@ -112,7 +112,7 @@ describe('PojoConstructorAsync + pojoFromAsync', function () {
     }
 
     const c = new C();
-    const { value: pojo } = await constructPojoAsync(c);
+    const pojo = await constructPojoFromInstanceAsync(c);
     expect(pojo).toMatchInlineSnapshot(`
       Object {
         "a": "a-string",
@@ -139,7 +139,7 @@ describe('PojoConstructorAsync + pojoFromAsync', function () {
       c: async (_, cachingProxy: PojoConstructorAsyncCachingProxy<T, Input>) =>
         cachingProxy.b(),
     };
-    const { value: pojo } = await constructPojoAsync(c);
+    const pojo = await constructPojoFromInstanceAsync(c);
     expect(pojo).toMatchInlineSnapshot(`
       Object {
         "a": "a-string",
@@ -169,7 +169,7 @@ describe('PojoConstructorAsync + pojoFromAsync', function () {
         return cachingProxy.a(input);
       },
     };
-    const { value: pojo1 } = await constructPojoAsync(c, true);
+    const pojo1 = await constructPojoFromInstanceAsync(c, true);
     expect(pojo1).toMatchInlineSnapshot(`
       Object {
         "a": "a-string-truthy-variant",
@@ -178,7 +178,7 @@ describe('PojoConstructorAsync + pojoFromAsync', function () {
       }
     `);
     expect(acounter).toBe(2);
-    const { value: pojo2 } = await constructPojoAsync(c, false);
+    const pojo2 = await constructPojoFromInstanceAsync(c, false);
     expect(pojo2).toMatchInlineSnapshot(`
       Object {
         "a": "a-string-falsy-variant",
@@ -214,7 +214,7 @@ describe('PojoConstructorAsync + pojoFromAsync', function () {
       }
     }
 
-    const { value: pojo } = await constructPojoAsync(new C(), true);
+    const pojo = await constructPojoFromInstanceAsync(new C(), true);
     expect(pojo).toMatchInlineSnapshot(`
       Object {
         "a": "a-string-true",
@@ -227,7 +227,7 @@ describe('PojoConstructorAsync + pojoFromAsync', function () {
     expect(ccounter).toBe(1);
   });
 
-  test('it should use default input - using cachingProxy argument', async () => {
+  test('it should reassign input - using cachingProxy argument', async () => {
     let acounter = 0;
     const c: PojoConstructorAsync<
       { a: string; b: string; c: string; d: string },
@@ -235,7 +235,7 @@ describe('PojoConstructorAsync + pojoFromAsync', function () {
     > = {
       a: async (input) => {
         acounter++;
-        return input ? 'a-string-truthy-variant' : 'a-string-falsy-variant';
+        return `a-string-${input}`;
       },
       b: async (_, cachingProxy) => {
         return cachingProxy.a();
@@ -247,19 +247,19 @@ describe('PojoConstructorAsync + pojoFromAsync', function () {
         return cachingProxy.a(input);
       },
     };
-    const { value: pojo } = await constructPojoAsync(c, true);
+    const pojo = await constructPojoFromInstanceAsync(c, true);
     expect(pojo).toMatchInlineSnapshot(`
       Object {
-        "a": "a-string-truthy-variant",
-        "b": "a-string-truthy-variant",
-        "c": "a-string-falsy-variant",
-        "d": "a-string-truthy-variant",
+        "a": "a-string-true",
+        "b": "a-string-undefined",
+        "c": "a-string-false",
+        "d": "a-string-true",
       }
     `);
-    expect(acounter).toBe(2);
+    expect(acounter).toBe(3); // true, false, undefined
   });
 
-  test('it should use default input - using this', async () => {
+  test('it should reassign input - using this', async () => {
     let acounter = 0;
     let bcounter = 0;
     let ccounter = 0;
@@ -290,16 +290,16 @@ describe('PojoConstructorAsync + pojoFromAsync', function () {
       }
     }
 
-    const { value: pojo } = await constructPojoAsync(new C(), true);
+    const pojo = await constructPojoFromInstanceAsync(new C(), true);
     expect(pojo).toMatchInlineSnapshot(`
       Object {
         "a": "a-string-true",
-        "b": "a-string-true",
+        "b": "a-string-undefined",
         "c": "a-string-false",
         "d": "a-string-true",
       }
     `);
-    expect(acounter).toBe(2);
+    expect(acounter).toBe(3);
     expect(bcounter).toBe(1);
     expect(ccounter).toBe(1);
     expect(dcounter).toBe(1);
@@ -310,7 +310,7 @@ describe('PojoConstructorAsync + pojoFromAsync', function () {
       a: async () => 'a-string',
       b: async () => 123,
     };
-    const { value: pojo } = await constructPojoAsync(c, null, {
+    const pojo = await constructPojoFromInstanceAsync(c, null, {
       concurrency: 100,
     });
     expect(pojo).toMatchInlineSnapshot(`
@@ -345,7 +345,7 @@ describe('PojoConstructorAsync + pojoFromAsync', function () {
     }
 
     const c = new C();
-    const { value: pojo } = await constructPojoAsync(c, null, {
+    const pojo = await constructPojoFromInstanceAsync(c, undefined, {
       concurrency: 100,
     });
     expect(pojo).toMatchInlineSnapshot(`
@@ -422,7 +422,7 @@ describe('PojoConstructorAsync + pojoFromAsync', function () {
       }
     }
 
-    const { value: pojo } = await constructPojoAsync(new C(), true);
+    const pojo = await constructPojoFromInstanceAsync(new C(), true);
     expect(pojo).toMatchInlineSnapshot(`
       Object {
         "a": "a-string-true",
@@ -518,7 +518,7 @@ describe('PojoConstructorAsync + pojoFromAsync', function () {
       }
     }
 
-    const { value: pojo } = await constructPojoAsync(new C(), true, {
+    const pojo = await constructPojoFromInstanceAsync(new C(), true, {
       sortKeys: (keys) => keys.slice().sort((a, b) => (a > b ? -1 : 1)),
     });
     expect(pojo).toMatchInlineSnapshot(`
@@ -561,7 +561,7 @@ describe('PojoConstructorAsync + pojoFromAsync', function () {
       },
       c: async () => 'c-string',
     };
-    const { value: pojo } = await constructPojoAsync(c, null, {
+    const pojo = await constructPojoFromInstanceAsync(c, null, {
       keys: () => ['a'],
     });
     expect(pojo).toMatchInlineSnapshot(`
@@ -599,7 +599,7 @@ describe('PojoConstructorAsync + pojoFromAsync', function () {
         return cache.c({ key: !input.key });
       },
     };
-    const { value: pojoControl } = await constructPojoAsync(c, { key: true });
+    const pojoControl = await constructPojoFromInstanceAsync(c, { key: true });
     expect(pojoControl).toMatchInlineSnapshot(`
       Object {
         "a": "a-true",
@@ -620,7 +620,7 @@ describe('PojoConstructorAsync + pojoFromAsync', function () {
     counters.b = 0;
     counters.c = 0;
     counters.d = 0;
-    const { value: pojoTest } = await constructPojoAsync(
+    const pojoTest = await constructPojoFromInstanceAsync(
       c,
       { key: true },
       {
@@ -658,13 +658,13 @@ describe('PojoConstructorAsync + pojoFromAsync', function () {
     };
     expect.assertions(2);
     try {
-      await constructPojoAsync(c, null);
+      await constructPojoFromInstanceAsync(c, null);
     } catch (caught) {
       expect(caught).toMatchInlineSnapshot(`[Error: Error!]`);
     }
 
     const caughtArr: any[] = [];
-    await constructPojoAsync(c, null, {
+    await constructPojoFromInstanceAsync(c, null, {
       catch: (caught, options) => {
         caughtArr.push({ caught, options });
       },
@@ -678,10 +678,6 @@ describe('PojoConstructorAsync + pojoFromAsync', function () {
             "thrownIn": Array [
               Array [
                 "a",
-                "promise",
-              ],
-              Array [
-                "b",
                 "promise",
               ],
             ],
@@ -720,7 +716,7 @@ describe('PojoConstructorAsync + pojoFromAsync', function () {
     };
     expect.assertions(2);
     try {
-      await constructPojoAsync(c, null, {
+      await constructPojoFromInstanceAsync(c, null, {
         concurrency: 10,
       });
     } catch (caught) {
@@ -728,7 +724,7 @@ describe('PojoConstructorAsync + pojoFromAsync', function () {
     }
 
     const caughtArr: any[] = [];
-    await constructPojoAsync(c, null, {
+    await constructPojoFromInstanceAsync(c, null, {
       concurrency: 10,
       catch: (caught, options) => {
         caughtArr.push({ caught, options });
@@ -743,10 +739,6 @@ describe('PojoConstructorAsync + pojoFromAsync', function () {
             "thrownIn": Array [
               Array [
                 "a",
-                "promise",
-              ],
-              Array [
-                "b",
                 "promise",
               ],
             ],
@@ -769,6 +761,47 @@ describe('PojoConstructorAsync + pojoFromAsync', function () {
           },
         },
       ]
+    `);
+  });
+
+  test('passing input through', async () => {
+    const c: PojoConstructorAsync<{ a: string; b: string }, boolean> = {
+      a: async (input) => `a-string-${input}`,
+      b: async (input, cachingProxy) => cachingProxy.a(input),
+    };
+    const pojo1 = await constructPojoFromInstanceAsync(c, true);
+    expect(pojo1).toMatchInlineSnapshot(`
+      Object {
+        "a": "a-string-true",
+        "b": "a-string-true",
+      }
+    `);
+    const pojo2 = await constructPojoFromInstanceAsync(c, false);
+    expect(pojo2).toMatchInlineSnapshot(`
+      Object {
+        "a": "a-string-false",
+        "b": "a-string-false",
+      }
+    `);
+  });
+
+  test('construct from class 1', async () => {
+    class C implements PojoConstructorAsync<{ a: string; b: string }, number> {
+      async a(input: number) {
+        return `a-field-${input}`;
+      }
+
+      async b(input: number) {
+        return this.a(input);
+      }
+    }
+
+    const pojo = await constructPojoAsync(C, 321);
+    expect(pojo).toMatchInlineSnapshot(`
+      Object {
+        "a": "a-field-321",
+        "b": "a-field-321",
+      }
     `);
   });
 });

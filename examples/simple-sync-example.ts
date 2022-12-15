@@ -1,5 +1,6 @@
 import {
   PojoConstructorSync,
+  constructPojoFromInstanceSync,
   constructPojoSync,
 } from '../src/PojoConstructorSync';
 
@@ -34,22 +35,13 @@ class AppCfgCtor implements PojoConstructorSync<AppCfg, Env> {
 }
 
 console.log('--- dev ---');
-const { value: configDev } = constructPojoSync<AppCfg, Env>(
-  new AppCfgCtor(),
-  'dev',
-);
+const configDev = constructPojoSync(AppCfgCtor, 'dev' as Env);
 console.log(JSON.stringify(configDev, null, 2));
 
 console.log('--- staging ---');
-const { value: configStaging } = constructPojoSync<AppCfg, Env>(
-  new AppCfgCtor(),
-  'staging',
-);
+const configStaging = constructPojoSync(AppCfgCtor, 'staging' as Env);
 console.log(JSON.stringify(configStaging, null, 2));
 
 console.log('--- production ---');
-const { value: configProduction } = constructPojoSync<AppCfg, Env>(
-  new AppCfgCtor(),
-  'production',
-);
+const configProduction = constructPojoSync(AppCfgCtor, 'production' as Env);
 console.log(JSON.stringify(configProduction, null, 2));

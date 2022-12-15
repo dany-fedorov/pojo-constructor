@@ -1,8 +1,5 @@
 import pMap from '@esm2cjs/p-map';
-import type {
-  ConstructPojoOptions,
-  ConstructPojoResult,
-} from './PojoConstructor';
+import type { ConstructPojoOptions } from './PojoConstructor';
 import { obtainSortedKeys } from './obtainSortedKeys';
 import { PojoConstructorCacheMap } from './PojoConstructorCacheMap';
 import { processCaughtInCachingProxy } from './processCaughtInCachingProxy';
@@ -26,11 +23,14 @@ export type ConstructPojoAsyncOptions<
   Input,
 > = ConstructPojoOptions<T, Input>;
 
-export async function constructPojoAsync<T extends object, Input = unknown>(
+export async function constructPojoFromInstanceAsync<
+  T extends object,
+  Input = unknown,
+>(
   ctor: PojoConstructorAsync<T, Input>,
   constructPojoInput?: Input,
   constructPojoOptions?: ConstructPojoAsyncOptions<T, Input>,
-): Promise<ConstructPojoResult<T>> {
+): Promise<T> {
   const sortedKeys = obtainSortedKeys(ctor, constructPojoOptions);
   const cacheKeyFn =
     typeof constructPojoOptions?.cacheKeyFromConstructorInput === 'function'
@@ -39,55 +39,45 @@ export async function constructPojoAsync<T extends object, Input = unknown>(
 
   const resolvedCache = new PojoConstructorCacheMap();
   const promisesCache = new PojoConstructorCacheMap();
-  const makeCachingProxy = (proxyInput?: Input) =>
-    new Proxy(ctor, {
-      get(target: PojoConstructorAsync<T, Input>, key: string | symbol): any {
-        return async function constructPojoAsync_proxyIntercepted(
-          interceptedInputArg?: Input,
-        ) {
-          const resolvedInterceptedInput =
-            interceptedInputArg === undefined
-              ? proxyInput
-              : interceptedInputArg;
-          const cachingKey = cacheKeyFn(resolvedInterceptedInput);
-          const thisProxy = makeCachingProxy(resolvedInterceptedInput);
+  const cachingProxy = new Proxy(ctor, {
+    get(target: PojoConstructorAsync<T, Input>, key: string | symbol): any {
+      return async function constructPojoAsync_proxyIntercepted(
+        interceptedInputArg?: Input,
+      ) {
+        const inputCacheKey = cacheKeyFn(interceptedInputArg);
 
-          if (resolvedCache.has(key, cachingKey)) {
-            return resolvedCache.get(key, cachingKey);
-          }
-          if (promisesCache.has(key, cachingKey)) {
-            return promisesCache.get(key, cachingKey);
-          }
-          let vpromise;
-          try {
-            vpromise = (target as any)[key].call(
-              thisProxy,
-              resolvedInterceptedInput,
-              thisProxy,
-            );
-          } catch (caught) {
-            throw processCaughtInCachingProxy(caught, [
-              key as string,
-              'key-method',
-            ]);
-          }
-          promisesCache.set(key, cachingKey, vpromise);
-          let v;
-          try {
-            v = await vpromise;
-          } catch (caught) {
-            throw processCaughtInCachingProxy(caught, [
-              key as string,
-              'promise',
-            ]);
-          }
-          resolvedCache.set(key, cachingKey, v);
-          return v;
-        };
-      },
-    });
+        if (resolvedCache.has(key, inputCacheKey)) {
+          return resolvedCache.get(key, inputCacheKey);
+        }
+        if (promisesCache.has(key, inputCacheKey)) {
+          return promisesCache.get(key, inputCacheKey);
+        }
+        let vpromise;
+        try {
+          vpromise = (target as any)[key].call(
+            cachingProxy,
+            interceptedInputArg,
+            cachingProxy,
+          );
+        } catch (caught) {
+          throw processCaughtInCachingProxy(caught, [
+            key as string,
+            'key-method',
+          ]);
+        }
+        promisesCache.set(key, inputCacheKey, vpromise);
+        let v;
+        try {
+          v = await vpromise;
+        } catch (caught) {
+          throw processCaughtInCachingProxy(caught, [key as string, 'promise']);
+        }
+        resolvedCache.set(key, inputCacheKey, v);
+        return v;
+      };
+    },
+  });
   const concurrency = constructPojoOptions?.concurrency;
-  const allPropsProxy = makeCachingProxy(constructPojoInput);
   const doCatch = (caught: unknown, i: number | null, key: string) => {
     if (typeof constructPojoOptions?.catch !== 'function') {
       throw caught;
@@ -108,7 +98,7 @@ export async function constructPojoAsync<T extends object, Input = unknown>(
             }
             let v;
             try {
-              v = await (allPropsProxy as any)[k]();
+              v = await (cachingProxy as any)[k](constructPojoInput);
             } catch (caught) {
               await doCatch(caught, null, k);
             }
@@ -120,7 +110,7 @@ export async function constructPojoAsync<T extends object, Input = unknown>(
         )
       ).flat(),
     );
-    return { value: pojo as T };
+    return pojo as T;
   } else {
     const pojo: any = {};
     let i = 0;
@@ -130,13 +120,25 @@ export async function constructPojoAsync<T extends object, Input = unknown>(
       }
       let v;
       try {
-        v = await (allPropsProxy as any)[k]();
+        v = await (cachingProxy as any)[k](constructPojoInput);
       } catch (caught) {
         await doCatch(caught, i, k);
       }
       pojo[k] = v;
       i++;
     }
-    return { value: pojo as T };
+    return pojo as T;
   }
+}
+
+export async function constructPojoAsync<T extends object, Input = unknown>(
+  CTorClass: { new (input?: Input): PojoConstructorAsync<T, Input> },
+  constructPojoInput?: Input,
+  constructPojoOptions?: ConstructPojoAsyncOptions<T, Input>,
+): Promise<T> {
+  return constructPojoFromInstanceAsync(
+    new CTorClass(constructPojoInput),
+    constructPojoInput,
+    constructPojoOptions,
+  );
 }

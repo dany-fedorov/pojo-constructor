@@ -2,7 +2,7 @@ import type {
   PojoConstructorSync,
   PojoConstructorSyncCachingProxy,
 } from '../src';
-import { constructPojoSync } from '../src';
+import { constructPojoFromInstanceSync, constructPojoSync } from '../src';
 
 describe('PojoConstructorSync + pojoFromSync', function () {
   test('it should construct from plain', () => {
@@ -10,7 +10,7 @@ describe('PojoConstructorSync + pojoFromSync', function () {
       a: () => 'a-string',
       b: () => 123,
     };
-    const { value: pojo } = constructPojoSync(c);
+    const pojo = constructPojoFromInstanceSync(c);
     expect(pojo).toMatchInlineSnapshot(`
       Object {
         "a": "a-string",
@@ -31,7 +31,7 @@ describe('PojoConstructorSync + pojoFromSync', function () {
     }
 
     const c = new C();
-    const { value: pojo } = constructPojoSync(c);
+    const pojo = constructPojoFromInstanceSync(c);
     expect(pojo).toMatchInlineSnapshot(`
       Object {
         "a": "a-string",
@@ -56,7 +56,7 @@ describe('PojoConstructorSync + pojoFromSync', function () {
     }
 
     const c = new C();
-    const { value: pojo } = constructPojoSync(c);
+    const pojo = constructPojoFromInstanceSync(c);
     expect(pojo).toMatchInlineSnapshot(`
       Object {
         "a": "a-string",
@@ -71,14 +71,14 @@ describe('PojoConstructorSync + pojoFromSync', function () {
         input ? 'a-string-truthy-variant' : 'a-string-falsy-variant',
       b: (input) => (input ? 123 : 321),
     };
-    const { value: pojo1 } = constructPojoSync(c, true);
+    const pojo1 = constructPojoFromInstanceSync(c, true);
     expect(pojo1).toMatchInlineSnapshot(`
       Object {
         "a": "a-string-truthy-variant",
         "b": 123,
       }
     `);
-    const { value: pojo2 } = constructPojoSync(c, false);
+    const pojo2 = constructPojoFromInstanceSync(c, false);
     expect(pojo2).toMatchInlineSnapshot(`
       Object {
         "a": "a-string-falsy-variant",
@@ -112,7 +112,7 @@ describe('PojoConstructorSync + pojoFromSync', function () {
     }
 
     const c = new C();
-    const { value: pojo } = constructPojoSync(c);
+    const pojo = constructPojoFromInstanceSync(c);
     expect(pojo).toMatchInlineSnapshot(`
       Object {
         "a": "a-string",
@@ -139,7 +139,7 @@ describe('PojoConstructorSync + pojoFromSync', function () {
       c: (_, cachingProxy: PojoConstructorSyncCachingProxy<T, Input>) =>
         cachingProxy.b(),
     };
-    const { value: pojo } = constructPojoSync(c);
+    const pojo = constructPojoFromInstanceSync(c);
     expect(pojo).toMatchInlineSnapshot(`
       Object {
         "a": "a-string",
@@ -213,7 +213,7 @@ describe('PojoConstructorSync + pojoFromSync', function () {
       }
     }
 
-    const { value: pojo } = constructPojoSync(new C(), true);
+    const pojo = constructPojoFromInstanceSync(new C(), true);
     expect(pojo).toMatchInlineSnapshot(`
       Object {
         "a": "a-string-true",
@@ -309,7 +309,7 @@ describe('PojoConstructorSync + pojoFromSync', function () {
       }
     }
 
-    const { value: pojo } = constructPojoSync(new C(), true, {
+    const pojo = constructPojoFromInstanceSync(new C(), true, {
       sortKeys: (keys) => keys.slice().sort((a, b) => (a > b ? -1 : 1)),
     });
     expect(pojo).toMatchInlineSnapshot(`
@@ -361,7 +361,7 @@ describe('PojoConstructorSync + pojoFromSync', function () {
           return cachingProxy.a(input);
         },
       };
-    const { value: pojo1 } = await constructPojoSync(c, true);
+    const pojo1 = await constructPojoFromInstanceSync(c, true);
     expect(pojo1).toMatchInlineSnapshot(`
       Object {
         "a": "a-string-truthy-variant",
@@ -370,7 +370,7 @@ describe('PojoConstructorSync + pojoFromSync', function () {
       }
     `);
     expect(acounter).toBe(2);
-    const { value: pojo2 } = constructPojoSync(c, false);
+    const pojo2 = constructPojoFromInstanceSync(c, false);
     expect(pojo2).toMatchInlineSnapshot(`
       Object {
         "a": "a-string-falsy-variant",
@@ -406,7 +406,7 @@ describe('PojoConstructorSync + pojoFromSync', function () {
       }
     }
 
-    const { value: pojo } = constructPojoSync(new C(), true);
+    const pojo = constructPojoFromInstanceSync(new C(), true);
     expect(pojo).toMatchInlineSnapshot(`
       Object {
         "a": "a-string-true",
@@ -427,7 +427,7 @@ describe('PojoConstructorSync + pojoFromSync', function () {
       },
       c: () => 'c-string',
     };
-    const { value: pojo } = constructPojoSync(c, null, {
+    const pojo = constructPojoFromInstanceSync(c, null, {
       keys: () => ['a'],
     });
     expect(pojo).toMatchInlineSnapshot(`
@@ -464,7 +464,9 @@ describe('PojoConstructorSync + pojoFromSync', function () {
         return cache.c({ key: !input.key });
       },
     };
-    const { value: pojoControl } = constructPojoSync(c, { key: true });
+    const pojoControl = constructPojoFromInstanceSync(c, {
+      key: true,
+    });
     expect(pojoControl).toMatchInlineSnapshot(`
       Object {
         "a": "a-true",
@@ -485,7 +487,7 @@ describe('PojoConstructorSync + pojoFromSync', function () {
     counters.b = 0;
     counters.c = 0;
     counters.d = 0;
-    const { value: pojoTest } = constructPojoSync(
+    const pojoTest = constructPojoFromInstanceSync(
       c,
       { key: true },
       {
@@ -506,6 +508,47 @@ describe('PojoConstructorSync + pojoFromSync', function () {
         "b": 2,
         "c": 2,
         "d": 1,
+      }
+    `);
+  });
+
+  test('input passing through', () => {
+    const c: PojoConstructorSync<{ a: string; b: string }, boolean> = {
+      a: (input) => `a-string-${input}`,
+      b: (input, cachingProxy) => cachingProxy.a(input),
+    };
+    const pojo1 = constructPojoFromInstanceSync(c, true);
+    expect(pojo1).toMatchInlineSnapshot(`
+      Object {
+        "a": "a-string-true",
+        "b": "a-string-true",
+      }
+    `);
+    const pojo2 = constructPojoFromInstanceSync(c, false);
+    expect(pojo2).toMatchInlineSnapshot(`
+      Object {
+        "a": "a-string-false",
+        "b": "a-string-false",
+      }
+    `);
+  });
+
+  test('construct from class 1', () => {
+    class C implements PojoConstructorSync<{ a: string; b: string }, number> {
+      a(input?: number) {
+        return `a-field-${input}`;
+      }
+
+      b(input: number) {
+        return this.a(input);
+      }
+    }
+
+    const pojo = constructPojoSync(C, 321);
+    expect(pojo).toMatchInlineSnapshot(`
+      Object {
+        "a": "a-field-321",
+        "b": "a-field-321",
       }
     `);
   });

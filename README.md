@@ -50,10 +50,7 @@ class AppCfgCtor implements PojoConstructorSync<AppCfg, Env> {
   }
 }
 
-const { value: configDev } = constructPojoSync<AppCfg, Env>(
-  new AppCfgCtor(),
-  'dev',
-);
+const configDev = constructPojoSync(AppCfgCtor, 'dev' as Env);
 console.log(JSON.stringify(configDev, null, 2));
 /**
  * {
