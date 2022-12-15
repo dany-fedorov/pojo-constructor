@@ -15,10 +15,10 @@ jobs:
           version: 7.18.1
 
       - name: Install
-        run: pnpm i
+        run: npm i
 
       - name: Run tests
-        run: pnpm run test-ci
+        run: npm run test-ci
 
       - name: Generating coverage badges
         uses: "jpb06/jest-badges-action@latest"
