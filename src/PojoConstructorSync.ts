@@ -37,7 +37,7 @@ export function constructPojoFromInstanceSync<
       ? constructPojoOptions?.cacheKeyFromConstructorInput
       : (x?: Input) => x;
 
-  const resolvedCache = new PojoConstructorCacheMap();
+  const syncCache = new PojoConstructorCacheMap();
   const cachingProxy = new Proxy(ctor, {
     get(target: PojoConstructorSync<T, Input>, key: string | symbol): any {
       return function constructPojoSync_proxyIntercepted(
@@ -45,8 +45,8 @@ export function constructPojoFromInstanceSync<
       ) {
         const inputCacheKey = cacheKeyFn(interceptedInputArg);
 
-        if (resolvedCache.has(key, inputCacheKey)) {
-          return resolvedCache.get(key, inputCacheKey);
+        if (syncCache.has(key, inputCacheKey)) {
+          return syncCache.get(key, inputCacheKey);
         }
         let v;
         try {
@@ -61,7 +61,7 @@ export function constructPojoFromInstanceSync<
             'key-method',
           ]);
         }
-        resolvedCache.set(key, inputCacheKey, v);
+        syncCache.set(key, inputCacheKey, v);
         return v;
       };
     },

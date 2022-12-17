@@ -63,8 +63,8 @@ export function constructPojoFromInstance<T extends object, Input = unknown>(
       ? constructPojoOptions?.cacheKeyFromConstructorInput
       : (x?: Input) => x;
 
-  const resolvedCache = new PojoConstructorCacheMap();
-  const promisesCache = new PojoConstructorCacheMap();
+  const syncCache = new PojoConstructorCacheMap();
+  const asyncCache = new PojoConstructorCacheMap();
   const cachingProxy = new Proxy(ctorInstance, {
     get(target: PojoConstructor<T, Input>, key: string | symbol): any {
       return function constructPojo_proxyIntercepted(
@@ -73,8 +73,8 @@ export function constructPojoFromInstance<T extends object, Input = unknown>(
         const inputCacheKey = cacheKeyFn(interceptedInputArg);
         return {
           sync: () => {
-            if (resolvedCache.has(key, inputCacheKey)) {
-              return resolvedCache.get(key, inputCacheKey);
+            if (syncCache.has(key, inputCacheKey)) {
+              return syncCache.get(key, inputCacheKey);
             }
             let res;
             try {
@@ -105,15 +105,12 @@ export function constructPojoFromInstance<T extends object, Input = unknown>(
                 'sync-result-method',
               ]);
             }
-            resolvedCache.set(key, inputCacheKey, v);
+            syncCache.set(key, inputCacheKey, v);
             return v;
           },
           promise: async () => {
-            if (resolvedCache.has(key, inputCacheKey)) {
-              return resolvedCache.get(key, inputCacheKey);
-            }
-            if (promisesCache.has(key, inputCacheKey)) {
-              return promisesCache.get(key, inputCacheKey);
+            if (asyncCache.has(key, inputCacheKey)) {
+              return asyncCache.get(key, inputCacheKey);
             }
             let res;
             try {
@@ -139,7 +136,7 @@ export function constructPojoFromInstance<T extends object, Input = unknown>(
                   'promise-result-method',
                 ]);
               }
-              promisesCache.set(key, inputCacheKey, vpromise);
+              asyncCache.set(key, inputCacheKey, vpromise);
               try {
                 v = await vpromise;
               } catch (caught: unknown) {
@@ -148,7 +145,6 @@ export function constructPojoFromInstance<T extends object, Input = unknown>(
                   'promise',
                 ]);
               }
-              resolvedCache.set(key, inputCacheKey, v);
             } else if (typeof res?.sync === 'function') {
               try {
                 v = res?.sync();
@@ -158,7 +154,7 @@ export function constructPojoFromInstance<T extends object, Input = unknown>(
                   'sync-result-method',
                 ]);
               }
-              resolvedCache.set(key, inputCacheKey, v);
+              syncCache.set(key, inputCacheKey, v);
             } else {
               throw new PojoConstructorCannotAsyncResolveError(
                 `${constructPojo_proxyIntercepted.name}->promise`,

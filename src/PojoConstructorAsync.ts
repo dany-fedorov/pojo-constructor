@@ -37,8 +37,7 @@ export async function constructPojoFromInstanceAsync<
       ? constructPojoOptions?.cacheKeyFromConstructorInput
       : (x?: Input) => x;
 
-  const resolvedCache = new PojoConstructorCacheMap();
-  const promisesCache = new PojoConstructorCacheMap();
+  const asyncCache = new PojoConstructorCacheMap();
   const cachingProxy = new Proxy(ctor, {
     get(target: PojoConstructorAsync<T, Input>, key: string | symbol): any {
       return async function constructPojoAsync_proxyIntercepted(
@@ -46,11 +45,8 @@ export async function constructPojoFromInstanceAsync<
       ) {
         const inputCacheKey = cacheKeyFn(interceptedInputArg);
 
-        if (resolvedCache.has(key, inputCacheKey)) {
-          return resolvedCache.get(key, inputCacheKey);
-        }
-        if (promisesCache.has(key, inputCacheKey)) {
-          return promisesCache.get(key, inputCacheKey);
+        if (asyncCache.has(key, inputCacheKey)) {
+          return asyncCache.get(key, inputCacheKey);
         }
         let vpromise;
         try {
@@ -65,14 +61,13 @@ export async function constructPojoFromInstanceAsync<
             'key-method',
           ]);
         }
-        promisesCache.set(key, inputCacheKey, vpromise);
+        asyncCache.set(key, inputCacheKey, vpromise);
         let v;
         try {
           v = await vpromise;
         } catch (caught) {
           throw processCaughtInCachingProxy(caught, [key as string, 'promise']);
         }
-        resolvedCache.set(key, inputCacheKey, v);
         return v;
       };
     },
