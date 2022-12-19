@@ -1,7 +1,7 @@
 {
   "name": "pojo-constructor",
-  "version": "0.4.1",
-  "description": "Configuration as code helper for TypeScript.",
+  "version": "0.4.2",
+  "description": "Configuration as code helper for TypeScript - write a separate constructor for each field, sync or async.",
   "main": "./index.js",
   "scripts": {
     "test": "NODE_OPTIONS='--stack-trace-limit=1000' ./node_modules/.bin/jest",
