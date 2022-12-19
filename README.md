@@ -24,7 +24,7 @@ staging and production depending on release lifecycle stage.
 I think, having as much of server configuration as possible in code is beneficial for several reasons.
 
 1. A sever developer has access and is responsible for more configuration. This is important in a
-   setting where developer can have limited access to infrastructure - e.g. cannot change task definitions or AWS ECS.
+   setting where developer can have limited access to infrastructure - e.g. cannot change task definitions for AWS ECS.
    As a person who makes changes more often than a DevOps person, sever developer should have as much freedom as
    possible to tweak configuration.
 
