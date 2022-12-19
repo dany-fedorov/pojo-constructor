@@ -28,7 +28,7 @@ I think, having as much of server configuration as possible in code is beneficia
    As a person who makes changes more often than a DevOps person, sever developer should have as much freedom as
    possible to tweak configuration.
 
-2. Better captures and environment in which server is run. E.g. if your env variables are just
+2. Better captures an environment in which server is run. E.g. if your env variables are just
    RELEASE_STAGE=dev|staging|production and RUNTIME_ENV=local|remote_ecs this is much easier to understand all supported
    ways to run the server, and it is easy to make sure configuration is right programmatically - e.g. make a rule that
    you cannot run production env locally.
