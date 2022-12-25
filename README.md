@@ -12,6 +12,9 @@ Configuration as code helper for TypeScript - write a separate constructor for e
 ### 1. [Simple sync example](./examples/simple-sync-example.ts) (run with `npm run tsfile ./examples/simple-sync-example.ts`)
 
 ```ts
+/**
+ * Use TypeScript to make configuration type safe.
+ */
 type AppCfg = {
   appName: string;
   listenOnPort: number;
@@ -20,6 +23,9 @@ type AppCfg = {
 
 type Env = 'dev' | 'staging' | 'production';
 
+/**
+ * Define configuration properties in methods of a class.
+ */
 class AppCfgCtor implements PojoConstructorSync<AppCfg, Env> {
   appName(env: Env) {
     return `awesome-app-in-${env}`;
@@ -42,7 +48,14 @@ class AppCfgCtor implements PojoConstructorSync<AppCfg, Env> {
   }
 }
 
+/**
+ * Produce configuration for dev env.
+ */
 const configDev = constructPojoSync(AppCfgCtor, 'dev' as Env);
+
+/**
+ * Result.
+ */
 console.log(JSON.stringify(configDev, null, 2));
 /**
  * {

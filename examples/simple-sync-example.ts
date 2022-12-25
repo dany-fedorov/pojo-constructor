@@ -3,6 +3,9 @@ import {
   constructPojoSync,
 } from '../src/PojoConstructorSync';
 
+/**
+ * Use TypeScript to make configuration type safe.
+ */
 type AppCfg = {
   appName: string;
   listenOnPort: number;
@@ -11,6 +14,9 @@ type AppCfg = {
 
 type Env = 'dev' | 'staging' | 'production';
 
+/**
+ * Define configuration properties in methods of a class.
+ */
 class AppCfgCtor implements PojoConstructorSync<AppCfg, Env> {
   appName(env: Env) {
     return `awesome-app-in-${env}`;
