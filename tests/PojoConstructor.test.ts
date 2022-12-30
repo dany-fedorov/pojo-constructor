@@ -749,6 +749,134 @@ describe('PojoConstructor + pojoFrom', function () {
     `);
   });
 
+  test('cachingProxy access - async eval order - default sorting', async () => {
+    const evalOrder: string[] = [];
+    const counts: any = {};
+
+    type O = { a: string; b: string; c: string };
+
+    class C implements PojoConstructor<O, boolean> {
+      b(input: boolean, cachingProxy: PojoConstructorCachingProxy<O, boolean>) {
+        evalOrder.push('b');
+        return {
+          promise: async () => {
+            if (!counts['b']) {
+              counts['b'] = 0;
+            }
+            counts['b']++;
+            return cachingProxy.a(input).promise!();
+          },
+        };
+      }
+
+      a(input: boolean) {
+        evalOrder.push('a');
+        return {
+          promise: async () => {
+            if (!counts['a']) {
+              counts['a'] = 0;
+            }
+            counts['a']++;
+            return `a-string-${input}`;
+          },
+        };
+      }
+
+      c(input: boolean, cachingProxy: PojoConstructorCachingProxy<O, boolean>) {
+        evalOrder.push('c');
+        return {
+          promise: async () => {
+            if (!counts['c']) {
+              counts['c'] = 0;
+            }
+            counts['c']++;
+            return cachingProxy.b(input).promise!();
+          },
+        };
+      }
+
+      d99(
+        input: boolean,
+        cachingProxy: PojoConstructorCachingProxy<O, boolean>,
+      ) {
+        evalOrder.push('d99');
+        return {
+          promise: () => {
+            if (!counts['d99']) {
+              counts['d99'] = 0;
+            }
+            counts['d99']++;
+            return cachingProxy.b(input).promise!();
+          },
+        };
+      }
+
+      d10(
+        input: boolean,
+        cachingProxy: PojoConstructorCachingProxy<O, boolean>,
+      ) {
+        evalOrder.push('d10');
+        return {
+          promise: () => {
+            if (!counts['d10']) {
+              counts['d10'] = 0;
+            }
+            counts['d10']++;
+            return cachingProxy.b(input).promise!();
+          },
+        };
+      }
+
+      d101(
+        input: boolean,
+        cachingProxy: PojoConstructorCachingProxy<O, boolean>,
+      ) {
+        evalOrder.push('d101');
+        return {
+          promise: () => {
+            if (!counts['d101']) {
+              counts['d101'] = 0;
+            }
+            counts['d101']++;
+            return cachingProxy.b(input).promise!();
+          },
+        };
+      }
+    }
+
+    const pojo = await constructPojoFromInstance(new C(), true).promise();
+    expect(pojo).toMatchInlineSnapshot(`
+      Object {
+        "a": "a-string-true",
+        "b": "a-string-true",
+        "c": "a-string-true",
+        "d10": "a-string-true",
+        "d101": "a-string-true",
+        "d99": "a-string-true",
+      }
+    `);
+    expect(evalOrder).toMatchInlineSnapshot(`
+      Array [
+        "a",
+        "b",
+        "c",
+        "d10",
+        "d101",
+        "d99",
+      ]
+    `);
+    expect(counts).toMatchInlineSnapshot(`
+      Object {
+        "a": 1,
+        "b": 1,
+        "c": 1,
+        "d10": 1,
+        "d101": 1,
+        "d99": 1,
+      }
+    `);
+  });
+
   test('async eval order - default sorting', async () => {
     const evalOrder: string[] = [];
     const counts: any = {};
@@ -975,6 +1103,129 @@ describe('PojoConstructor + pojoFrom', function () {
         "c",
         "b",
         "a",
+      ]
+    `);
+    expect(counts).toMatchInlineSnapshot(`
+      Object {
+        "a": 1,
+        "b": 1,
+        "c": 1,
+        "d10": 1,
+        "d101": 1,
+        "d99": 1,
+      }
+    `);
+  });
+
+  test('cachingProxy access - eval order - reversed sorting', async () => {
+    const evalOrder: string[] = [];
+    const counts: any = {};
+
+    type O = { a: string; b: string; c: string };
+
+    class C
+      implements PojoConstructor<O, boolean>
+    {
+      b(input: boolean, cachingProxy: PojoConstructorCachingProxy<O, boolean>) {
+        evalOrder.push('b');
+        return {
+          sync: () => {
+            if (!counts['b']) {
+              counts['b'] = 0;
+            }
+            counts['b']++;
+            return cachingProxy.a(input).sync!();
+          },
+        };
+      }
+
+      a(input: boolean) {
+        evalOrder.push('a');
+        return {
+          sync: () => {
+            if (!counts['a']) {
+              counts['a'] = 0;
+            }
+            counts['a']++;
+            return `a-string-${input}`;
+          },
+        };
+      }
+
+      c(input: boolean) {
+        evalOrder.push('c');
+        return {
+          sync: () => {
+            if (!counts['c']) {
+              counts['c'] = 0;
+            }
+            counts['c']++;
+            return this.b(input).sync();
+          },
+        };
+      }
+
+      d99(input: boolean) {
+        evalOrder.push('d99');
+        return {
+          sync: () => {
+            if (!counts['d99']) {
+              counts['d99'] = 0;
+            }
+            counts['d99']++;
+            return this.b(input).sync();
+          },
+        };
+      }
+
+      d10(input: boolean) {
+        evalOrder.push('d10');
+        return {
+          sync: () => {
+            if (!counts['d10']) {
+              counts['d10'] = 0;
+            }
+            counts['d10']++;
+            return this.b(input).sync();
+          },
+        };
+      }
+
+      d101(input: boolean) {
+        evalOrder.push('d101');
+        return {
+          sync: () => {
+            if (!counts['d101']) {
+              counts['d101'] = 0;
+            }
+            counts['d101']++;
+            return this.b(input).sync();
+          },
+        };
+      }
+    }
+
+    const pojo = constructPojoFromInstance(new C(), true, {
+      sortKeys: (keys) => keys.slice().sort((a, b) => (a > b ? -1 : 1)),
+    }).sync();
+    expect(pojo).toMatchInlineSnapshot(`
+      Object {
+        "a": "a-string-true",
+        "b": "a-string-true",
+        "c": "a-string-true",
+        "d10": "a-string-true",
+        "d101": "a-string-true",
+        "d99": "a-string-true",
+      }
+    `);
+    expect(evalOrder).toMatchInlineSnapshot(`
+      Array [
+        "d99",
+        "b",
+        "a",
+        "d101",
+        "d10",
+        "c",
       ]
     `);
     expect(counts).toMatchInlineSnapshot(`
