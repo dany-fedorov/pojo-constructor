@@ -1123,9 +1123,7 @@ describe('PojoConstructor + pojoFrom', function () {
 
     type O = { a: string; b: string; c: string };
 
-    class C
-      implements PojoConstructor<O, boolean>
-    {
+    class C implements PojoConstructor<O, boolean> {
       b(input: boolean, cachingProxy: PojoConstructorCachingProxy<O, boolean>) {
         evalOrder.push('b');
         return {
@@ -1152,7 +1150,7 @@ describe('PojoConstructor + pojoFrom', function () {
         };
       }
 
-      c(input: boolean) {
+      c(input: boolean, cachingProxy: PojoConstructorCachingProxy<O, boolean>) {
         evalOrder.push('c');
         return {
           sync: () => {
@@ -1160,12 +1158,15 @@ describe('PojoConstructor + pojoFrom', function () {
               counts['c'] = 0;
             }
             counts['c']++;
-            return this.b(input).sync();
+            return cachingProxy.b(input).sync!();
           },
         };
       }
 
-      d99(input: boolean) {
+      d99(
+        input: boolean,
+        cachingProxy: PojoConstructorCachingProxy<O, boolean>,
+      ) {
         evalOrder.push('d99');
         return {
           sync: () => {
@@ -1173,12 +1174,15 @@ describe('PojoConstructor + pojoFrom', function () {
               counts['d99'] = 0;
             }
             counts['d99']++;
-            return this.b(input).sync();
+            return cachingProxy.b(input).sync!();
           },
         };
       }
 
-      d10(input: boolean) {
+      d10(
+        input: boolean,
+        cachingProxy: PojoConstructorCachingProxy<O, boolean>,
+      ) {
         evalOrder.push('d10');
         return {
           sync: () => {
@@ -1186,12 +1190,15 @@ describe('PojoConstructor + pojoFrom', function () {
               counts['d10'] = 0;
             }
             counts['d10']++;
-            return this.b(input).sync();
+            return cachingProxy.b(input).sync!();
           },
         };
       }
 
-      d101(input: boolean) {
+      d101(
+        input: boolean,
+        cachingProxy: PojoConstructorCachingProxy<O, boolean>,
+      ) {
         evalOrder.push('d101');
         return {
           sync: () => {
@@ -1199,7 +1206,7 @@ describe('PojoConstructor + pojoFrom', function () {
               counts['d101'] = 0;
             }
             counts['d101']++;
-            return this.b(input).sync();
+            return cachingProxy.b(input).sync!();
           },
         };
       }
@@ -1441,6 +1448,58 @@ describe('PojoConstructor + pojoFrom', function () {
         "b": 123,
       }
     `);
+  });
+
+  test('cachingProxy access - only evaluated once - async concur', async () => {
+    let acounter = 0;
+    let bcounter = 0;
+    let ccounter = 0;
+
+    type O = { a: string; b: string; c: string };
+
+    class C implements PojoConstructor<O> {
+      a() {
+        return {
+          sync: () => {
+            acounter++;
+            return 'a-string';
+          },
+        };
+      }
+
+      b(_: any, cachingProxy: PojoConstructorCachingProxy<O>) {
+        return {
+          promise: async () => {
+            bcounter++;
+            return cachingProxy.a().sync!();
+          },
+        };
+      }
+
+      c(_: any, cachingProxy: PojoConstructorCachingProxy<O>) {
+        return {
+          promise: () => {
+            ccounter++;
+            return cachingProxy.b().promise!();
+          },
+        };
+      }
+    }
+
+    const c = new C();
+    const pojo = await constructPojoFromInstance(c, undefined as unknown, {
+      concurrency: 100,
+    }).promise();
+    expect(pojo).toMatchInlineSnapshot(`
+      Object {
+        "a": "a-string",
+        "b": "a-string",
+        "c": "a-string",
+      }
+    `);
+    expect(acounter).toBe(1);
+    expect(bcounter).toBe(1);
+    expect(ccounter).toBe(1);
   });
 
   test('only evaluated once - async concur', async () => {

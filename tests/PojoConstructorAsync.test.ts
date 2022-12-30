@@ -125,6 +125,44 @@ describe('PojoConstructorAsync + pojoFromAsync', function () {
     expect(ccounter).toBe(1);
   });
 
+  test('cachingProxy access - only evaluated once', async () => {
+    let acounter = 0;
+    let bcounter = 0;
+    let ccounter = 0;
+
+    type O = { a: string; b: string; c: string };
+
+    class C implements PojoConstructorAsync<O> {
+      async a() {
+        acounter++;
+        return 'a-string';
+      }
+
+      async b(_: any, cachingProxy: PojoConstructorAsyncCachingProxy<O>) {
+        bcounter++;
+        return cachingProxy.a();
+      }
+
+      async c(_: any, cachingProxy: PojoConstructorAsyncCachingProxy<O>) {
+        ccounter++;
+        return cachingProxy.b();
+      }
+    }
+
+    const c = new C();
+    const pojo = await constructPojoFromInstanceAsync(c);
+    expect(pojo).toMatchInlineSnapshot(`
+      Object {
+        "a": "a-string",
+        "b": "a-string",
+        "c": "a-string",
+      }
+    `);
+    expect(acounter).toBe(1);
+    expect(bcounter).toBe(1);
+    expect(ccounter).toBe(1);
+  });
+
   test('using cachingProxy', async () => {
     let acount = 0;
     type T = { a: string; b: string; c: string };
@@ -320,6 +358,7 @@ describe('PojoConstructorAsync + pojoFromAsync', function () {
       }
     `);
   });
+
   test('only evaluated once - concur', async () => {
     let acounter = 0;
     let bcounter = 0;
@@ -359,6 +398,157 @@ describe('PojoConstructorAsync + pojoFromAsync', function () {
     expect(bcounter).toBe(1);
     expect(ccounter).toBe(1);
   });
+
+  test('cachingProxy access - only evaluated once - concur', async () => {
+    let acounter = 0;
+    let bcounter = 0;
+    let ccounter = 0;
+
+    type O = { a: string; b: string; c: string };
+
+    class C implements PojoConstructorAsync<O> {
+      async a() {
+        acounter++;
+        return 'a-string';
+      }
+
+      async b(_: any, cachingProxy: PojoConstructorAsyncCachingProxy<O>) {
+        bcounter++;
+        return cachingProxy.a();
+      }
+
+      async c(_: any, cachingProxy: PojoConstructorAsyncCachingProxy<O>) {
+        ccounter++;
+        return cachingProxy.b();
+      }
+    }
+
+    const c = new C();
+    const pojo = await constructPojoFromInstanceAsync(c, undefined as any, {
+      concurrency: 100,
+    });
+    expect(pojo).toMatchInlineSnapshot(`
+      Object {
+        "a": "a-string",
+        "b": "a-string",
+        "c": "a-string",
+      }
+    `);
+    expect(acounter).toBe(1);
+    expect(bcounter).toBe(1);
+    expect(ccounter).toBe(1);
+  });
+
+  test('cachingProxy access - eval order - default sorting', async () => {
+    const evalOrder: string[] = [];
+    const counts: any = {};
+
+    type O = { a: string; b: string; c: string };
+
+    class C implements PojoConstructorAsync<O, boolean> {
+      async b(
+        input: boolean,
+        cachingProxy: PojoConstructorAsyncCachingProxy<O, boolean>,
+      ) {
+        evalOrder.push('b');
+        if (!counts['b']) {
+          counts['b'] = 0;
+        }
+        counts['b']++;
+        return cachingProxy.a(input);
+      }
+
+      async a(input: boolean) {
+        evalOrder.push('a');
+        if (!counts['a']) {
+          counts['a'] = 0;
+        }
+        counts['a']++;
+        return `a-string-${input}`;
+      }
+
+      async c(
+        input: boolean,
+        cachingProxy: PojoConstructorAsyncCachingProxy<O, boolean>,
+      ) {
+        evalOrder.push('c');
+        if (!counts['c']) {
+          counts['c'] = 0;
+        }
+        counts['c']++;
+        return cachingProxy.b(input);
+      }
+
+      async d99(
+        input: boolean,
+        cachingProxy: PojoConstructorAsyncCachingProxy<O, boolean>,
+      ) {
+        evalOrder.push('d99');
+        if (!counts['d99']) {
+          counts['d99'] = 0;
+        }
+        counts['d99']++;
+        return cachingProxy.b(input);
+      }
+
+      async d10(
+        input: boolean,
+        cachingProxy: PojoConstructorAsyncCachingProxy<O, boolean>,
+      ) {
+        evalOrder.push('d10');
+        if (!counts['d10']) {
+          counts['d10'] = 0;
+        }
+        counts['d10']++;
+        return cachingProxy.b(input);
+      }
+
+      async d101(
+        input: boolean,
+        cachingProxy: PojoConstructorAsyncCachingProxy<O, boolean>,
+      ) {
+        evalOrder.push('d101');
+        if (!counts['d101']) {
+          counts['d101'] = 0;
+        }
+        counts['d101']++;
+        return cachingProxy.b(input);
+      }
+    }
+
+    const pojo = await constructPojoFromInstanceAsync(new C(), true);
+    expect(pojo).toMatchInlineSnapshot(`
+      Object {
+        "a": "a-string-true",
+        "b": "a-string-true",
+        "c": "a-string-true",
+        "d10": "a-string-true",
+        "d101": "a-string-true",
+        "d99": "a-string-true",
+      }
+    `);
+    expect(evalOrder).toMatchInlineSnapshot(`
+      Array [
+        "a",
+        "b",
+        "c",
+        "d10",
+        "d101",
+        "d99",
+      ]
+    `);
+    expect(counts).toMatchInlineSnapshot(`
+      Object {
+        "a": 1,
+        "b": 1,
+        "c": 1,
+        "d10": 1,
+        "d101": 1,
+        "d99": 1,
+      }
+    `);
+  });
+
   test('eval order - default sorting', async () => {
     const evalOrder: string[] = [];
     const counts: any = {};
@@ -515,6 +705,118 @@ describe('PojoConstructorAsync + pojoFromAsync', function () {
         }
         counts['d101']++;
         return this.b(input);
+      }
+    }
+
+    const pojo = await constructPojoFromInstanceAsync(new C(), true, {
+      sortKeys: (keys) => keys.slice().sort((a, b) => (a > b ? -1 : 1)),
+    });
+    expect(pojo).toMatchInlineSnapshot(`
+      Object {
+        "a": "a-string-true",
+        "b": "a-string-true",
+        "c": "a-string-true",
+        "d10": "a-string-true",
+        "d101": "a-string-true",
+        "d99": "a-string-true",
+      }
+    `);
+    expect(evalOrder).toMatchInlineSnapshot(`
+      Array [
+        "d99",
+        "b",
+        "a",
+        "d101",
+        "d10",
+        "c",
+      ]
+    `);
+    expect(counts).toMatchInlineSnapshot(`
+      Object {
+        "a": 1,
+        "b": 1,
+        "c": 1,
+        "d10": 1,
+        "d101": 1,
+        "d99": 1,
+      }
+    `);
+  });
+
+  test('cachingProxy access - eval order - reversed sorting', async () => {
+    const evalOrder: string[] = [];
+    const counts: any = {};
+
+    type O = { a: string; b: string; c: string };
+
+    class C implements PojoConstructorAsync<O, boolean> {
+      async b(
+        input: boolean,
+        cachingProxy: PojoConstructorAsyncCachingProxy<O, boolean>,
+      ) {
+        evalOrder.push('b');
+        if (!counts['b']) {
+          counts['b'] = 0;
+        }
+        counts['b']++;
+        return cachingProxy.a(input);
+      }
+
+      async a(input: boolean) {
+        evalOrder.push('a');
+        if (!counts['a']) {
+          counts['a'] = 0;
+        }
+        counts['a']++;
+        return `a-string-${input}`;
+      }
+
+      async c(
+        input: boolean,
+        cachingProxy: PojoConstructorAsyncCachingProxy<O, boolean>,
+      ) {
+        evalOrder.push('c');
+        if (!counts['c']) {
+          counts['c'] = 0;
+        }
+        counts['c']++;
+        return cachingProxy.b(input);
+      }
+
+      async d99(
+        input: boolean,
+        cachingProxy: PojoConstructorAsyncCachingProxy<O, boolean>,
+      ) {
+        evalOrder.push('d99');
+        if (!counts['d99']) {
+          counts['d99'] = 0;
+        }
+        counts['d99']++;
+        return cachingProxy.b(input);
+      }
+
+      async d10(
+        input: boolean,
+        cachingProxy: PojoConstructorAsyncCachingProxy<O, boolean>,
+      ) {
+        evalOrder.push('d10');
+        if (!counts['d10']) {
+          counts['d10'] = 0;
+        }
+        counts['d10']++;
+        return cachingProxy.b(input);
+      }
+
+      async d101(
+        input: boolean,
+        cachingProxy: PojoConstructorAsyncCachingProxy<O, boolean>,
+      ) {
+        evalOrder.push('d101');
+        if (!counts['d101']) {
+          counts['d101'] = 0;
+        }
+        counts['d101']++;
+        return cachingProxy.b(input);
       }
     }
 
