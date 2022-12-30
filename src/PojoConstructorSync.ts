@@ -59,7 +59,7 @@ export function constructPojoFromInstanceSync<
         let v;
         try {
           v = (target as any)[key].call(
-            cachingProxy,
+            target,
             interceptedInputArg,
             cachingProxy,
           );

@@ -59,7 +59,7 @@ export async function constructPojoFromInstanceAsync<
         let vpromise;
         try {
           vpromise = (target as any)[key].call(
-            cachingProxy,
+            target,
             interceptedInputArg,
             cachingProxy,
           );

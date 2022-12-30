@@ -89,7 +89,7 @@ export function constructPojoFromInstance<T extends object, Input = unknown>(
             let res;
             try {
               res = (target as any)[key].call(
-                cachingProxy,
+                target,
                 interceptedInputArg,
                 cachingProxy,
               );
@@ -125,7 +125,7 @@ export function constructPojoFromInstance<T extends object, Input = unknown>(
             let res;
             try {
               res = (target as any)[key].call(
-                cachingProxy,
+                target,
                 interceptedInputArg,
                 cachingProxy,
               );
