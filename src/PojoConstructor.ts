@@ -29,14 +29,18 @@ export type PojoSyncOrPromiseResult<T> =
   | PojoPromiseResult<T>;
 
 export type PojoConstructorCachingProxy<T extends object, Input = unknown> = {
-  [K in keyof T]: (input?: Input) => PojoSyncOrPromiseResult<T[K]>;
+  [K in keyof T]: K extends string
+    ? (input?: Input) => PojoSyncOrPromiseResult<T[K]>
+    : never;
 };
 
 export type PojoConstructor<T extends object, Input = unknown> = {
-  [K in keyof T]: (
-    input: Input,
-    cachingProxy: PojoConstructorCachingProxy<T, Input>,
-  ) => PojoSyncOrPromiseResult<T[K]>;
+  [K in keyof T]: K extends string
+    ? (
+        input: Input,
+        cachingProxy: PojoConstructorCachingProxy<T, Input>,
+      ) => PojoSyncOrPromiseResult<T[K]>
+    : unknown;
 };
 
 export type ConstructPojoCatchFnOptions = {
@@ -67,6 +71,12 @@ export function constructPojoFromInstance<T extends object, Input = unknown>(
   const asyncCache = new PojoConstructorCacheMap();
   const cachingProxy = new Proxy(ctorInstance, {
     get(target: PojoConstructor<T, Input>, key: string | symbol): any {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      const propv = target[key];
+      if (typeof key === 'symbol' || typeof propv !== 'function') {
+        return propv;
+      }
       return function constructPojo_proxyIntercepted(
         interceptedInputArg?: Input,
       ) {

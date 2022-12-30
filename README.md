@@ -2,7 +2,7 @@
 
 ![Jest coverage](./badges/coverage-jest%20coverage.svg)
 
-Configuration as code helper for TypeScript - write a separate constructor for each field, sync or async.
+Configuration as code helper for TypeScript - write own constructor for each property, sync or async.
 
 > **Warning**
 > Please use fixed version (remove ^ from package.json).

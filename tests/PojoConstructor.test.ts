@@ -1574,4 +1574,65 @@ describe('PojoConstructor + pojoFrom', function () {
       }
     `);
   });
+
+  test('symbols are not proxied', () => {
+    const prvm = Symbol('prvm');
+    const prvv = Symbol('prvv');
+
+    class C implements PojoConstructor<{ a: string; b: string }, number> {
+      [prvm]() {
+        return 'private-method-by-symbol-result';
+      }
+
+      [prvv] = 'private-value-by-symbol-result';
+
+      a(input: number, cachingProxy: any) {
+        return {
+          sync: () =>
+            `a-field-${input}---${this[prvm]()}---${
+              this[prvv]
+            }---${cachingProxy[prvm]()}---${cachingProxy[prvv]}`,
+        };
+      }
+
+      b(input: number, cachingProxy: any) {
+        return { sync: () => cachingProxy.a(input).sync() };
+      }
+    }
+
+    const pojo = constructPojo(C, 321).sync();
+    expect(pojo).toMatchInlineSnapshot(`
+      Object {
+        "a": "a-field-321---private-method-by-symbol-result---private-value-by-symbol-result---private-method-by-symbol-result---private-value-by-symbol-result",
+        "b": "a-field-321---private-method-by-symbol-result---private-value-by-symbol-result---private-method-by-symbol-result---private-value-by-symbol-result",
+      }
+    `);
+  });
+
+  test('non-function values can be accessed (is not supported for TS)', () => {
+    class C implements PojoConstructor<{ a: string; b: string }, number> {
+      nonFunctionProp = 'simple-prop-value';
+
+      a(input: number, cachingProxy: any) {
+        return {
+          sync: () =>
+            `a-field-${input}---${this.nonFunctionProp}---${cachingProxy.nonFunctionProp}`,
+        };
+      }
+
+      b(input: number, cachingProxy: any) {
+        return { sync: () => cachingProxy.a(input).sync() };
+      }
+    }
+
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    const pojo = constructPojo(C, 321).sync();
+    expect(pojo).toMatchInlineSnapshot(`
+      Object {
+        "a": "a-field-321---simple-prop-value---simple-prop-value",
+        "b": "a-field-321---simple-prop-value---simple-prop-value",
+      }
+    `);
+  });
 });

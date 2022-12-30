@@ -552,4 +552,59 @@ describe('PojoConstructorSync + pojoFromSync', function () {
       }
     `);
   });
+
+  test('symbols are not proxied', () => {
+    const prvm = Symbol('prvm');
+    const prvv = Symbol('prvv');
+
+    class C implements PojoConstructorSync<{ a: string; b: string }, number> {
+      [prvm]() {
+        return 'private-method-by-symbol-result';
+      }
+
+      [prvv] = 'private-value-by-symbol-result';
+
+      a(input: number, cachingProxy: any) {
+        return `a-field-${input}---${this[prvm]()}---${
+          this[prvv]
+        }---${cachingProxy[prvm]()}---${cachingProxy[prvv]}`;
+      }
+
+      b(input: number, cachingProxy: any) {
+        return cachingProxy.a(input);
+      }
+    }
+
+    const pojo = constructPojoSync(C, 3212);
+    expect(pojo).toMatchInlineSnapshot(`
+      Object {
+        "a": "a-field-3212---private-method-by-symbol-result---private-value-by-symbol-result---private-method-by-symbol-result---private-value-by-symbol-result",
+        "b": "a-field-3212---private-method-by-symbol-result---private-value-by-symbol-result---private-method-by-symbol-result---private-value-by-symbol-result",
+      }
+    `);
+  });
+
+  test('non-function values can be accessed (is not supported for TS)', () => {
+    class C implements PojoConstructorSync<{ a: string; b: string }, number> {
+      nonFunctionProp = 'simple-prop-value';
+
+      a(input: number, cachingProxy: any) {
+        return `a-field-${input}---${this.nonFunctionProp}---${cachingProxy.nonFunctionProp}`;
+      }
+
+      b(input: number, cachingProxy: any) {
+        return cachingProxy.a(input);
+      }
+    }
+
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    const pojo = constructPojoSync(C, 321);
+    expect(pojo).toMatchInlineSnapshot(`
+      Object {
+        "a": "a-field-321---simple-prop-value---simple-prop-value",
+        "b": "a-field-321---simple-prop-value---simple-prop-value",
+      }
+    `);
+  });
 });

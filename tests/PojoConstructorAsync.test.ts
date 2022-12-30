@@ -804,4 +804,59 @@ describe('PojoConstructorAsync + pojoFromAsync', function () {
       }
     `);
   });
+
+  test('symbols are not proxied', async () => {
+    const prvm = Symbol('prvm');
+    const prvv = Symbol('prvv');
+
+    class C implements PojoConstructorAsync<{ a: string; b: string }, number> {
+      [prvm]() {
+        return 'private-method-by-symbol-result';
+      }
+
+      [prvv] = 'private-value-by-symbol-result';
+
+      async a(input: number, cachingProxy: any) {
+        return `a-field-${input}---${this[prvm]()}---${
+          this[prvv]
+        }---${cachingProxy[prvm]()}---${cachingProxy[prvv]}`;
+      }
+
+      async b(input: number, cachingProxy: any) {
+        return cachingProxy.a(input);
+      }
+    }
+
+    const pojo = await constructPojoAsync(C, 3212);
+    expect(pojo).toMatchInlineSnapshot(`
+      Object {
+        "a": "a-field-3212---private-method-by-symbol-result---private-value-by-symbol-result---private-method-by-symbol-result---private-value-by-symbol-result",
+        "b": "a-field-3212---private-method-by-symbol-result---private-value-by-symbol-result---private-method-by-symbol-result---private-value-by-symbol-result",
+      }
+    `);
+  });
+
+  test('non-function values can be accessed (is not supported for TS)', async () => {
+    class C implements PojoConstructorAsync<{ a: string; b: string }, number> {
+      nonFunctionProp = 'simple-prop-value';
+
+      async a(input: number, cachingProxy: any) {
+        return `a-field-${input}---${this.nonFunctionProp}---${cachingProxy.nonFunctionProp}`;
+      }
+
+      async b(input: number, cachingProxy: any) {
+        return cachingProxy.a(input);
+      }
+    }
+
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    const pojo = await constructPojoAsync(C, 321);
+    expect(pojo).toMatchInlineSnapshot(`
+      Object {
+        "a": "a-field-321---simple-prop-value---simple-prop-value",
+        "b": "a-field-321---simple-prop-value---simple-prop-value",
+      }
+    `);
+  });
 });
