@@ -13,6 +13,14 @@ jobs:
       - name: Install
         run: npm i
 
+      - name: Run tests
+        run: npm run test-ci
+
+      - name: Generating coverage badges
+        uses: "jpb06/jest-badges-action@latest"
+        with:
+          branches: main
+
       - name: Compare npm with local (versions)
         uses: Rober19/compare-npm-versions-ci@master
         id: package_version
@@ -20,25 +28,23 @@ jobs:
           path: './'
           npm_package_name: pojo-constructor
 
-      - name: Get version
-        run: |
-          echo "Version is  ${{ steps.package_version.outputs.version }} "
-          echo "Version NPM is  ${{ steps.package_version.outputs.pkg_npm_version }} "
-          echo "Is greater ${{steps.package_version.outputs.npm_is_greater}}"
+      #      - name: Get version
+      #        run: |
+      #          echo "Version is  ${{ steps.package_version.outputs.version }} "
+      #          echo "Version NPM is  ${{ steps.package_version.outputs.pkg_npm_version }} "
+      #          echo "Is greater ${{steps.package_version.outputs.npm_is_greater}}"
 
-#      - name: Run tests
-#        run: npm run test-ci
-#
-#      - name: Generating coverage badges
-#        uses: "jpb06/jest-badges-action@latest"
-#        with:
-#          branches: main
-#
-#      - name: Build
-#        run: npm run prepublish-me
-#
-#      - uses: JS-DevTools/npm-publish@v1
+      - name: Build
+        if: steps.package_version.outputs.npm_is_greater == 'false'
+        run: npm run prepublish-me
+
+#      - name: Publish
+#        uses: JS-DevTools/npm-publish@v1
+#        if: steps.package_version.outputs.npm_is_greater == 'false'
 #        with:
 #          token: ${{secrets.NPM_TOKEN}}
 #          package: ./npm-module/package.json
 #          greater-version-only: true
+
+      - name: Publish
+        run: npx release-it patch --ci
