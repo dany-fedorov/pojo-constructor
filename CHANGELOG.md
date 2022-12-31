@@ -1,5 +1,14 @@
 
 
+### [0.5.15](https://github.com/dany-fedorov/pojo-constructor/compare/0.5.13...0.5.14) (2022-12-31)
+
+
+### Features
+
+* bump version ([6e2e411](https://github.com/dany-fedorov/pojo-constructor/commit/6e2e4115f2d630b77e7e1d60cc21d33a300fa3eb))
+
+### [0.5.14](https://github.com/dany-fedorov/pojo-constructor/compare/0.5.13...0.5.14) (2022-12-31)
+
 ### [0.5.14](https://github.com/dany-fedorov/pojo-constructor/compare/0.5.11...0.5.13) (2022-12-31)
 
 ### [0.5.13](https://github.com/dany-fedorov/pojo-constructor/compare/0.5.11...0.5.13) (2022-12-31)
