@@ -38,26 +38,10 @@ jobs:
         if: steps.package_version.outputs.npm_is_greater == 'false'
         run: npm run prepublish-me
 
-#      - name: Publish
-#        uses: JS-DevTools/npm-publish@v1
-#        if: steps.package_version.outputs.npm_is_greater == 'false'
-#        with:
-#          token: ${{secrets.NPM_TOKEN}}
-#          package: ./npm-module/package.json
-#          greater-version-only: true
-
-      - name: Set NPM_TOKEN
-        if: steps.package_version.outputs.npm_is_greater == 'false'
-        env:
-          NPM_TOKEN: ${{secrets.NPM_TOKEN}}
-        run: npm config set //registry.npmjs.org/:_authToken $NPM_TOKEN
-
-      - name: Author Identity
-        if: steps.package_version.outputs.npm_is_greater == 'false'
-        run: git config --global user.email "dany.fedorov.d@gmail.com" && git config --global user.name "Dany Fedorov"
-
       - name: Publish
+        uses: JS-DevTools/npm-publish@v1
         if: steps.package_version.outputs.npm_is_greater == 'false'
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-        run: npx release-it patch --ci
+        with:
+          token: ${{secrets.NPM_TOKEN}}
+          package: ./npm-module/package.json
+          greater-version-only: true
