@@ -46,13 +46,16 @@ jobs:
 #          package: ./npm-module/package.json
 #          greater-version-only: true
 
-      - name: token
+      - name: Set NPM_TOKEN
+        if: steps.package_version.outputs.npm_is_greater == 'false'
         env:
           NPM_TOKEN: ${{secrets.NPM_TOKEN}}
         run: npm config set //registry.npmjs.org/:_authToken $NPM_TOKEN
 
       - name: Author Identity
+        if: steps.package_version.outputs.npm_is_greater == 'false'
         run: git config --global user.email "dany.fedorov.d@gmail.com" && git config --global user.name "Dany Fedorov"
 
       - name: Publish
+        if: steps.package_version.outputs.npm_is_greater == 'false'
         run: npx release-it patch --ci
