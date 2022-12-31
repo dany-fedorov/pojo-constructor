@@ -6,7 +6,9 @@
     "publishPath": "./npm-module"
   },
   "@release-it/conventional-changelog": {
-    "preset": "conventionalcommits",
+    "preset": {
+      "name": "conventionalcommits"
+    },
     "infile": "CHANGELOG.md"
   }
 }
