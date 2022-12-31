@@ -4,5 +4,9 @@
   },
   "npm": {
     "publishPath": "./npm-module"
+  },
+  "@release-it/conventional-changelog": {
+    "preset": "angular",
+    "infile": "CHANGELOG.md"
   }
 }
