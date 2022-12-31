@@ -51,5 +51,8 @@ jobs:
           NPM_TOKEN: ${{secrets.NPM_TOKEN}}
         run: npm config set //registry.npmjs.org/:_authToken $NPM_TOKEN
 
+      - name: not clean?
+        run: git status
+
       - name: Publish
         run: npx release-it patch --ci
