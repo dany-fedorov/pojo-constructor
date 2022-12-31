@@ -1,5 +1,7 @@
 
 
+### 0.5.18 (2022-12-31)
+
 ### [0.5.15](https://github.com/dany-fedorov/pojo-constructor/compare/0.5.13...0.5.14) (2022-12-31)
 
 
