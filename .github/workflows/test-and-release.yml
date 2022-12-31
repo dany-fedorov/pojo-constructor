@@ -58,4 +58,6 @@ jobs:
 
       - name: Publish
         if: steps.package_version.outputs.npm_is_greater == 'false'
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         run: npx release-it patch --ci
