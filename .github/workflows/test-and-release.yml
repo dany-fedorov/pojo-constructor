@@ -10,7 +10,7 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v2
 
-      - name: Cache node modules
+      - name: Npm install with cache
         uses: actions/cache@v2
         with:
           path: node_modules
@@ -30,7 +30,7 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v2
 
-      - name: Cache node modules
+      - name: Npm install with cache
         uses: actions/cache@v2
         with:
           path: node_modules
@@ -45,7 +45,7 @@ jobs:
         uses: actions/upload-artifact@master
         with:
           name: build
-          path: npm-module
+          path: npm-module-build
 
   release:
     runs-on: ubuntu-latest
@@ -54,11 +54,19 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v2
 
+      - name: Npm install with cache
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-build-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-
+
       - name: Download build
         uses: actions/download-artifact@master
         with:
           name: build
-          path: npm-module
+          path: npm-module-build
 
       - name: Release
         env:

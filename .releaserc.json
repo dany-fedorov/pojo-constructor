@@ -15,13 +15,13 @@
       "@semantic-release/npm",
       {
         "npmPublish": false,
-        "pkgRoot": "./npm-module"
+        "pkgRoot": "./npm-module-build"
       }
     ],
     [
       "@semantic-release/exec",
       {
-        "prepareCmd": "cp npm-module/package.json ./"
+        "prepareCmd": "cp npm-module-build/package.json ./"
       }
     ],
     [
@@ -38,7 +38,7 @@
       "@semantic-release/npm",
       {
         "npmPublish": true,
-        "pkgRoot": "./npm-module"
+        "pkgRoot": "./npm-module-build"
       }
     ],
     [
