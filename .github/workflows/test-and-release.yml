@@ -13,6 +13,12 @@ jobs:
       - name: Install
         run: npm install-clean
 
+      - name: Release
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          NPM_TOKEN: ${{secrets.NPM_TOKEN}}
+        run: npx semantic-release
+
 #      - name: Run tests
 #        run: npm run test-ci
 #
@@ -21,12 +27,12 @@ jobs:
 #        with:
 #          branches: main
 
-      - name: Compare npm with local (versions)
-        uses: Rober19/compare-npm-versions-ci@master
-        id: package_version
-        with:
-          path: './'
-          npm_package_name: pojo-constructor
+#      - name: Compare npm with local (versions)
+#        uses: Rober19/compare-npm-versions-ci@master
+#        id: package_version
+#        with:
+#          path: './'
+#          npm_package_name: pojo-constructor
 
       #      - name: Get version
       #        run: |
@@ -34,24 +40,24 @@ jobs:
       #          echo "Version NPM is  ${{ steps.package_version.outputs.pkg_npm_version }} "
       #          echo "Is greater ${{steps.package_version.outputs.npm_is_greater}}"
 
-      - name: Make changelog
-        if: steps.package_version.outputs.npm_is_greater == 'false'
-        run: |
-          npx conventional-changelog -p angular -i CHANGELOG.md -s
-          npx conventional-changelog -p angular -i CHANGELOG.md > .this.changelog
-
-      - name: Commit changelog
-        if: steps.package_version.outputs.npm_is_greater == 'false'
-        run: git commit -am 'Update CHANGELOG'
-
-      - name: Build
-        if: steps.package_version.outputs.npm_is_greater == 'false'
-        run: npm run prepublish-me
-
-      - name: Publish
-        uses: JS-DevTools/npm-publish@v1
-        if: steps.package_version.outputs.npm_is_greater == 'false'
-        with:
-          token: ${{secrets.NPM_TOKEN}}
-          package: ./npm-module/package.json
-          greater-version-only: true
+#      - name: Make changelog
+#        if: steps.package_version.outputs.npm_is_greater == 'false'
+#        run: |
+#          npx conventional-changelog -p angular -i CHANGELOG.md -s
+#          npx conventional-changelog -p angular -i CHANGELOG.md > .this.changelog
+#
+#      - name: Commit changelog
+#        if: steps.package_version.outputs.npm_is_greater == 'false'
+#        run: git commit -am 'Update CHANGELOG'
+#
+#      - name: Build
+#        if: steps.package_version.outputs.npm_is_greater == 'false'
+#        run: npm run prepublish-me
+#
+#      - name: Publish
+#        uses: JS-DevTools/npm-publish@v1
+#        if: steps.package_version.outputs.npm_is_greater == 'false'
+#        with:
+#          token: ${{secrets.NPM_TOKEN}}
+#          package: ./npm-module/package.json
+#          greater-version-only: true
