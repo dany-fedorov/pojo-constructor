@@ -1154,9 +1154,9 @@ describe('PojoConstructor + pojoFrom', function () {
       constructPojoFromInstance(c).sync();
     } catch (caught) {
       expect(caught).toMatchInlineSnapshot(`
-        [Error: constructPojo_proxyIntercepted->sync: Could not resolve property "b"
-        constructPojo_proxyIntercepted->sync: - Result of "b" method does not have "sync" property
-        constructPojo_proxyIntercepted->sync: - Result - {}]
+        [Error: constructPojo_cachingProxyIntercepted->sync: Could not resolve property "b"
+        constructPojo_cachingProxyIntercepted->sync: - Result of "b" method does not have "sync" property
+        constructPojo_cachingProxyIntercepted->sync: - Result - {}]
       `);
     }
   });
@@ -1291,9 +1291,9 @@ describe('PojoConstructor + pojoFrom', function () {
       await constructPojoFromInstance(c).promise();
     } catch (caught) {
       expect(caught).toMatchInlineSnapshot(`
-        [Error: constructPojo_proxyIntercepted->promise: Could not resolve property "a"
-        constructPojo_proxyIntercepted->promise: - Result of "a" method does not have neither "promise" nor "sync" properties
-        constructPojo_proxyIntercepted->promise: - Result - {}]
+        [Error: constructPojo_cachingProxyIntercepted->promise: Could not resolve property "a"
+        constructPojo_cachingProxyIntercepted->promise: - Result of "a" method does not have neither "promise" nor "sync" properties
+        constructPojo_cachingProxyIntercepted->promise: - Result - {}]
       `);
     }
   });
@@ -1312,14 +1312,14 @@ describe('PojoConstructor + pojoFrom', function () {
       constructPojoFromInstance(c).sync();
     } catch (caught) {
       expect(caught).toMatchInlineSnapshot(`
-        [Error: constructPojo_proxyIntercepted->sync: Could not resolve property "a"
-        constructPojo_proxyIntercepted->sync: - Result of "a" method does not have "sync" property
-        constructPojo_proxyIntercepted->sync: - Result - {}]
+        [Error: constructPojo_cachingProxyIntercepted->sync: Could not resolve property "a"
+        constructPojo_cachingProxyIntercepted->sync: - Result of "a" method does not have "sync" property
+        constructPojo_cachingProxyIntercepted->sync: - Result - {}]
       `);
     }
   });
 
-  test('sync custom catch - thrownIn: key-method', () => {
+  test('sync custom catch - pojoConstructorThrownIn: key-method', () => {
     const c: PojoConstructor<{ a: string; b: string }> = {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
@@ -1348,36 +1348,32 @@ describe('PojoConstructor + pojoFrom', function () {
         Object {
           "caught": [Error: Error!],
           "options": Object {
-            "sequentialIndex": 0,
-            "thrownIn": Array [
-              Array [
-                "a",
-                "key-method",
-              ],
+            "pojoConstructorSequentialIndex": 0,
+            "pojoConstructorThrownIn": Array [
+              "a",
+              "key-method",
             ],
+            "pojoConstructorThrownInKey": "a",
           },
         },
         Object {
           "caught": [Error: Error!],
           "options": Object {
-            "sequentialIndex": 1,
-            "thrownIn": Array [
-              Array [
-                "a",
-                "key-method",
-              ],
-              Array [
-                "b",
-                "sync-result-method",
-              ],
+            "pojoConstructorSequentialIndex": 1,
+            "pojoConstructorThrownIn": Array [
+              "a",
+              "key-method",
+              "b",
+              "sync-result-method",
             ],
+            "pojoConstructorThrownInKey": "b",
           },
         },
       ]
     `);
   });
 
-  test('sync custom catch - thrownIn: sync-result-method', () => {
+  test('sync custom catch - pojoConstructorThrownIn: sync-result-method', () => {
     const c: PojoConstructor<{ a: string; b: string }> = {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
@@ -1410,36 +1406,32 @@ describe('PojoConstructor + pojoFrom', function () {
         Object {
           "caught": [Error: Error!],
           "options": Object {
-            "sequentialIndex": 0,
-            "thrownIn": Array [
-              Array [
-                "a",
-                "sync-result-method",
-              ],
+            "pojoConstructorSequentialIndex": 0,
+            "pojoConstructorThrownIn": Array [
+              "a",
+              "sync-result-method",
             ],
+            "pojoConstructorThrownInKey": "a",
           },
         },
         Object {
           "caught": [Error: Error!],
           "options": Object {
-            "sequentialIndex": 1,
-            "thrownIn": Array [
-              Array [
-                "a",
-                "sync-result-method",
-              ],
-              Array [
-                "b",
-                "sync-result-method",
-              ],
+            "pojoConstructorSequentialIndex": 1,
+            "pojoConstructorThrownIn": Array [
+              "a",
+              "sync-result-method",
+              "b",
+              "sync-result-method",
             ],
+            "pojoConstructorThrownInKey": "b",
           },
         },
       ]
     `);
   });
 
-  test('async custom catch - thrownIn: key-method', async () => {
+  test('async custom catch - pojoConstructorThrownIn: key-method', async () => {
     const c: PojoConstructor<{ a: string; b: string }> = {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
@@ -1468,36 +1460,32 @@ describe('PojoConstructor + pojoFrom', function () {
         Object {
           "caught": [Error: Error!],
           "options": Object {
-            "sequentialIndex": 0,
-            "thrownIn": Array [
-              Array [
-                "a",
-                "key-method",
-              ],
+            "pojoConstructorSequentialIndex": 0,
+            "pojoConstructorThrownIn": Array [
+              "a",
+              "key-method",
             ],
+            "pojoConstructorThrownInKey": "a",
           },
         },
         Object {
           "caught": [Error: Error!],
           "options": Object {
-            "sequentialIndex": 1,
-            "thrownIn": Array [
-              Array [
-                "a",
-                "key-method",
-              ],
-              Array [
-                "b",
-                "promise",
-              ],
+            "pojoConstructorSequentialIndex": 1,
+            "pojoConstructorThrownIn": Array [
+              "a",
+              "key-method",
+              "b",
+              "promise",
             ],
+            "pojoConstructorThrownInKey": "b",
           },
         },
       ]
     `);
   });
 
-  test('async concur custom catch - thrownIn: key-method', async () => {
+  test('async concur custom catch - pojoConstructorThrownIn: key-method', async () => {
     const c: PojoConstructor<{ a: string; b: string }> = {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
@@ -1529,36 +1517,32 @@ describe('PojoConstructor + pojoFrom', function () {
         Object {
           "caught": [Error: Error!],
           "options": Object {
-            "sequentialIndex": null,
-            "thrownIn": Array [
-              Array [
-                "a",
-                "key-method",
-              ],
+            "pojoConstructorSequentialIndex": null,
+            "pojoConstructorThrownIn": Array [
+              "a",
+              "key-method",
             ],
+            "pojoConstructorThrownInKey": "a",
           },
         },
         Object {
           "caught": [Error: Error!],
           "options": Object {
-            "sequentialIndex": null,
-            "thrownIn": Array [
-              Array [
-                "a",
-                "key-method",
-              ],
-              Array [
-                "b",
-                "promise",
-              ],
+            "pojoConstructorSequentialIndex": null,
+            "pojoConstructorThrownIn": Array [
+              "a",
+              "key-method",
+              "b",
+              "promise",
             ],
+            "pojoConstructorThrownInKey": "b",
           },
         },
       ]
     `);
   });
 
-  test('async concur custom catch - thrownIn: key-method -- throws not error', async () => {
+  test('async concur custom catch - pojoConstructorThrownIn: key-method -- throws not error', async () => {
     const c: PojoConstructor<{ a: string; b: string }> = {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
@@ -1592,37 +1576,37 @@ describe('PojoConstructor + pojoFrom', function () {
           "caught": [Error: PojoConstructorNonErrorCaughtWrapperError: Caught non error object when resolving "a" key in "key-method"
       PojoConstructorNonErrorCaughtWrapperError: - Caught object: "I'm thrown, but I'm not an error"],
           "options": Object {
-            "sequentialIndex": null,
-            "thrownIn": Array [
+            "pojoConstructorSequentialIndex": null,
+            "pojoConstructorThrownIn": Array [
               Array [
                 "a",
                 "key-method",
               ],
             ],
+            "pojoConstructorThrownInKey": "a",
           },
         },
         Object {
           "caught": [Error: PojoConstructorNonErrorCaughtWrapperError: Caught non error object when resolving "a" key in "key-method"
       PojoConstructorNonErrorCaughtWrapperError: - Caught object: "I'm thrown, but I'm not an error"],
           "options": Object {
-            "sequentialIndex": null,
-            "thrownIn": Array [
+            "pojoConstructorSequentialIndex": null,
+            "pojoConstructorThrownIn": Array [
               Array [
                 "a",
                 "key-method",
               ],
-              Array [
-                "b",
-                "promise",
-              ],
+              "b",
+              "promise",
             ],
+            "pojoConstructorThrownInKey": "b",
           },
         },
       ]
     `);
   });
 
-  test('async concur custom catch - thrownIn: key-method -- throws in promise synchronously', async () => {
+  test('async concur custom catch - pojoConstructorThrownIn: key-method -- throws in promise synchronously', async () => {
     const c: PojoConstructor<{ a: string; b: string }> = {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
@@ -1660,25 +1644,25 @@ describe('PojoConstructor + pojoFrom', function () {
           "caught": [Error: PojoConstructorNonErrorCaughtWrapperError: Caught non error object when resolving "a" key in "key-method"
       PojoConstructorNonErrorCaughtWrapperError: - Caught object: "I'm thrown, but I'm not an error"],
           "options": Object {
-            "sequentialIndex": null,
-            "thrownIn": Array [
+            "pojoConstructorSequentialIndex": null,
+            "pojoConstructorThrownIn": Array [
               Array [
                 "a",
                 "key-method",
               ],
             ],
+            "pojoConstructorThrownInKey": "a",
           },
         },
         Object {
           "caught": [Error: Hey],
           "options": Object {
-            "sequentialIndex": null,
-            "thrownIn": Array [
-              Array [
-                "b",
-                "promise-result-method",
-              ],
+            "pojoConstructorSequentialIndex": null,
+            "pojoConstructorThrownIn": Array [
+              "b",
+              "promise-result-method",
             ],
+            "pojoConstructorThrownInKey": "b",
           },
         },
       ]
@@ -1763,6 +1747,142 @@ describe('PojoConstructor + pojoFrom', function () {
         "a": "a-field-321---simple-prop-value---simple-prop-value",
         "b": "a-field-321---simple-prop-value---simple-prop-value",
       }
+    `);
+  });
+
+  test('sync throw in promise', async () => {
+    class C
+      implements PojoConstructor<{ a: string; b: string; c: string }, number>
+    {
+      nonFunctionProp = 'simple-prop-value';
+
+      a() {
+        return {
+          promise: () => {
+            throw new Error('a-error');
+          },
+        };
+      }
+
+      b(input: number, cachingProxy: any) {
+        return { promise: () => cachingProxy.a(input).promise() };
+      }
+
+      c() {
+        return {
+          sync: () => 'c-string',
+        };
+      }
+    }
+
+    const savedCaught: any[] = [];
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    const pojo = await constructPojo(C, 321, {
+      catch(caught, options) {
+        savedCaught.push({ caught, options });
+      },
+    }).promise();
+    expect(pojo).toMatchInlineSnapshot(`
+      Object {
+        "c": "c-string",
+      }
+    `);
+    expect(savedCaught).toMatchInlineSnapshot(`
+      Array [
+        Object {
+          "caught": [Error: a-error],
+          "options": Object {
+            "pojoConstructorSequentialIndex": 0,
+            "pojoConstructorThrownIn": Array [
+              "a",
+              "promise-result-method",
+            ],
+            "pojoConstructorThrownInKey": "a",
+          },
+        },
+        Object {
+          "caught": [Error: a-error],
+          "options": Object {
+            "pojoConstructorSequentialIndex": 1,
+            "pojoConstructorThrownIn": Array [
+              "a",
+              "promise-result-method",
+              "b",
+              "promise",
+            ],
+            "pojoConstructorThrownInKey": "b",
+          },
+        },
+      ]
+    `);
+  });
+
+  test('async throw in promise', async () => {
+    class C
+      implements PojoConstructor<{ a: string; b: string; c: string }, number>
+    {
+      nonFunctionProp = 'simple-prop-value';
+
+      a() {
+        return {
+          promise: async () => {
+            throw new Error('a-error');
+          },
+        };
+      }
+
+      b(input: number, cachingProxy: any) {
+        return { promise: () => cachingProxy.a(input).promise() };
+      }
+
+      c() {
+        return {
+          sync: () => 'c-string',
+        };
+      }
+    }
+
+    const savedCaught: any[] = [];
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    const pojo = await constructPojo(C, 321, {
+      catch(caught, options) {
+        savedCaught.push({ caught, options });
+      },
+    }).promise();
+    expect(pojo).toMatchInlineSnapshot(`
+      Object {
+        "c": "c-string",
+      }
+    `);
+    expect(savedCaught).toMatchInlineSnapshot(`
+      Array [
+        Object {
+          "caught": [Error: a-error],
+          "options": Object {
+            "pojoConstructorSequentialIndex": 0,
+            "pojoConstructorThrownIn": Array [
+              "a",
+              "promise",
+            ],
+            "pojoConstructorThrownInKey": "a",
+          },
+        },
+        Object {
+          "caught": [Error: a-error],
+          "options": Object {
+            "pojoConstructorSequentialIndex": 1,
+            "pojoConstructorThrownIn": Array [
+              "a",
+              "promise",
+              "b",
+              "promise",
+            ],
+            "pojoConstructorThrownInKey": "b",
+          },
+        },
+      ]
     `);
   });
 });

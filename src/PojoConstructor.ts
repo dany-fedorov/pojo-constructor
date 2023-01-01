@@ -44,8 +44,9 @@ export type PojoConstructor<T extends object, Input = unknown> = {
 };
 
 export type ConstructPojoCatchFnOptions = {
-  thrownIn: [string, PojoKeyProcessingStage][];
-  sequentialIndex: number | null;
+  pojoConstructorThrownInKey: string;
+  pojoConstructorThrownIn: [string, PojoKeyProcessingStage][];
+  pojoConstructorSequentialIndex: number | null;
 };
 
 export type ConstructPojoOptions<T extends object, Input> = {
@@ -80,7 +81,7 @@ export function constructPojoFromInstance<T extends object, Input = unknown>(
       if (typeof key === 'symbol' || typeof propv !== 'function') {
         return propv;
       }
-      return function constructPojo_proxyIntercepted(
+      return function constructPojo_cachingProxyIntercepted(
         interceptedInputArg?: Input,
       ) {
         const inputCacheKey = cacheKeyFn(interceptedInputArg);
@@ -104,7 +105,7 @@ export function constructPojoFromInstance<T extends object, Input = unknown>(
             }
             if (!res.sync) {
               throw new PojoConstructorCannotSyncResolveError(
-                `${constructPojo_proxyIntercepted.name}->sync`,
+                `${constructPojo_cachingProxyIntercepted.name}->sync`,
                 key as string,
                 res,
               );
@@ -170,7 +171,7 @@ export function constructPojoFromInstance<T extends object, Input = unknown>(
               syncCache.set(key, inputCacheKey, v);
             } else {
               throw new PojoConstructorCannotAsyncResolveError(
-                `${constructPojo_proxyIntercepted.name}->promise`,
+                `${constructPojo_cachingProxyIntercepted.name}->promise`,
                 key as string,
                 res,
               );
@@ -182,12 +183,19 @@ export function constructPojoFromInstance<T extends object, Input = unknown>(
     },
   });
   const doCatch = (caught: unknown, i: number | null, key: string) => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    caught.pojoConstructorThrownInKey = key;
     if (typeof constructPojoOptions?.catch !== 'function') {
       throw caught;
     }
     return constructPojoOptions?.catch(caught, {
-      thrownIn: (caught as any)?.thrownIn ?? [key, 'unknown'],
-      sequentialIndex: i,
+      pojoConstructorThrownInKey: key,
+      pojoConstructorThrownIn: (caught as any)?.pojoConstructorThrownIn ?? [
+        key,
+        'unknown',
+      ],
+      pojoConstructorSequentialIndex: i,
     });
   };
   const constructPojoSync = () => {
@@ -195,12 +203,16 @@ export function constructPojoFromInstance<T extends object, Input = unknown>(
     let i = 0;
     for (const k of sortedKeys) {
       let v;
+      let setv = false;
       try {
         v = (cachingProxy as any)[k](constructPojoInput).sync();
+        setv = true;
       } catch (caught: unknown) {
         doCatch(caught, i, k);
       }
-      pojo[k] = v;
+      if (setv) {
+        pojo[k] = v;
+      }
       i++;
     }
     return pojo as T;
@@ -214,14 +226,20 @@ export function constructPojoFromInstance<T extends object, Input = unknown>(
             sortedKeys,
             async (k) => {
               let v;
+              let setv = false;
               try {
                 v = await (cachingProxy as any)
                   [k](constructPojoInput)
                   .promise();
+                setv = true;
               } catch (caught) {
                 await doCatch(caught, null, k);
               }
-              return [[k, v]];
+              if (setv) {
+                return [[k, v]];
+              } else {
+                return [];
+              }
             },
             {
               concurrency,
@@ -235,12 +253,16 @@ export function constructPojoFromInstance<T extends object, Input = unknown>(
       let i = 0;
       for (const k of sortedKeys) {
         let v;
+        let setv = false;
         try {
           v = await (cachingProxy as any)[k](constructPojoInput).promise();
+          setv = true;
         } catch (caught) {
           await doCatch(caught, i, k);
         }
-        pojo[k] = v;
+        if (setv) {
+          pojo[k] = v;
+        }
         i++;
       }
       return pojo as T;

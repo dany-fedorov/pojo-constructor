@@ -20,8 +20,8 @@ export class PojoConstructorCannotAsyncResolveError extends PojoConstructorError
 }
 
 export class PojoConstructorCannotSyncResolveError extends PojoConstructorError {
-  thrownWhenProcessingKey: string;
-  thrownIn: PojoKeyProcessingStage;
+  pojoConstructorThrownWhenProcessingKey: string;
+  pojoConstructorThrownIn: PojoKeyProcessingStage;
 
   constructor(prefix: string, key: string, keyMethodResult: unknown) {
     super(
@@ -32,8 +32,8 @@ export class PojoConstructorCannotSyncResolveError extends PojoConstructorError 
         `- Result - ${_pojo_jsonStringifySafe(keyMethodResult)}`,
       ),
     );
-    this.thrownIn = 'caching-proxy-glue-code';
-    this.thrownWhenProcessingKey = key;
+    this.pojoConstructorThrownIn = 'caching-proxy-glue-code';
+    this.pojoConstructorThrownWhenProcessingKey = key;
   }
 }
 
@@ -46,17 +46,37 @@ export type PojoKeyProcessingStage =
   | 'unknown';
 
 export class PojoConstructorNonErrorCaughtWrapperError extends Error {
-  origCaught: unknown;
-  thrownIn: [string, PojoKeyProcessingStage][];
+  pojoConstructorOrigCaught: unknown;
+  pojoConstructorThrownIn: [string, PojoKeyProcessingStage][];
 
-  constructor(caught: unknown, thrownIn: [string, PojoKeyProcessingStage]) {
+  constructor(
+    caught: unknown,
+    pojoConstructorThrownIn: [string, PojoKeyProcessingStage],
+  ) {
     const msg = plines(
       'PojoConstructorNonErrorCaughtWrapperError',
-      `Caught non error object when resolving "${thrownIn[0]}" key in "${thrownIn[1]}"`,
+      `Caught non error object when resolving "${pojoConstructorThrownIn[0]}" key in "${pojoConstructorThrownIn[1]}"`,
       `- Caught object: ${_pojo_jsonStringifySafe(caught)}`,
     );
     super(msg);
-    this.origCaught = caught;
-    this.thrownIn = [thrownIn];
+    this.pojoConstructorOrigCaught = caught;
+    this.pojoConstructorThrownIn = [pojoConstructorThrownIn];
+  }
+}
+
+export class PojoConstructorCacheMapCannotGet extends Error {
+  pojoConstructorCacheMapPropName: any;
+  pojoConstructorCacheMapPropNameInputCacheKey: any;
+
+  constructor(propName: any, inputCacheKey: any) {
+    const msg = plines(
+      'PojoConstructorCacheMap',
+      'Cannot get by',
+      `- Prop Name ${_pojo_jsonStringifySafe(propName)}`,
+      `- Input ${_pojo_jsonStringifySafe(inputCacheKey)}`,
+    );
+    super(msg);
+    this.pojoConstructorCacheMapPropName = propName;
+    this.pojoConstructorCacheMapPropNameInputCacheKey = inputCacheKey;
   }
 }

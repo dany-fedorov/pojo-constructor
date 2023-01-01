@@ -51,7 +51,7 @@ export function constructPojoFromInstanceSync<
       if (typeof key === 'symbol' || typeof propv !== 'function') {
         return propv;
       }
-      return function constructPojoSync_proxyIntercepted(
+      return function constructPojoSync_cachingProxyIntercepted(
         interceptedInputArg?: Input,
       ) {
         const inputCacheKey = cacheKeyFn(interceptedInputArg);
@@ -79,24 +79,35 @@ export function constructPojoFromInstanceSync<
   });
 
   const doCatch = (caught: unknown, i: number | null, key: string) => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    caught.pojoConstructorThrownInKey = key;
     if (typeof constructPojoOptions?.catch !== 'function') {
       throw caught;
     }
     return constructPojoOptions?.catch(caught, {
-      thrownIn: (caught as any)?.thrownIn ?? [key, 'unknown'],
-      sequentialIndex: i,
+      pojoConstructorThrownInKey: key,
+      pojoConstructorThrownIn: (caught as any)?.pojoConstructorThrownIn ?? [
+        key,
+        'unknown',
+      ],
+      pojoConstructorSequentialIndex: i,
     });
   };
   const pojo: any = {};
   let i = 0;
   for (const k of sortedKeys) {
     let v;
+    let setv = false;
     try {
       v = (cachingProxy as any)[k](constructPojoInput);
+      setv = true;
     } catch (caught) {
       doCatch(caught, i, k);
     }
-    pojo[k] = v;
+    if (setv) {
+      pojo[k] = v;
+    }
     i++;
   }
   return pojo as T;

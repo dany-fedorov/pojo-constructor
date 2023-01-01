@@ -635,4 +635,80 @@ describe('PojoConstructorSync + pojoFromSync', function () {
       }
     `);
   });
+
+  test('throws in key-method', () => {
+    const c: PojoConstructorSync<{ a: number; b: string }> = {
+      a() {
+        throw new Error('a-error');
+      },
+      b(...args) {
+        return String(this.a(...args));
+      },
+    };
+    // expect.assertions(2);
+    try {
+      constructPojoFromInstanceSync(c);
+    } catch (caught) {
+      expect(caught).toMatchInlineSnapshot(`[Error: a-error]`);
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      expect(caught?.pojoConstructorThrownIn).toMatchInlineSnapshot(`
+        Array [
+          "a",
+          "key-method",
+        ]
+      `);
+    }
+  });
+
+  test('throws in key-method - uses catch method', () => {
+    const c: PojoConstructorSync<{ a: number; b: string; c: string }> = {
+      a() {
+        throw new Error('a-error');
+      },
+      b(...args) {
+        return String(this.a(...args));
+      },
+      c() {
+        return 'c-string';
+      },
+    };
+    const savedCaught: unknown[] = [];
+    const pojo = constructPojoFromInstanceSync(c, null, {
+      catch(caught, options) {
+        savedCaught.push({ caught, options });
+      },
+    });
+    expect(pojo).toMatchInlineSnapshot(`
+      Object {
+        "c": "c-string",
+      }
+    `);
+    expect(savedCaught).toMatchInlineSnapshot(`
+      Array [
+        Object {
+          "caught": [Error: a-error],
+          "options": Object {
+            "pojoConstructorSequentialIndex": 0,
+            "pojoConstructorThrownIn": Array [
+              "a",
+              "key-method",
+            ],
+            "pojoConstructorThrownInKey": "a",
+          },
+        },
+        Object {
+          "caught": [Error: a-error],
+          "options": Object {
+            "pojoConstructorSequentialIndex": 1,
+            "pojoConstructorThrownIn": Array [
+              "b",
+              "key-method",
+            ],
+            "pojoConstructorThrownInKey": "b",
+          },
+        },
+      ]
+    `);
+  });
 });

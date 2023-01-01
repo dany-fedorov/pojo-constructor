@@ -51,7 +51,7 @@ export async function constructPojoFromInstanceAsync<
       if (typeof key === 'symbol' || typeof propv !== 'function') {
         return propv;
       }
-      return async function constructPojoAsync_proxyIntercepted(
+      return async function constructPojoAsync_cachingProxyIntercepted(
         interceptedInputArg?: Input,
       ) {
         const inputCacheKey = cacheKeyFn(interceptedInputArg);
@@ -85,12 +85,19 @@ export async function constructPojoFromInstanceAsync<
   });
   const concurrency = constructPojoOptions?.concurrency;
   const doCatch = (caught: unknown, i: number | null, key: string) => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    caught.pojoConstructorThrownInKey = key;
     if (typeof constructPojoOptions?.catch !== 'function') {
       throw caught;
     }
     return constructPojoOptions?.catch(caught, {
-      thrownIn: (caught as any)?.thrownIn ?? [key, 'unknown'],
-      sequentialIndex: i,
+      pojoConstructorThrownInKey: key,
+      pojoConstructorThrownIn: (caught as any)?.pojoConstructorThrownIn ?? [
+        key,
+        'unknown',
+      ],
+      pojoConstructorSequentialIndex: i,
     });
   };
   if (concurrency) {
@@ -100,12 +107,18 @@ export async function constructPojoFromInstanceAsync<
           sortedKeys,
           async (k) => {
             let v;
+            let setv = false;
             try {
               v = await (cachingProxy as any)[k](constructPojoInput);
+              setv = true;
             } catch (caught) {
               await doCatch(caught, null, k);
             }
-            return [[k, v]];
+            if (setv) {
+              return [[k, v]];
+            } else {
+              return [];
+            }
           },
           {
             concurrency,
@@ -119,12 +132,16 @@ export async function constructPojoFromInstanceAsync<
     let i = 0;
     for (const k of sortedKeys) {
       let v;
+      let setv = false;
       try {
         v = await (cachingProxy as any)[k](constructPojoInput);
+        setv = true;
       } catch (caught) {
         await doCatch(caught, i, k);
       }
-      pojo[k] = v;
+      if (setv) {
+        pojo[k] = v;
+      }
       i++;
     }
     return pojo as T;
