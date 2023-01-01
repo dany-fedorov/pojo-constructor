@@ -62,15 +62,29 @@ jobs:
           path: npm-module-build
 
   gen_docs:
-    - name: Generate docs
-      run: npx typedoc src/index.ts
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate docs
+        run: npx typedoc src/index.ts
 
-    - uses: EndBug/add-and-commit@v9
-      with:
-        add: 'docs'
-        author_name: github-actions[bot]
-        author_email: github-actions[bot]@users.noreply.github.com
-        message: 'chore: Generate docs [skip ci]'
+      - name: Install dependencies - node_modules cache
+        id: node_modules_cache
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-build-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-
+      - name: Install dependencies - npm install-clean
+        if: steps.node_modules_cache.outputs.cache-hit == 'false'
+        run: npm install-clean
+
+      - uses: EndBug/add-and-commit@v9
+        with:
+          add: 'docs'
+          author_name: github-actions[bot]
+          author_email: github-actions[bot]@users.noreply.github.com
+          message: 'chore: Generate docs [skip ci]'
 
   release:
     runs-on: ubuntu-latest
