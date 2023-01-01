@@ -13,6 +13,15 @@ jobs:
       - name: Install
         run: npm install-clean
 
+      - name: Run tests
+        run: npm run test-ci
+
+      - name: Generating coverage badges
+        uses: "jpb06/jest-badges-action@latest"
+        with:
+          branches: main
+          commit-message: "chore: Updating tests coverage badges [skip ci]"
+
       - name: Build
         run: npm run prepublish-me
 
@@ -22,14 +31,6 @@ jobs:
           NPM_TOKEN: ${{secrets.NPM_TOKEN}}
         run: npx semantic-release
 
-      #      - name: Run tests
-      #        run: npm run test-ci
-      #
-      #      - name: Generating coverage badges
-      #        uses: "jpb06/jest-badges-action@latest"
-      #        with:
-      #          branches: main
-      #          commit-message: "chore: Updating coverage badges [skip ci]"
 
       #      - name: Compare npm with local (versions)
       #        uses: Rober19/compare-npm-versions-ci@master
