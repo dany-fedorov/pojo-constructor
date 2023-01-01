@@ -1,3 +1,10 @@
+# [1.5.0](https://github.com/dany-fedorov/pojo-constructor/compare/v1.4.0...v1.5.0) (2023-01-01)
+
+
+### Features
+
+* Add --- (test) ([0ccf2a3](https://github.com/dany-fedorov/pojo-constructor/commit/0ccf2a3af287eaa64471bacb36ae3b7a10af0de8))
+
 # [1.4.0](https://github.com/dany-fedorov/pojo-constructor/compare/v1.3.0...v1.4.0) (2023-01-01)
 
 
