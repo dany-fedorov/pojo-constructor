@@ -30,6 +30,14 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v2
 
+      - name: Cache node modules
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-build-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-
+
       - name: Build
         run: npm run prepublish-me
 
