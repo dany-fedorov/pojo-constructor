@@ -64,8 +64,8 @@ jobs:
   gen_docs:
     runs-on: ubuntu-latest
     steps:
-      - name: Generate docs
-        run: npx typedoc src/index.ts
+      - name: Check out repository code
+        uses: actions/checkout@v3
 
       - name: Install dependencies - node_modules cache
         id: node_modules_cache
@@ -78,6 +78,9 @@ jobs:
       - name: Install dependencies - npm install-clean
         if: steps.node_modules_cache.outputs.cache-hit == 'false'
         run: npm install-clean
+
+      - name: Generate docs
+        run: npx typedoc src/index.ts
 
       - uses: EndBug/add-and-commit@v9
         with:
