@@ -1,4 +1,6 @@
 version: 2
+commit-message:
+  prefix: 'build:'
 updates:
   - package-ecosystem: 'npm'
     directory: '/'

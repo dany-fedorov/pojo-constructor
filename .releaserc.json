@@ -14,6 +14,29 @@
     [
       "@semantic-release/npm",
       {
+        "npmPublish": false,
+        "pkgRoot": "./npm-module"
+      }
+    ],
+    [
+      "@semantic-release/exec",
+      {
+        "prepare": "cp npm-modules/package.json ./"
+      }
+    ],
+    [
+      "@semantic-release/git",
+      {
+        "assets": [
+          "package.json",
+          "CHANGELOG.md"
+        ],
+        "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+      }
+    ],
+    [
+      "@semantic-release/npm",
+      {
         "npmPublish": true,
         "pkgRoot": "./npm-module"
       }
