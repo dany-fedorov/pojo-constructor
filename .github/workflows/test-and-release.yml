@@ -29,7 +29,10 @@ jobs:
         uses: "jpb06/jest-badges-action@latest"
         with:
           branches: main
+          coverage-summary-path: ./coverage/coverage-summary.json
           commit-message: "chore: Updating tests coverage badges [skip ci]"
+          commit-user: github-actions[bot]
+          commit-user-email: github-actions[bot]@users.noreply.github.com
 
   build:
     runs-on: ubuntu-latest
@@ -88,32 +91,3 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npx semantic-release
-#
-#
-#
-#  test_and_release:
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Check out repository code
-#        uses: actions/checkout@v2
-#
-#      - name: Install
-#        run: npm install-clean
-#
-#      - name: Run tests
-#        run: npm run test-ci
-#
-#      - name: Generating coverage badges
-#        uses: "jpb06/jest-badges-action@latest"
-#        with:
-#          branches: main
-#          commit-message: "chore: Updating tests coverage badges [skip ci]"
-#
-#      - name: Build
-#        run: npm run prepublish-me
-#
-#      - name: Release
-#        env:
-#          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-#          NPM_TOKEN: ${{secrets.NPM_TOKEN}}
-#        run: npx semantic-release

@@ -194,9 +194,6 @@ export function constructPojoFromInstance<T extends object, Input = unknown>(
     const pojo: any = {};
     let i = 0;
     for (const k of sortedKeys) {
-      if (typeof k !== 'string') {
-        continue;
-      }
       let v;
       try {
         v = (cachingProxy as any)[k](constructPojoInput).sync();
@@ -214,11 +211,8 @@ export function constructPojoFromInstance<T extends object, Input = unknown>(
       const pojo = Object.fromEntries(
         (
           await pMap(
-            sortedKeys as string[],
+            sortedKeys,
             async (k) => {
-              if (typeof k !== 'string') {
-                return [];
-              }
               let v;
               try {
                 v = await (cachingProxy as any)
@@ -240,9 +234,6 @@ export function constructPojoFromInstance<T extends object, Input = unknown>(
       const pojo: any = {};
       let i = 0;
       for (const k of sortedKeys) {
-        if (typeof k !== 'string') {
-          continue;
-        }
         let v;
         try {
           v = await (cachingProxy as any)[k](constructPojoInput).promise();

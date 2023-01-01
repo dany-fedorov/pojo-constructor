@@ -90,9 +90,6 @@ export function constructPojoFromInstanceSync<
   const pojo: any = {};
   let i = 0;
   for (const k of sortedKeys) {
-    if (typeof k !== 'string') {
-      continue;
-    }
     let v;
     try {
       v = (cachingProxy as any)[k](constructPojoInput);
