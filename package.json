@@ -13,7 +13,6 @@
     "build-watch": "chokidar './src/**/*.ts' -c 'npm run build' -i './node_modules/**/*' --initial",
     "tsfile": "ts-node -r tsconfig-paths/register -T -s",
     "test-ci": "npm run test -- --ci --coverage",
-    "release": "release-it"
   },
   "repository": {
     "type": "git",
