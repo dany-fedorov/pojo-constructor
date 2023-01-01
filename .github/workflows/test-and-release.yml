@@ -29,15 +29,6 @@ jobs:
           name: tests-coverage
           path: coverage
 
-  #      - name: Generating tests coverage badges
-  #        uses: "jpb06/jest-badges-action@latest"
-  #        with:
-  #          branches: main
-  #          coverage-summary-path: ./coverage/coverage-summary.json
-  #          commit-message: "chore: Updating tests coverage badges [skip ci]"
-  #          commit-user: github-actions[bot]
-  #          commit-user-email: github-actions[bot]@users.noreply.github.com
-
   build:
     runs-on: ubuntu-latest
     steps:
@@ -88,13 +79,6 @@ jobs:
           name: docs
           path: docs
 
-  #      - uses: EndBug/add-and-commit@v9
-  #        with:
-  #          add: 'docs'
-  #          author_name: github-actions[bot]
-  #          author_email: github-actions[bot]@users.noreply.github.com
-  #          message: 'chore: Generate docs [skip ci]'
-
   release:
     runs-on: ubuntu-latest
     needs: [ test, build, gen_docs ]
@@ -133,7 +117,7 @@ jobs:
         with:
           branches: main
           coverage-summary-path: ./coverage/coverage-summary.json
-          commit-message: "chore: Updating tests coverage badges [skip ci]"
+          commit-message: "chore: Update tests coverage badges [skip ci]"
           commit-user: github-actions[bot]
           commit-user-email: github-actions[bot]@users.noreply.github.com
 
@@ -143,7 +127,7 @@ jobs:
           add: 'docs'
           author_name: github-actions[bot]
           author_email: github-actions[bot]@users.noreply.github.com
-          message: 'chore: Updating docs [skip ci]'
+          message: 'chore: Update docs [skip ci]'
 
       - name: Release
         env:
