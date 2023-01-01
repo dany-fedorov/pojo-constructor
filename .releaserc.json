@@ -17,6 +17,12 @@
       {
         "assets": "dist/*.tgz"
       }
+    ],
+    [
+      "@semantic-release/changelog",
+      {
+        "changelogFile": "CHANGELOG.md"
+      }
     ]
   ]
 }
