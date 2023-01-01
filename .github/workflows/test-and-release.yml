@@ -29,7 +29,7 @@ jobs:
       #        uses: "jpb06/jest-badges-action@latest"
       #        with:
       #          branches: main
-      #          commit-message: "chore: Updating coverage badges"
+      #          commit-message: "chore: Updating coverage badges [skip ci]"
 
       #      - name: Compare npm with local (versions)
       #        uses: Rober19/compare-npm-versions-ci@master
