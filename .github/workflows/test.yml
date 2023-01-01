@@ -19,7 +19,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node_modules-
       - name: Install dependencies - npm install-clean
-        if: steps.node_modules_cache.outputs.cache-hit == 'false'
+        if: steps.node_modules_cache.outputs.cache-hit == false
         run: npm install-clean
 
       - name: Run tests
