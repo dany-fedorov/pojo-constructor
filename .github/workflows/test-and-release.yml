@@ -4,11 +4,18 @@ on:
     branches:
       - main
 jobs:
-  test_and_release:
-    runs-on: ubuntu-latest
+  test:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
+
+      - name: Cache node modules
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-build-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-
 
       - name: Install
         run: npm install-clean
@@ -16,17 +23,63 @@ jobs:
       - name: Run tests
         run: npm run test-ci
 
-      - name: Generating coverage badges
-        uses: "jpb06/jest-badges-action@latest"
-        with:
-          branches: main
-          commit-message: "chore: Updating tests coverage badges [skip ci]"
+  build:
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
 
       - name: Build
         run: npm run prepublish-me
 
+      - name: Upload build
+        uses: actions/upload-artifact@master
+        with:
+          name: build
+          path: npm-module
+
+  release:
+    needs: [ test, build ]
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+
+      - name: Download build
+        uses: actions/download-artifact@master
+        with:
+          name: build
+          path: npm-module
+
       - name: Release
         env:
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-          NPM_TOKEN: ${{secrets.NPM_TOKEN}}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npx semantic-release
+#
+#
+#
+#  test_and_release:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Check out repository code
+#        uses: actions/checkout@v2
+#
+#      - name: Install
+#        run: npm install-clean
+#
+#      - name: Run tests
+#        run: npm run test-ci
+#
+#      - name: Generating coverage badges
+#        uses: "jpb06/jest-badges-action@latest"
+#        with:
+#          branches: main
+#          commit-message: "chore: Updating tests coverage badges [skip ci]"
+#
+#      - name: Build
+#        run: npm run prepublish-me
+#
+#      - name: Release
+#        env:
+#          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+#          NPM_TOKEN: ${{secrets.NPM_TOKEN}}
+#        run: npx semantic-release
