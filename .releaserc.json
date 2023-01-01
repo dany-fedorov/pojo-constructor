@@ -21,7 +21,7 @@
     [
       "@semantic-release/exec",
       {
-        "prepare": "cp npm-modules/package.json ./"
+        "prepare": "cp npm-modules/package.json ./ && echo cat npm-modules/package.json"
       }
     ],
     [
