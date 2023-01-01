@@ -1,5 +1,5 @@
 import type { ConstructPojoOptions } from './PojoConstructor';
-import { obtainSortedKeys } from './obtainSortedKeys';
+import { getSortedKeysForPojoConstructorInstance } from './getSortedKeysForPojoConstructorInstance';
 import { PojoConstructorCacheMap } from './PojoConstructorCacheMap';
 import { processCaughtInCachingProxy } from './processCaughtInCachingProxy';
 import type { ConstructPojoAsyncOptions } from './PojoConstructorAsync';
@@ -33,7 +33,10 @@ export function constructPojoFromInstanceSync<
   constructPojoInput?: Input,
   constructPojoOptions?: ConstructPojoSyncOptions<T, Input>,
 ): T {
-  const sortedKeys = obtainSortedKeys(ctor, constructPojoOptions);
+  const sortedKeys = getSortedKeysForPojoConstructorInstance(
+    ctor,
+    constructPojoOptions,
+  );
   const cacheKeyFn =
     typeof constructPojoOptions?.cacheKeyFromConstructorInput === 'function'
       ? constructPojoOptions?.cacheKeyFromConstructorInput

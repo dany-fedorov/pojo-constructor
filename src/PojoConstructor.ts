@@ -4,7 +4,7 @@ import {
   PojoConstructorCannotSyncResolveError,
   PojoKeyProcessingStage,
 } from './errors';
-import { obtainSortedKeys } from './obtainSortedKeys';
+import { getSortedKeysForPojoConstructorInstance } from './getSortedKeysForPojoConstructorInstance';
 import { PojoConstructorCacheMap } from './PojoConstructorCacheMap';
 import { processCaughtInCachingProxy } from './processCaughtInCachingProxy';
 
@@ -61,7 +61,10 @@ export function constructPojoFromInstance<T extends object, Input = unknown>(
   constructPojoInput?: Input,
   constructPojoOptions?: ConstructPojoOptions<T, Input>,
 ): PojoSyncAndPromiseResult<T> {
-  const sortedKeys = obtainSortedKeys(ctorInstance, constructPojoOptions);
+  const sortedKeys = getSortedKeysForPojoConstructorInstance(
+    ctorInstance,
+    constructPojoOptions,
+  );
   const cacheKeyFn =
     typeof constructPojoOptions?.cacheKeyFromConstructorInput === 'function'
       ? constructPojoOptions?.cacheKeyFromConstructorInput

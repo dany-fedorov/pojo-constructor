@@ -1,6 +1,6 @@
 import pMap from '@esm2cjs/p-map';
 import type { ConstructPojoOptions } from './PojoConstructor';
-import { obtainSortedKeys } from './obtainSortedKeys';
+import { getSortedKeysForPojoConstructorInstance } from './getSortedKeysForPojoConstructorInstance';
 import { PojoConstructorCacheMap } from './PojoConstructorCacheMap';
 import { processCaughtInCachingProxy } from './processCaughtInCachingProxy';
 
@@ -33,7 +33,10 @@ export async function constructPojoFromInstanceAsync<
   constructPojoInput?: Input,
   constructPojoOptions?: ConstructPojoAsyncOptions<T, Input>,
 ): Promise<T> {
-  const sortedKeys = obtainSortedKeys(ctor, constructPojoOptions);
+  const sortedKeys = getSortedKeysForPojoConstructorInstance(
+    ctor,
+    constructPojoOptions,
+  );
   const cacheKeyFn =
     typeof constructPojoOptions?.cacheKeyFromConstructorInput === 'function'
       ? constructPojoOptions?.cacheKeyFromConstructorInput

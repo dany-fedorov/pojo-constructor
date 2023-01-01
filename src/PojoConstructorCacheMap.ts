@@ -1,17 +1,13 @@
 export class PojoConstructorCacheMap<T> {
-  map: Map<any, any>;
-
-  constructor() {
-    this.map = new Map();
-  }
+  private map: Map<any, any> = new Map();
 
   has(propName: any, input: any): boolean {
-    const hasK1 = this.map.has(propName);
-    if (!hasK1) {
+    const hasProp = this.map.has(propName);
+    if (!hasProp) {
       return false;
     }
-    const map2 = this.map.get(propName) as Map<any, any>;
-    const hasK2 = map2.has(input);
+    const inputsMap = this.map.get(propName) as Map<any, any>;
+    const hasK2 = inputsMap.has(input);
     return hasK2;
   }
 
@@ -19,17 +15,17 @@ export class PojoConstructorCacheMap<T> {
     if (!this.has(propName, input)) {
       return undefined;
     }
-    const map2 = this.map.get(propName) as Map<any, any>;
-    const v = map2.get(input);
+    const inputsMap = this.map.get(propName) as Map<any, any>;
+    const v = inputsMap.get(input);
     return v as T;
   }
 
   set(propName: any, input: any, value: T): void {
-    const hasK1 = this.map.has(propName);
-    if (!hasK1) {
+    const hasProp = this.map.has(propName);
+    if (!hasProp) {
       this.map.set(propName, new Map());
     }
-    const map2 = this.map.get(propName);
-    map2.set(input, value);
+    const inputsMap = this.map.get(propName);
+    inputsMap.set(input, value);
   }
 }
