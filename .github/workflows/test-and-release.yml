@@ -10,7 +10,7 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v2
 
-      - name: node_modules cache
+      - name: Install dependencies - node_modules cache
         id: node_modules_cache
         uses: actions/cache@v3
         with:
@@ -18,7 +18,7 @@ jobs:
           key: ${{ runner.os }}-build-${{ hashFiles('package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-build-
-      - name: Install dependencies
+      - name: Install dependencies - npm install-clean
         if: steps.node_modules_cache.outputs.cache-hit == 'false'
         run: npm install-clean
 
@@ -29,7 +29,7 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v2
 
-      - name: node_modules cache
+      - name: Install dependencies - node_modules cache
         id: node_modules_cache
         uses: actions/cache@v3
         with:
@@ -37,7 +37,7 @@ jobs:
           key: ${{ runner.os }}-build-${{ hashFiles('package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-build-
-      - name: Install dependencies
+      - name: Install dependencies - npm install-clean
         if: steps.node_modules_cache.outputs.cache-hit == 'false'
         run: npm install-clean
 
@@ -51,7 +51,7 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v2
 
-      - name: node_modules cache
+      - name: Install dependencies - node_modules cache
         id: node_modules_cache
         uses: actions/cache@v3
         with:
@@ -59,7 +59,7 @@ jobs:
           key: ${{ runner.os }}-build-${{ hashFiles('package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-build-
-      - name: Install dependencies
+      - name: Install dependencies - npm install-clean
         if: steps.node_modules_cache.outputs.cache-hit == 'false'
         run: npm install-clean
 
@@ -79,7 +79,7 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v2
 
-      - name: node_modules cache
+      - name: Install dependencies - node_modules cache
         id: node_modules_cache
         uses: actions/cache@v3
         with:
@@ -87,7 +87,7 @@ jobs:
           key: ${{ runner.os }}-build-${{ hashFiles('package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-build-
-      - name: Install dependencies
+      - name: Install dependencies - npm install-clean
         if: steps.node_modules_cache.outputs.cache-hit == 'false'
         run: npm install-clean
 
