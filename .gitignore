@@ -4,3 +4,4 @@ node_modules/
 /npm-module
 /coverage
 .npmrc
+.this-changelog

@@ -1,3 +1,12 @@
+## [0.5.23](https://github.com/dany-fedorov/pojo-constructor/compare/0.5.22...0.5.23) (2022-12-31)
+
+
+### Features
+
+* Bump ([4de367f](https://github.com/dany-fedorov/pojo-constructor/commit/4de367fa7f3b6af3887b038d635d72e9dce3d9e9))
+
+
+
 ## [0.5.22](https://github.com/dany-fedorov/pojo-constructor/compare/0.5.20...0.5.22) (2022-12-31)
 
 
