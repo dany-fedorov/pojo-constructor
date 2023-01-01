@@ -44,6 +44,12 @@ jobs:
       - name: Run tests
         run: npm run test-ci
 
+      - name: Generating tests coverage badges
+        uses: "jpb06/jest-badges-action@latest"
+        with:
+          branches: main
+          commit-message: "chore: Updating tests coverage badges [skip ci]"
+
   build:
     runs-on: ubuntu-latest
     needs: [ npm_install ]
