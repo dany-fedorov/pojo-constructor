@@ -38,22 +38,22 @@ Please use fixed version (remove ^ from package.json).</p>
 </blockquote>
 <ul>
 <li><a href="#api">API</a><ul>
-<li><a href="#sync">Sync mode API</a><ul>
-<li><a href="#constructpojosync--ctorclass-constructpojoinput-constructpojooptions-">constructPojoSync(CTorClass, constructPojoInput?, constructPojoOptions?)</a></li>
-<li><a href="#constructpojofrominstancesync--ctor-constructpojoinput-constructpojooptions-">constructPojoFromInstanceSync(ctor, constructPojoInput?, constructPojoOptions?)</a></li>
-<li><a href="#type-pojoconstructorsync--pojo-ctorinput-">type PojoConstructorSync&lt;Pojo, CtorInput&gt;</a></li>
+<li><a href="#sync-mode-api">Sync mode API</a><ul>
+<li><a href="#constructpojosyncctorclass-constructpojoinput-constructpojooptions">constructPojoSync(CTorClass, constructPojoInput?, constructPojoOptions?)</a></li>
+<li><a href="#constructpojofrominstancesyncctor-constructpojoinput-constructpojooptions">constructPojoFromInstanceSync(ctor, constructPojoInput?, constructPojoOptions?)</a></li>
+<li><a href="#type-pojoconstructorsyncpojo-ctorinput">type PojoConstructorSync&lt;Pojo, CtorInput&gt;</a></li>
 </ul>
 </li>
-<li><a href="#async">Async mode API</a><ul>
-<li><a href="#constructpojoasync--ctorclass-constructpojoinput-constructpojooptions-">constructPojoAsync(CTorClass, constructPojoInput?, constructPojoOptions?)</a></li>
-<li><a href="#constructpojofrominstanceasync--ctor-constructpojoinput-constructpojooptions-">constructPojoFromInstanceAsync(ctor, constructPojoInput?, constructPojoOptions?)</a></li>
-<li><a href="#type-pojoconstructorasync--pojo-ctorinput-">type PojoConstructorAsync&lt;Pojo, CtorInput&gt;</a></li>
+<li><a href="#async-mode-api">Async mode API</a><ul>
+<li><a href="#constructpojoasyncctorclass-constructpojoinput-constructpojooptions">constructPojoAsync(CTorClass, constructPojoInput?, constructPojoOptions?)</a></li>
+<li><a href="#constructpojofrominstanceasyncctor-constructpojoinput-constructpojooptions">constructPojoFromInstanceAsync(ctor, constructPojoInput?, constructPojoOptions?)</a></li>
+<li><a href="#type-pojoconstructorasyncpojo-ctorinput">type PojoConstructorAsync&lt;Pojo, CtorInput&gt;</a></li>
 </ul>
 </li>
-<li><a href="#sync--async-combined">Sync + Async Combined API</a><ul>
-<li><a href="#constructpojo--ctorclass-constructpojoinput-constructpojooptions-">constructPojo(CTorClass, constructPojoInput?, constructPojoOptions?)</a></li>
-<li><a href="#constructpojofrominstance--ctor-constructpojoinput-constructpojooptions-">constructPojoFromInstance(ctor, constructPojoInput?, constructPojoOptions?)</a></li>
-<li><a href="#type-pojoconstructor--pojo-ctorinput-">type PojoConstructor&lt;Pojo, CtorInput&gt;</a></li>
+<li><a href="#sync--async-combined-api">Sync + Async Combined API</a><ul>
+<li><a href="#constructpojoctorclass-constructpojoinput-constructpojooptions">constructPojo(CTorClass, constructPojoInput?, constructPojoOptions?)</a></li>
+<li><a href="#constructpojofrominstancector-constructpojoinput-constructpojooptions">constructPojoFromInstance(ctor, constructPojoInput?, constructPojoOptions?)</a></li>
+<li><a href="#type-pojoconstructorpojo-ctorinput">type PojoConstructor&lt;Pojo, CtorInput&gt;</a></li>
 </ul>
 </li>
 </ul>
@@ -74,8 +74,8 @@ Please use fixed version (remove ^ from package.json).</p>
   <h1><a href="https://dany-fedorov.github.io/pojo-constructor">API</a></h1>
 </a>
 
-<a href="#sync" id="sync" style="color: inherit; text-decoration: none;">
-  <h2>Sync</h2>
+<a href="#sync-mode-api" id="sync-mode-api" style="color: inherit; text-decoration: none;">
+  <h2>Sync mode API</h2>
 </a>
 
 <a href="#constructpojosyncctorclass-constructpojoinput-constructpojooptions" id="constructpojosyncctorclass-constructpojoinput-constructpojooptions" style="color: inherit; text-decoration: none;">
@@ -95,8 +95,8 @@ Instantiates <code>CTorClass</code> passing <code>constructPojoInput</code> to c
 </a>
 <p>A generic type that makes &quot;Sync Pojo Constructor object&quot; type from <code>Pojo</code> object type, check out the link for details.</p>
 
-<a href="#async" id="async" style="color: inherit; text-decoration: none;">
-  <h2>Async</h2>
+<a href="#async-mode-api" id="async-mode-api" style="color: inherit; text-decoration: none;">
+  <h2>Async mode API</h2>
 </a>
 
 <a href="#constructpojoasyncctorclass-constructpojoinput-constructpojooptions" id="constructpojoasyncctorclass-constructpojoinput-constructpojooptions" style="color: inherit; text-decoration: none;">
@@ -116,8 +116,8 @@ Instantiates <code>CTorClass</code> passing <code>constructPojoInput</code> to c
 </a>
 <p>A generic type that makes &quot;Async Pojo Constructor object&quot; type from <code>Pojo</code> object type, check out the link for details.</p>
 
-<a href="#sync--async-combined" id="sync--async-combined" style="color: inherit; text-decoration: none;">
-  <h2>Sync + Async Combined</h2>
+<a href="#sync--async-combined-api" id="sync--async-combined-api" style="color: inherit; text-decoration: none;">
+  <h2>Sync + Async Combined API</h2>
 </a>
 
 <a href="#constructpojoctorclass-constructpojoinput-constructpojooptions" id="constructpojoctorclass-constructpojoinput-constructpojooptions" style="color: inherit; text-decoration: none;">
