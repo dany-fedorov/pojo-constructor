@@ -56,8 +56,6 @@ export type PojoConstructorCachingProxy<
  * }
  * ```
  *
- * Check out documentation in README for working example with this type.
- *
  * @param Pojo - A result object that will be produced by this Pojo Constructor.
  * @param CtorInput - An input type that will be passed to each property constructor method.
  */

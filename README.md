@@ -95,6 +95,8 @@ is no `promise` function, async mode falls back to `sync` function.
 
 #### [type PojoConstructor<Pojo, CtorInput>](https://dany-fedorov.github.io/pojo-constructor/types/PojoConstructor.html)
 
+A generic type that makes "Combined Sync + Async Pojo Constructor object" type from `Pojo` object type.
+
 # Examples
 
 ## 1. [Simple server-side config, sync mode](./examples/example-1-simple-server-side-config-sync.ts)
