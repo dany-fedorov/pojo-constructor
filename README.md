@@ -20,6 +20,10 @@ Example use cases
 > **Warning**
 > Please use fixed version (remove ^ from package.json).
 
+* [API](#api)
+* [Examples](#examples)
+  * [1. Simple server-side config](#1-simple-server-side-config)
+
 # API
 
 WIP. Please check out source code or https://dany-fedorov.github.io/pojo-constructor/.
