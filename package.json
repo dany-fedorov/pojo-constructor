@@ -11,7 +11,7 @@
     "publish-me": "npm run prepublish-me && cd npm-module-build && npm publish --access public --registry https://registry.npmjs.org/",
     "postpublish-me": "rm -fr npm-module-build",
     "build-watch": "chokidar './src/**/*.ts' -c 'npm run build' -i './node_modules/**/*' --initial",
-    "tsfile": "ts-node -r tsconfig-paths/register -T -s",
+    "ts-file": "ts-node -r tsconfig-paths/register -T -s",
     "test-ci": "npm run test -- --ci --coverage"
   },
   "repository": {
