@@ -39,10 +39,10 @@ Example use cases
     * [1. Simple server-side config, sync mode](#1-simple-server-side-config-sync-mode)
     * [2. Server-side config with feature flags, async mode](#2-server-side-config-with-feature-flags-async-mode)
 * [Links](#links)
-  * [GitHub](#github)
-  * [Npm](#npm)
+    * [GitHub](#github)
+    * [Npm](#npm)
 
-# [API](https://dany-fedorov.github.io/pojo-constructor)
+# [API](https://dany-fedorov.github.io/pojo-constructor/modules.html)
 
 ## Sync mode API
 
