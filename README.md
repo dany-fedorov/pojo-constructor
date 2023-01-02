@@ -12,7 +12,7 @@ Configuration as code helper for TypeScript - write own constructor for each pro
 Idea is that a setup like this allows you to focus on individual properties of a big configuration object, which is
 useful when
 a property can control complicated behaviour and selecting a proper value for it should be a maintainable piece of code.
-For example
+Example use cases
 
 - Maintaining configuration for server-side application code
 - Building options for a complex JS class
