@@ -19,9 +19,6 @@ Example use cases
 - Maintaining configuration for server-side application code
 - Building options for a complex JS class
 
-> **Warning**
-> Please use fixed version (remove ^ from package.json).
-
 * [API](#api)
     * [Sync mode API](#sync-mode-api)
         * [constructPojoSync(CTorClass, constructPojoInput?, constructPojoOptions?)](#constructpojosyncctorclass-constructpojoinput-constructpojooptions)
