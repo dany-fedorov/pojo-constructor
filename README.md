@@ -22,19 +22,20 @@ Example use cases
 > **Warning**
 > Please use fixed version (remove ^ from package.json).
 
+* [POJO Constructor](#pojo-constructor)
 * [API](#api)
     * [Sync](#sync)
         * [constructPojoSync(CTorClass, constructPojoInput?, constructPojoOptions?)](#constructpojosync--ctorclass-constructpojoinput-constructpojooptions-)
         * [constructPojoFromInstanceSync(ctor, constructPojoInput?, constructPojoOptions?)](#constructpojofrominstancesync--ctor-constructpojoinput-constructpojooptions-)
         * [type PojoConstructorSync<Pojo, CtorInput>](#type-pojoconstructorsync--pojo-ctorinput-)
     * [Async](#async)
-        * [<strong>constructPojoAsync(CTorClass, constructPojoInput?, constructPojoOptions?)</strong>](#strong-constructpojoasync--ctorclass-constructpojoinput-constructpojooptions--strong)
-        * [<strong>constructPojoFromInstanceAsync(ctor, constructPojoInput?, constructPojoOptions?)</strong>](#strong-constructpojofrominstanceasync--ctor-constructpojoinput-constructpojooptions--strong)
-        * [<strong>type PojoConstructorAsync<Pojo, CtorInput></strong>](#strong-type-pojoconstructorasync--pojo-ctorinput--strong)
+        * [constructPojoAsync(CTorClass, constructPojoInput?, constructPojoOptions?)](#constructpojoasync--ctorclass-constructpojoinput-constructpojooptions-)
+        * [constructPojoFromInstanceAsync(ctor, constructPojoInput?, constructPojoOptions?)](#constructpojofrominstanceasync--ctor-constructpojoinput-constructpojooptions-)
+        * [type PojoConstructorAsync<Pojo, CtorInput>](#type-pojoconstructorasync--pojo-ctorinput-)
     * [Sync + Async Combined](#sync--async-combined)
-        * [<strong>constructPojo(CTorClass, constructPojoInput?, constructPojoOptions?)</strong>](#strong-constructpojo--ctorclass-constructpojoinput-constructpojooptions--strong)
-        * [<strong>constructPojoFromInstance(ctor, constructPojoInput?, constructPojoOptions?)</strong>](#strong-constructpojofrominstance--ctor-constructpojoinput-constructpojooptions--strong)
-        * [<strong>type PojoConstructor<Pojo, CtorInput></strong>](#strong-type-pojoconstructor--pojo-ctorinput--strong)
+        * [constructPojo(CTorClass, constructPojoInput?, constructPojoOptions?)](#constructpojo--ctorclass-constructpojoinput-constructpojooptions-)
+        * [constructPojoFromInstance(ctor, constructPojoInput?, constructPojoOptions?)](#constructpojofrominstance--ctor-constructpojoinput-constructpojooptions-)
+        * [type PojoConstructor<Pojo, CtorInput>](#type-pojoconstructor--pojo-ctorinput-)
 * [Examples](#examples)
     * [1. Simple server-side config, sync mode](#1-simple-server-side-config-sync-mode)
     * [2. Server-side config with feature flags, async mode](#2-server-side-config-with-feature-flags-async-mode)
@@ -62,29 +63,29 @@ A generic type that makes "Sync Pojo Constructor object" type from `Pojo` object
 
 ## Async
 
-#### <strong>[constructPojoAsync(CTorClass, constructPojoInput?, constructPojoOptions?)](https://dany-fedorov.github.io/pojo-constructor/functions/constructPojoAsync.html)</strong>
+#### [constructPojoAsync(CTorClass, constructPojoInput?, constructPojoOptions?)](https://dany-fedorov.github.io/pojo-constructor/functions/constructPojoAsync.html)
 
 Wrapper
 for [constructPojoFromInstanceSync(ctor, constructPojoInput?, constructPojoOptions?)](https://dany-fedorov.github.io/pojo-constructor/functions/constructPojoFromInstanceAsync.html).<br>
 Instantiates `CTorClass` passing `constructPojoInput` to constructor.
 
-#### <strong>[constructPojoFromInstanceAsync(ctor, constructPojoInput?, constructPojoOptions?)](https://dany-fedorov.github.io/pojo-constructor/functions/constructPojoFromInstanceAsync.html)</strong>
+#### [constructPojoFromInstanceAsync(ctor, constructPojoInput?, constructPojoOptions?)](https://dany-fedorov.github.io/pojo-constructor/functions/constructPojoFromInstanceAsync.html)
 
 Builds an object from `ctor` in async mode by calling property constructor methods.
 
-#### <strong>[type PojoConstructorAsync<Pojo, CtorInput>](https://dany-fedorov.github.io/pojo-constructor/types/PojoConstructorAsync.html)</strong>
+#### [type PojoConstructorAsync<Pojo, CtorInput>](https://dany-fedorov.github.io/pojo-constructor/types/PojoConstructorAsync.html)
 
 A generic type that makes "Async Pojo Constructor object" type from `Pojo` object type, check out the link for details.
 
 ## Sync + Async Combined
 
-#### <strong>[constructPojo(CTorClass, constructPojoInput?, constructPojoOptions?)](https://dany-fedorov.github.io/pojo-constructor/functions/constructPojo.html)</strong>
+#### [constructPojo(CTorClass, constructPojoInput?, constructPojoOptions?)](https://dany-fedorov.github.io/pojo-constructor/functions/constructPojo.html)
 
 Wrapper
 for [constructPojoFromInstance(ctor, constructPojoInput?, constructPojoOptions?)](https://dany-fedorov.github.io/pojo-constructor/functions/constructPojoFromInstance.html).<br>
 Instantiates `CTorClass` passing `constructPojoInput` to constructor.
 
-#### <strong>[constructPojoFromInstance(ctor, constructPojoInput?, constructPojoOptions?)](https://dany-fedorov.github.io/pojo-constructor/functions/constructPojoFromInstance.html)</strong>
+#### [constructPojoFromInstance(ctor, constructPojoInput?, constructPojoOptions?)](https://dany-fedorov.github.io/pojo-constructor/functions/constructPojoFromInstance.html)
 
 Returns object with `sync`, `promise` functions that can be called to build
 an object from `ctor` in sync or async mode.
@@ -93,7 +94,7 @@ In sync mode, only `sync` functions returned by property methods are called.
 In async mode, `promise` functions returned by property methods are called, but when there
 is no `promise` function, async mode falls back to `sync` function.
 
-#### <strong>[type PojoConstructor<Pojo, CtorInput>](https://dany-fedorov.github.io/pojo-constructor/types/PojoConstructor.html)</strong>
+#### [type PojoConstructor<Pojo, CtorInput>](https://dany-fedorov.github.io/pojo-constructor/types/PojoConstructor.html)
 
 # Examples
 
