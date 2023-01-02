@@ -23,64 +23,43 @@
 <a href="https://www.npmjs.org/package/pojo-constructor"><img src="https://img.shields.io/npm/l/pojo-constructor.svg" alt="Package License MIT"></a>
 <a href="https://www.npmjs.org/package/pojo-constructor"><img src="https://img.shields.io/npm/v/pojo-constructor.svg" alt="Npm Version"></a></p>
 <p>Configuration as code helper for TypeScript - write own constructor for each property, sync or async.</p>
+<p>Idea is that a setup like this allows you to focus on individual properties of a big configuration object, which is
+useful when
+a property can control complicated behaviour and selecting a proper value for it should be a maintainable piece of code.
+For example</p>
+<ul>
+<li>Maintaining configuration for server-side application code</li>
+<li>Building options for a complex JS class</li>
+</ul>
 <blockquote>
 <p><strong>Warning</strong>
 Please use fixed version (remove ^ from package.json).</p>
 </blockquote>
 
-<a href="#examples" id="examples" style="color: inherit; text-decoration: none;">
-  <h2>Examples</h2>
-</a>
-
-<a href="#1-simple-sync-example-run-with-npm-run-tsfile-examplessimple-sync-examplets" id="1-simple-sync-example-run-with-npm-run-tsfile-examplessimple-sync-examplets" style="color: inherit; text-decoration: none;">
-  <h3>1. <a href="./examples/simple-sync-example.ts">Simple sync example</a> (run with <code>npm run tsfile ./examples/simple-sync-example.ts</code>)</h3>
-</a>
-<pre><code class="language-ts"><span class="hl-0">/**</span><br/><span class="hl-0"> * Use TypeScript to make configuration type safe.</span><br/><span class="hl-0"> */</span><br/><span class="hl-1">type</span><span class="hl-2"> </span><span class="hl-3">AppCfg</span><span class="hl-2"> = {</span><br/><span class="hl-2">  </span><span class="hl-4">appName</span><span class="hl-2">: </span><span class="hl-3">string</span><span class="hl-2">;</span><br/><span class="hl-2">  </span><span class="hl-4">listenOnPort</span><span class="hl-2">: </span><span class="hl-3">number</span><span class="hl-2">;</span><br/><span class="hl-2">  </span><span class="hl-4">thirdPartyApiEndpoint</span><span class="hl-2">: </span><span class="hl-3">string</span><span class="hl-2">;</span><br/><span class="hl-2">};</span><br/><br/><span class="hl-1">type</span><span class="hl-2"> </span><span class="hl-3">Env</span><span class="hl-2"> = </span><span class="hl-5">&#39;dev&#39;</span><span class="hl-2"> | </span><span class="hl-5">&#39;staging&#39;</span><span class="hl-2"> | </span><span class="hl-5">&#39;production&#39;</span><span class="hl-2">;</span><br/><br/><span class="hl-0">/**</span><br/><span class="hl-0"> * Define configuration properties in methods of a class.</span><br/><span class="hl-0"> */</span><br/><span class="hl-1">class</span><span class="hl-2"> </span><span class="hl-3">AppCfgCtor</span><span class="hl-2"> </span><span class="hl-1">implements</span><span class="hl-2"> </span><span class="hl-3">PojoConstructorSync</span><span class="hl-2">&lt;</span><span class="hl-3">AppCfg</span><span class="hl-2">, </span><span class="hl-3">Env</span><span class="hl-2">&gt; {</span><br/><span class="hl-2">  </span><span class="hl-6">appName</span><span class="hl-2">(</span><span class="hl-4">env</span><span class="hl-2">: </span><span class="hl-3">Env</span><span class="hl-2">) {</span><br/><span class="hl-2">    </span><span class="hl-7">return</span><span class="hl-2"> </span><span class="hl-5">`awesome-app-in-</span><span class="hl-1">${</span><span class="hl-4">env</span><span class="hl-1">}</span><span class="hl-5">`</span><span class="hl-2">;</span><br/><span class="hl-2">  }</span><br/><br/><span class="hl-2">  </span><span class="hl-6">listenOnPort</span><span class="hl-2">() {</span><br/><span class="hl-2">    </span><span class="hl-7">return</span><span class="hl-2"> </span><span class="hl-8">3003</span><span class="hl-2">;</span><br/><span class="hl-2">  }</span><br/><br/><span class="hl-2">  </span><span class="hl-6">thirdPartyApiEndpoint</span><span class="hl-2">(</span><span class="hl-4">env</span><span class="hl-2">: </span><span class="hl-3">Env</span><span class="hl-2">) {</span><br/><span class="hl-2">    </span><span class="hl-7">switch</span><span class="hl-2"> (</span><span class="hl-4">env</span><span class="hl-2">) {</span><br/><span class="hl-2">      </span><span class="hl-7">case</span><span class="hl-2"> </span><span class="hl-5">&#39;dev&#39;</span><span class="hl-2">:</span><br/><span class="hl-2">      </span><span class="hl-7">case</span><span class="hl-2"> </span><span class="hl-5">&#39;staging&#39;</span><span class="hl-2">:</span><br/><span class="hl-2">        </span><span class="hl-7">return</span><span class="hl-2"> </span><span class="hl-5">&#39;https://sandbox.thrird-party-api.example.com&#39;</span><span class="hl-2">;</span><br/><span class="hl-2">      </span><span class="hl-7">case</span><span class="hl-2"> </span><span class="hl-5">&#39;production&#39;</span><span class="hl-2">:</span><br/><span class="hl-2">        </span><span class="hl-7">return</span><span class="hl-2"> </span><span class="hl-5">&#39;https://api.example.com&#39;</span><span class="hl-2">;</span><br/><span class="hl-2">      </span><span class="hl-7">default</span><span class="hl-2">:</span><br/><span class="hl-2">        </span><span class="hl-7">throw</span><span class="hl-2"> </span><span class="hl-1">new</span><span class="hl-2"> </span><span class="hl-6">Error</span><span class="hl-2">(</span><span class="hl-5">&#39;Unknown env&#39;</span><span class="hl-2">);</span><br/><span class="hl-2">    }</span><br/><span class="hl-2">  }</span><br/><span class="hl-2">}</span><br/><br/><span class="hl-0">/**</span><br/><span class="hl-0"> * Produce configuration for dev env.</span><br/><span class="hl-0"> */</span><br/><span class="hl-1">const</span><span class="hl-2"> </span><span class="hl-9">configDev</span><span class="hl-2"> = </span><span class="hl-6">constructPojoSync</span><span class="hl-2">(</span><span class="hl-4">AppCfgCtor</span><span class="hl-2">, </span><span class="hl-5">&#39;dev&#39;</span><span class="hl-2"> </span><span class="hl-7">as</span><span class="hl-2"> </span><span class="hl-3">Env</span><span class="hl-2">);</span><br/><br/><span class="hl-0">/**</span><br/><span class="hl-0"> * Result.</span><br/><span class="hl-0"> */</span><br/><span class="hl-4">console</span><span class="hl-2">.</span><span class="hl-6">log</span><span class="hl-2">(</span><span class="hl-9">JSON</span><span class="hl-2">.</span><span class="hl-6">stringify</span><span class="hl-2">(</span><span class="hl-4">configDev</span><span class="hl-2">, </span><span class="hl-1">null</span><span class="hl-2">, </span><span class="hl-8">2</span><span class="hl-2">));</span><br/><span class="hl-0">/**</span><br/><span class="hl-0"> * {</span><br/><span class="hl-0"> *   &quot;appName&quot;: &quot;awesome-app-in-dev&quot;,</span><br/><span class="hl-0"> *   &quot;listenOnPort&quot;: 3003,</span><br/><span class="hl-0"> *   &quot;thirdPartyApiEndpoint&quot;: &quot;https://sandbox.thrird-party-api.example.com&quot;</span><br/><span class="hl-0"> * }</span><br/><span class="hl-0"> */</span>
-</code></pre>
-
-<a href="#why" id="why" style="color: inherit; text-decoration: none;">
-  <h2>Why?</h2>
-</a>
-
-<a href="#1-better-way-to-scale-up-configuration-objects" id="1-better-way-to-scale-up-configuration-objects" style="color: inherit; text-decoration: none;">
-  <h3>1. Better way to scale up configuration objects.</h3>
-</a>
-<p>Separate &quot;pure&quot; methods are easier to add, understand and
-maintain than imperative script that constructs the configuration object.</p>
-
-<a href="#2-better-pattern-for-server-configuration" id="2-better-pattern-for-server-configuration" style="color: inherit; text-decoration: none;">
-  <h3>2. Better pattern for server configuration.</h3>
-</a>
-<p>For example: Server uses a database endpoint and a third party api endpoint. Usually, you&#39;ll make DB_HOST and
-THIRD_PARTY_API env variables and parametrize this way. This means you can run your server with whatever combination
-of DB_HOST and THIRD_PARTY_API variables, but usually you have just several sets of configurations really - .e.g. dev,
-staging and production depending on release lifecycle stage.</p>
-<p>I think, having as much of server configuration as possible in code is beneficial for several reasons.</p>
-<ol>
-<li><p>A sever developer has access and is responsible for more configuration. This is important in a
-setting where developer can have limited access to infrastructure - e.g. cannot change task definitions for AWS ECS.
-As a person who makes changes more often than a DevOps person, sever developer should have as much freedom as
-possible to tweak configuration.</p>
-</li>
-<li><p>Better captures an environment in which server is run. E.g. if your env variables are just
-RELEASE_STAGE=dev|staging|production and RUNTIME_ENV=local|remote_ecs this is much easier to understand all supported
-ways to run the server, and it is easy to make sure configuration is right programmatically - e.g. make a rule that
-you cannot run production env locally.</p>
-</li>
-<li><p>Configuration as code - flexibility of the programming language + type safety.</p>
-</li>
-</ol>
-
 <a href="#api" id="api" style="color: inherit; text-decoration: none;">
-  <h2>API</h2>
+  <h1>API</h1>
 </a>
-<p>WIP. Please check out source code.</p>
+<p>WIP. Please check out source code or <a href="https://dany-fedorov.github.io/pojo-constructor/">https://dany-fedorov.github.io/pojo-constructor/</a>.</p>
 <ul>
 <li>type <code>PojoConstructorSync</code> + function <code>constructPojoSync</code> - for use with sync methods</li>
 <li>type <code>PojoConstructorAsync</code> + function  <code>constructPojoAsync</code> - for use with async methods</li>
 <li>type <code>PojoConstructor</code> + function <code>constructPojo</code> - allows to combine sync and async methods by returning an object
 like this <code>{ sync: () =&gt; {}, promise: () =&gt; {} }</code></li>
 </ul>
+
+<a href="#examples" id="examples" style="color: inherit; text-decoration: none;">
+  <h1>Examples</h1>
+</a>
+
+<a href="#1-simple-server-side-config" id="1-simple-server-side-config" style="color: inherit; text-decoration: none;">
+  <h2>1. <a href="./examples/example-1-simple-server-side-config-sync.ts">Simple server-side config</a></h2>
+</a>
+<p>(Run with <code>npm run ts-file ./examples/example-1-simple-server-side-config-sync.ts</code>)</p>
+<pre><code class="language-ts"><span class="hl-0">/*</span><br/><span class="hl-0"> * Use TypeScript to make configuration type safe.</span><br/><span class="hl-0"> */</span><br/><span class="hl-1">type</span><span class="hl-2"> </span><span class="hl-3">AppCfg</span><span class="hl-2"> = {</span><br/><span class="hl-2">  </span><span class="hl-4">appName</span><span class="hl-2">: </span><span class="hl-3">string</span><span class="hl-2">;</span><br/><span class="hl-2">  </span><span class="hl-4">listenOnPort</span><span class="hl-2">: </span><span class="hl-3">number</span><span class="hl-2">;</span><br/><span class="hl-2">  </span><span class="hl-4">thirdPartyApiEndpoint</span><span class="hl-2">: </span><span class="hl-3">string</span><span class="hl-2">;</span><br/><span class="hl-2">};</span><br/><br/><span class="hl-1">type</span><span class="hl-2"> </span><span class="hl-3">Env</span><span class="hl-2"> = </span><span class="hl-5">&#39;dev&#39;</span><span class="hl-2"> | </span><span class="hl-5">&#39;staging&#39;</span><span class="hl-2"> | </span><span class="hl-5">&#39;production&#39;</span><span class="hl-2">;</span><br/><br/><span class="hl-0">/**</span><br/><span class="hl-0"> * Define configuration properties in methods of a class.</span><br/><span class="hl-0"> */</span><br/><span class="hl-1">class</span><span class="hl-2"> </span><span class="hl-3">AppCfgCtor</span><span class="hl-2"> </span><span class="hl-1">implements</span><span class="hl-2"> </span><span class="hl-3">PojoConstructorSync</span><span class="hl-2">&lt;</span><span class="hl-3">AppCfg</span><span class="hl-2">, </span><span class="hl-3">Env</span><span class="hl-2">&gt; {</span><br/><span class="hl-2">  </span><span class="hl-6">appName</span><span class="hl-2">(</span><span class="hl-4">env</span><span class="hl-2">: </span><span class="hl-3">Env</span><span class="hl-2">) {</span><br/><span class="hl-2">    </span><span class="hl-7">return</span><span class="hl-2"> </span><span class="hl-5">`awesome-app-in-</span><span class="hl-1">${</span><span class="hl-4">env</span><span class="hl-1">}</span><span class="hl-5">`</span><span class="hl-2">;</span><br/><span class="hl-2">  }</span><br/><br/><span class="hl-2">  </span><span class="hl-6">listenOnPort</span><span class="hl-2">() {</span><br/><span class="hl-2">    </span><span class="hl-7">return</span><span class="hl-2"> </span><span class="hl-8">3003</span><span class="hl-2">;</span><br/><span class="hl-2">  }</span><br/><br/><span class="hl-2">  </span><span class="hl-6">thirdPartyApiEndpoint</span><span class="hl-2">(</span><span class="hl-4">env</span><span class="hl-2">: </span><span class="hl-3">Env</span><span class="hl-2">) {</span><br/><span class="hl-2">    </span><span class="hl-7">switch</span><span class="hl-2"> (</span><span class="hl-4">env</span><span class="hl-2">) {</span><br/><span class="hl-2">      </span><span class="hl-7">case</span><span class="hl-2"> </span><span class="hl-5">&#39;dev&#39;</span><span class="hl-2">:</span><br/><span class="hl-2">      </span><span class="hl-7">case</span><span class="hl-2"> </span><span class="hl-5">&#39;staging&#39;</span><span class="hl-2">:</span><br/><span class="hl-2">        </span><span class="hl-7">return</span><span class="hl-2"> </span><span class="hl-5">&#39;https://sandbox.thrird-party-api.example.com&#39;</span><span class="hl-2">;</span><br/><span class="hl-2">      </span><span class="hl-7">case</span><span class="hl-2"> </span><span class="hl-5">&#39;production&#39;</span><span class="hl-2">:</span><br/><span class="hl-2">        </span><span class="hl-7">return</span><span class="hl-2"> </span><span class="hl-5">&#39;https://api.example.com&#39;</span><span class="hl-2">;</span><br/><span class="hl-2">      </span><span class="hl-7">default</span><span class="hl-2">:</span><br/><span class="hl-2">        </span><span class="hl-7">throw</span><span class="hl-2"> </span><span class="hl-1">new</span><span class="hl-2"> </span><span class="hl-6">Error</span><span class="hl-2">(</span><span class="hl-5">&#39;Unknown env&#39;</span><span class="hl-2">);</span><br/><span class="hl-2">    }</span><br/><span class="hl-2">  }</span><br/><span class="hl-2">}</span><br/><br/><span class="hl-0">/**</span><br/><span class="hl-0"> * Produce configuration for dev env.</span><br/><span class="hl-0"> */</span><br/><span class="hl-1">const</span><span class="hl-2"> </span><span class="hl-9">configDev</span><span class="hl-2"> = </span><span class="hl-6">constructPojoSync</span><span class="hl-2">(</span><span class="hl-4">AppCfgCtor</span><span class="hl-2">, </span><span class="hl-5">&#39;dev&#39;</span><span class="hl-2"> </span><span class="hl-7">as</span><span class="hl-2"> </span><span class="hl-3">Env</span><span class="hl-2">);</span><br/><br/><span class="hl-0">/**</span><br/><span class="hl-0"> * Print result.</span><br/><span class="hl-0"> */</span><br/><span class="hl-4">console</span><span class="hl-2">.</span><span class="hl-6">log</span><span class="hl-2">(</span><span class="hl-9">JSON</span><span class="hl-2">.</span><span class="hl-6">stringify</span><span class="hl-2">(</span><span class="hl-4">configDev</span><span class="hl-2">, </span><span class="hl-1">null</span><span class="hl-2">, </span><span class="hl-8">2</span><span class="hl-2">));</span>
+</code></pre>
+<p>prints</p>
+<pre><code class="language-json"><span class="hl-2">{</span><br/><span class="hl-2">  </span><span class="hl-10">&quot;appName&quot;</span><span class="hl-2">: </span><span class="hl-5">&quot;awesome-app-in-dev&quot;</span><span class="hl-2">,</span><br/><span class="hl-2">  </span><span class="hl-10">&quot;listenOnPort&quot;</span><span class="hl-2">: </span><span class="hl-8">3003</span><span class="hl-2">,</span><br/><span class="hl-2">  </span><span class="hl-10">&quot;thirdPartyApiEndpoint&quot;</span><span class="hl-2">: </span><span class="hl-5">&quot;https://sandbox.thrird-party-api.example.com&quot;</span><br/><span class="hl-2">}</span>
+</code></pre>
 </div></div>
 <div class="col-4 col-menu menu-sticky-wrap menu-highlight">
 <div class="tsd-navigation settings">
