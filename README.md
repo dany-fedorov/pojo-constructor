@@ -22,7 +22,6 @@ Example use cases
 > **Warning**
 > Please use fixed version (remove ^ from package.json).
 
-* [POJO Constructor](#pojo-constructor)
 * [API](#api)
     * [Sync](#sync)
         * [constructPojoSync(CTorClass, constructPojoInput?, constructPojoOptions?)](#constructpojosync--ctorclass-constructpojoinput-constructpojooptions-)
