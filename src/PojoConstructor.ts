@@ -28,18 +28,45 @@ export type PojoSyncOrPromiseResult<T> =
   | PojoSyncResult<T>
   | PojoPromiseResult<T>;
 
-export type PojoConstructorCachingProxy<T extends object, Input = unknown> = {
-  [K in keyof T]: K extends string
-    ? (input?: Input) => PojoSyncOrPromiseResult<T[K]>
+export type PojoConstructorCachingProxy<
+  Pojo extends object,
+  CtorInput = unknown,
+> = {
+  [K in keyof Pojo]: K extends string
+    ? (input?: CtorInput) => PojoSyncOrPromiseResult<Pojo[K]>
     : never;
 };
 
-export type PojoConstructor<T extends object, Input = unknown> = {
-  [K in keyof T]: K extends string
+/**
+ * A generic type that makes "Combined Sync + Async Pojo Constructor object" type from `Pojo` object type.
+ *
+ * Turns
+ * ```typescript
+ * type Pojo = {
+ *   a: string;
+ *   b: number;
+ * }
+ * ```
+ *
+ * To
+ * ```typescript
+ * type PojoCtor = {
+ *   a: (input, cachingProxy) => PojoSyncOrPromiseResult<string>
+ *   b: (input, cachingProxy) => PojoSyncOrPromiseResult<number>
+ * }
+ * ```
+ *
+ * Check out documentation in README for working example with this type.
+ *
+ * @param Pojo - A result object that will be produced by this Pojo Constructor.
+ * @param CtorInput - An input type that will be passed to each property constructor method.
+ */
+export type PojoConstructor<Pojo extends object, CtorInput = unknown> = {
+  [K in keyof Pojo]: K extends string
     ? (
-        input: Input,
-        cachingProxy: PojoConstructorCachingProxy<T, Input>,
-      ) => PojoSyncOrPromiseResult<T[K]>
+        input: CtorInput,
+        cachingProxy: PojoConstructorCachingProxy<Pojo, CtorInput>,
+      ) => PojoSyncOrPromiseResult<Pojo[K]>
     : unknown;
 };
 
@@ -49,19 +76,68 @@ export type ConstructPojoCatchFnOptions = {
   pojoConstructorSequentialIndex: number | null;
 };
 
-export type ConstructPojoOptions<T extends object, Input> = {
-  keys?: () => (keyof T)[];
-  sortKeys?: (keys: (keyof T)[]) => (keyof T)[];
+export type ConstructPojoOptions<Pojo extends object, CtorInput> = {
+  /**
+   * A function that produces a list of string property names that should be applied to the Pojo Constructor.
+   *
+   * @default
+   * By default, {@link extractMethodKeysForPojoConstructorInstance} function is applied.<br>
+   * It works like this:
+   * - Use Object.getOwnPropertyNames on ctor
+   * - Keep only typeof "function" properties and exclude "constructor" property
+   * - Exclude keys that are not string
+   * - Recur for prototype of ctor
+   */
+  keys?: () => Extract<keyof Pojo, string>[];
+  /**
+   * A function that takes property names produces either by `keys` function or by default {@link extractMethodKeysForPojoConstructorInstance} function
+   * and returns them sorted.
+   * Property names will be processed in this order, unless `concurrency` option is set.
+   *
+   * @default
+   * By default property names are sorted lexicographically.
+   */
+  sortKeys?: (
+    keys: Extract<keyof Pojo, string>[],
+  ) => Extract<keyof Pojo, string>[];
+  /**
+   * Minimum num value is `1`.
+   *
+   * If this option is set, uses [p-map](https://www.npmjs.com/package/p-map) to process properties in async mode.
+   * This is passed through as `concurrency` option of [p-map](https://www.npmjs.com/package/p-map) lib.
+   */
   concurrency?: number;
-  cacheKeyFromConstructorInput?: (input?: Input) => unknown;
+  /**
+   * Function that should produce a cache key from constructor input.
+   * Used by `cachingProxy` to only evaluate property once.
+   * Default is identity function - `(x) => x`
+   */
+  cacheKeyFromConstructorInput?: (input?: CtorInput) => unknown;
+  /**
+   * Is called when property constructor method throws an error.
+   */
   catch?: (caught: unknown, options: ConstructPojoCatchFnOptions) => unknown;
 };
 
-export function constructPojoFromInstance<T extends object, Input = unknown>(
-  ctorInstance: PojoConstructor<T, Input>,
-  constructPojoInput?: Input,
-  constructPojoOptions?: ConstructPojoOptions<T, Input>,
-): PojoSyncAndPromiseResult<T> {
+/**
+ * Returns object with `sync`, `promise` functions that can be called to build
+ * an object from `ctor` in sync or async mode.
+ *
+ * In sync mode, only `sync` functions returned by property methods are called.
+ * In async mode, `promise` functions returned by property methods are called, but when there is no `promise` function, async mode falls back to `sync` function.
+ *
+ * @param ctor - Object conforming to {@link PojoConstructor | PojoConstructor<Pojo, CtorInput>}`.
+ * @param constructPojoInput - An input that will be passed to each property constructor method.
+ * @param constructPojoOptions
+ */
+export function constructPojoFromInstance<
+  Pojo extends object,
+  CtorInput = unknown,
+>(
+  ctorInstance: PojoConstructor<Pojo, CtorInput>,
+  constructPojoInput?: CtorInput,
+  constructPojoOptions?: ConstructPojoOptions<Pojo, CtorInput>,
+): PojoSyncAndPromiseResult<Pojo> {
   const sortedKeys = getSortedKeysForPojoConstructorInstance(
     ctorInstance,
     constructPojoOptions,
@@ -69,12 +145,12 @@ export function constructPojoFromInstance<T extends object, Input = unknown>(
   const cacheKeyFn =
     typeof constructPojoOptions?.cacheKeyFromConstructorInput === 'function'
       ? constructPojoOptions?.cacheKeyFromConstructorInput
-      : (x?: Input) => x;
+      : (x?: CtorInput) => x;
 
   const syncCache = new PojoConstructorCacheMap();
   const asyncCache = new PojoConstructorCacheMap();
   const cachingProxy = new Proxy(ctorInstance, {
-    get(target: PojoConstructor<T, Input>, key: string | symbol): any {
+    get(target: PojoConstructor<Pojo, CtorInput>, key: string | symbol): any {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       const propv = target[key];
@@ -82,7 +158,7 @@ export function constructPojoFromInstance<T extends object, Input = unknown>(
         return propv;
       }
       return function constructPojo_cachingProxyIntercepted(
-        interceptedInputArg?: Input,
+        interceptedInputArg?: CtorInput,
       ) {
         const inputCacheKey = cacheKeyFn(interceptedInputArg);
         return {
@@ -215,7 +291,7 @@ export function constructPojoFromInstance<T extends object, Input = unknown>(
       }
       i++;
     }
-    return pojo as T;
+    return pojo as Pojo;
   };
   const constructPojoPromise = async () => {
     const concurrency = constructPojoOptions?.concurrency;
@@ -247,7 +323,7 @@ export function constructPojoFromInstance<T extends object, Input = unknown>(
           )
         ).flat(),
       );
-      return pojo as T;
+      return pojo as Pojo;
     } else {
       const pojo: any = {};
       let i = 0;
@@ -265,7 +341,7 @@ export function constructPojoFromInstance<T extends object, Input = unknown>(
         }
         i++;
       }
-      return pojo as T;
+      return pojo as Pojo;
     }
   };
   return {
@@ -274,11 +350,19 @@ export function constructPojoFromInstance<T extends object, Input = unknown>(
   };
 }
 
-export function constructPojo<T extends object, Input = unknown>(
-  CTorClass: { new (input?: Input): PojoConstructor<T, Input> },
-  constructPojoInput?: Input,
-  constructPojoOptions?: ConstructPojoOptions<T, Input>,
-): PojoSyncAndPromiseResult<T> {
+/**
+ * Wrapper for {@link constructPojoFromInstance}.<br>
+ * Instantiates `CTorClass` passing `constructPojoInput` to constructor.
+ *
+ * @param CTorClass - Class object (constructor function).
+ * @param constructPojoInput - An input that will be passed to each property constructor method.
+ * @param constructPojoOptions
+ */
+export function constructPojo<Pojo extends object, CtorInput = unknown>(
+  CTorClass: { new (input?: CtorInput): PojoConstructor<Pojo, CtorInput> },
+  constructPojoInput?: CtorInput,
+  constructPojoOptions?: ConstructPojoOptions<Pojo, CtorInput>,
+): PojoSyncAndPromiseResult<Pojo> {
   return constructPojoFromInstance(
     new CTorClass(constructPojoInput),
     constructPojoInput,

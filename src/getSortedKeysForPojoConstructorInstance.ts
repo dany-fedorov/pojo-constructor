@@ -4,43 +4,50 @@ import type { PojoConstructorAsync } from './PojoConstructorAsync';
 
 const OBJ_DEFAULT_PROTOTYPE = Object.getPrototypeOf({});
 
-export function extractMethodKeys<T extends object>(
-  obj: T,
+export function extractMethodKeysForPojoConstructorInstance<
+  Pojo extends object,
+  CtorInput,
+>(
+  ctor:
+    | PojoConstructor<Pojo, CtorInput>
+    | PojoConstructorSync<Pojo, CtorInput>
+    | PojoConstructorAsync<Pojo, CtorInput>,
   isPrototype = false,
-): (keyof T)[] {
-  const keys = Object.getOwnPropertyNames(obj).filter(
+): Extract<keyof Pojo, string>[] {
+  const keys = Object.getOwnPropertyNames(ctor).filter(
     (k) =>
-      typeof (obj as any)[k] === 'function' &&
+      typeof (ctor as any)[k] === 'function' &&
       (!isPrototype || k !== 'constructor'),
   );
-  const proto = Object.getPrototypeOf(obj);
+  const stringKeys = keys.filter((k) => typeof k === 'string');
+  const proto = Object.getPrototypeOf(ctor);
   if (proto === null || proto === OBJ_DEFAULT_PROTOTYPE) {
-    return keys as (keyof T)[];
+    return stringKeys as Extract<keyof Pojo, string>[];
   } else {
-    return [...keys, ...extractMethodKeys(proto, true)] as (keyof T)[];
+    return [
+      ...stringKeys,
+      ...extractMethodKeysForPojoConstructorInstance(proto, true),
+    ] as Extract<keyof Pojo, string>[];
   }
 }
 
 export function getSortedKeysForPojoConstructorInstance<
-  T extends object,
-  Input,
+  Pojo extends object,
+  CtorInput,
 >(
   ctor:
-    | PojoConstructor<T, Input>
-    | PojoConstructorSync<T, Input>
-    | PojoConstructorAsync<T, Input>,
-  options?: Pick<ConstructPojoOptions<T, Input>, 'keys' | 'sortKeys'>,
-) {
+    | PojoConstructor<Pojo, CtorInput>
+    | PojoConstructorSync<Pojo, CtorInput>
+    | PojoConstructorAsync<Pojo, CtorInput>,
+  options?: Pick<ConstructPojoOptions<Pojo, CtorInput>, 'keys' | 'sortKeys'>,
+): Extract<keyof Pojo, string>[] {
   const keys =
     typeof options?.keys === 'function'
       ? options.keys()
-      : extractMethodKeys(ctor);
-  const stringKeys = keys.filter((k) => typeof k === 'string');
+      : extractMethodKeysForPojoConstructorInstance(ctor);
   const sortedKeys =
     typeof options?.sortKeys !== 'function'
-      ? stringKeys
-          .slice()
-          .sort((a, b) => ((a as string) <= (b as string) ? -1 : 1))
-      : options.sortKeys(stringKeys);
-  return sortedKeys as Extract<keyof T, string>[];
+      ? keys.slice().sort((a, b) => ((a as string) <= (b as string) ? -1 : 1))
+      : options.sortKeys(keys);
+  return sortedKeys as Extract<keyof Pojo, string>[];
 }
