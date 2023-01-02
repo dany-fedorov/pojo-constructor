@@ -1,6 +1,6 @@
 {
   "name": "pojo-constructor",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Configuration as code helper for TypeScript - write a separate constructor for each field, sync or async.",
   "main": "./index.js",
   "scripts": {
