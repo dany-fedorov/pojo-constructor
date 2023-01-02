@@ -10,6 +10,7 @@
         "releaseRules": [
           {
             "type": "docs",
+            "scope": "release",
             "release": "patch"
           },
           {
