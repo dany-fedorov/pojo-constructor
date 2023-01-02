@@ -23,15 +23,15 @@ Example use cases
 > Please use fixed version (remove ^ from package.json).
 
 * [API](#api)
-    * [Sync](#sync)
+    * [Sync mode API](#sync)
         * [constructPojoSync(CTorClass, constructPojoInput?, constructPojoOptions?)](#constructpojosync--ctorclass-constructpojoinput-constructpojooptions-)
         * [constructPojoFromInstanceSync(ctor, constructPojoInput?, constructPojoOptions?)](#constructpojofrominstancesync--ctor-constructpojoinput-constructpojooptions-)
         * [type PojoConstructorSync<Pojo, CtorInput>](#type-pojoconstructorsync--pojo-ctorinput-)
-    * [Async](#async)
+    * [Async mode API](#async)
         * [constructPojoAsync(CTorClass, constructPojoInput?, constructPojoOptions?)](#constructpojoasync--ctorclass-constructpojoinput-constructpojooptions-)
         * [constructPojoFromInstanceAsync(ctor, constructPojoInput?, constructPojoOptions?)](#constructpojofrominstanceasync--ctor-constructpojoinput-constructpojooptions-)
         * [type PojoConstructorAsync<Pojo, CtorInput>](#type-pojoconstructorasync--pojo-ctorinput-)
-    * [Sync + Async Combined](#sync--async-combined)
+    * [Sync + Async Combined API](#sync--async-combined)
         * [constructPojo(CTorClass, constructPojoInput?, constructPojoOptions?)](#constructpojo--ctorclass-constructpojoinput-constructpojooptions-)
         * [constructPojoFromInstance(ctor, constructPojoInput?, constructPojoOptions?)](#constructpojofrominstance--ctor-constructpojoinput-constructpojooptions-)
         * [type PojoConstructor<Pojo, CtorInput>](#type-pojoconstructor--pojo-ctorinput-)
