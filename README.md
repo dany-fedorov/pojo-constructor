@@ -3,7 +3,7 @@
 ![Jest coverage](https://raw.githubusercontent.com/dany-fedorov/pojo-constructor/main/badges/coverage-jest%20coverage.svg)
 [![semantic-release: angular](https://img.shields.io/badge/semantic--release-angular-e10079?logo=semantic-release)](https://github.com/semantic-release/semantic-release)
 [![Code Style by Prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
-[![Strictest TypeScript Config](https://badgen.net/badge/TS/Strictest "Strictest TypeScript Config")](https://www.npmjs.com/package/@tsconfig/strictest)
+[![Strictest TypeScript Config](https://badgen.net/badge/TS/strictest "Strictest TypeScript Config")](https://www.npmjs.com/package/@tsconfig/strictest)
 [![Package License MIT](https://img.shields.io/npm/l/pojo-constructor.svg)](https://www.npmjs.org/package/pojo-constructor)
 [![Npm Version](https://img.shields.io/npm/v/pojo-constructor.svg)](https://www.npmjs.org/package/pojo-constructor)
 
