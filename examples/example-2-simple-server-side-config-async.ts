@@ -17,11 +17,11 @@ type Env = 'dev' | 'staging' | 'production';
 
 class AppCfgCtor implements PojoConstructorAsync<AppCfg, Env> {
   async appName(env: Env) {
-    return `awesome-app-in-${env}`;
+    return { value: `awesome-app-in-${env}` };
   }
 
   async listenOnPort() {
-    return 3003;
+    return { value: 3003 };
   }
 
   /**
@@ -36,8 +36,10 @@ class AppCfgCtor implements PojoConstructorAsync<AppCfg, Env> {
       Number((await axios.get(GET_0_OR_1 + 'feature2')).data),
     );
     return {
-      feature1: feature1Flag,
-      feature2: feature2Flag,
+      value: {
+        feature1: feature1Flag,
+        feature2: feature2Flag,
+      },
     };
   }
 }

@@ -4,8 +4,8 @@ import { constructPojo, constructPojoFromInstance } from '../src';
 describe('PojoConstructor + pojoFrom', function () {
   test('it should construct from plain', () => {
     const c: PojoConstructor<{ a: string; b: number }> = {
-      a: () => ({ sync: () => 'a-string' }),
-      b: () => ({ sync: () => 123 }),
+      a: () => ({ sync: () => ({ value: 'a-string' }) }),
+      b: () => ({ sync: () => ({ value: 123 }) }),
     };
     const pojo = constructPojoFromInstance(c).sync();
     expect(pojo).toMatchInlineSnapshot(`
@@ -19,11 +19,11 @@ describe('PojoConstructor + pojoFrom', function () {
   test('it should construct from class instance', () => {
     class C implements PojoConstructor<{ a: string; b: number }> {
       a() {
-        return { sync: () => 'a-string' };
+        return { sync: () => ({ value: 'a-string' }) };
       }
 
       b() {
-        return { sync: () => 123 };
+        return { sync: () => ({ value: 123 }) };
       }
     }
 
@@ -42,13 +42,13 @@ describe('PojoConstructor + pojoFrom', function () {
 
     class Base implements Pick<PojoC, 'a'> {
       a() {
-        return { sync: () => 'a-string' };
+        return { sync: () => ({ value: 'a-string' }) };
       }
     }
 
     class C extends Base implements PojoC {
       b() {
-        return { sync: () => 123 };
+        return { sync: () => ({ value: 123 }) };
       }
     }
 
@@ -65,10 +65,11 @@ describe('PojoConstructor + pojoFrom', function () {
   test('it should pass input', () => {
     const c: PojoConstructor<{ a: string; b: number }, boolean> = {
       a: (input) => ({
-        sync: () =>
-          input ? 'a-string-truthy-variant' : 'a-string-falsy-variant',
+        sync: () => ({
+          value: input ? 'a-string-truthy-variant' : 'a-string-falsy-variant',
+        }),
       }),
-      b: (input) => ({ sync: () => (input ? 123 : 321) }),
+      b: (input) => ({ sync: () => ({ value: input ? 123 : 321 }) }),
     };
     const pojo1 = constructPojoFromInstance(c, true).sync();
     expect(pojo1).toMatchInlineSnapshot(`
@@ -88,8 +89,8 @@ describe('PojoConstructor + pojoFrom', function () {
 
   test('async', async () => {
     const c: PojoConstructor<{ a: string; b: number }> = {
-      a: () => ({ sync: () => 'a-string' }),
-      b: () => ({ promise: () => Promise.resolve(123) }),
+      a: () => ({ sync: () => ({ value: 'a-string' }) }),
+      b: () => ({ promise: () => Promise.resolve({ value: 123 }) }),
     };
     const pojo = await constructPojoFromInstance(c).promise();
     expect(pojo).toMatchInlineSnapshot(`
@@ -112,7 +113,7 @@ describe('PojoConstructor + pojoFrom', function () {
         return {
           sync: () => {
             acounter++;
-            return 'a-string';
+            return { value: 'a-string' };
           },
         };
       }
@@ -160,7 +161,7 @@ describe('PojoConstructor + pojoFrom', function () {
         return {
           sync: () => {
             acounter++;
-            return 'a-string';
+            return { value: 'a-string' };
           },
         };
       }
@@ -210,7 +211,7 @@ describe('PojoConstructor + pojoFrom', function () {
         return {
           sync: () => {
             acounter++;
-            return 'a-string';
+            return { value: 'a-string' };
           },
         };
       }
@@ -258,7 +259,7 @@ describe('PojoConstructor + pojoFrom', function () {
         return {
           sync: () => {
             acounter++;
-            return 'a-string';
+            return { value: 'a-string' };
           },
         };
       }
@@ -302,7 +303,9 @@ describe('PojoConstructor + pojoFrom', function () {
       a: (input) => ({
         sync: () => {
           acounter++;
-          return input ? 'a-string-truthy-variant' : 'a-string-falsy-variant';
+          return {
+            value: input ? 'a-string-truthy-variant' : 'a-string-falsy-variant',
+          };
         },
       }),
       b: (input, cachingProxy) => ({
@@ -360,7 +363,7 @@ describe('PojoConstructor + pojoFrom', function () {
               counts['a'] = 0;
             }
             counts['a']++;
-            return `a-string-${input}`;
+            return { value: `a-string-${input}` };
           },
         };
       }
@@ -475,7 +478,7 @@ describe('PojoConstructor + pojoFrom', function () {
               counts['b'] = 0;
             }
             counts['b']++;
-            return 'b';
+            return { value: 'b' };
           },
         };
       }
@@ -488,7 +491,7 @@ describe('PojoConstructor + pojoFrom', function () {
               counts['a'] = 0;
             }
             counts['a']++;
-            return `a`;
+            return { value: `a` };
           },
         };
       }
@@ -501,7 +504,7 @@ describe('PojoConstructor + pojoFrom', function () {
               counts['c'] = 0;
             }
             counts['c']++;
-            return 'c';
+            return { value: 'c' };
           },
         };
       }
@@ -514,7 +517,7 @@ describe('PojoConstructor + pojoFrom', function () {
               counts['d99'] = 0;
             }
             counts['d99']++;
-            return 'd99';
+            return { value: 'd99' };
           },
         };
       }
@@ -527,7 +530,7 @@ describe('PojoConstructor + pojoFrom', function () {
               counts['d10'] = 0;
             }
             counts['d10']++;
-            return 'd10';
+            return { value: 'd10' };
           },
         };
       }
@@ -540,7 +543,7 @@ describe('PojoConstructor + pojoFrom', function () {
               counts['d101'] = 0;
             }
             counts['d101']++;
-            return 'd101';
+            return { value: 'd101' };
           },
         };
       }
@@ -609,7 +612,7 @@ describe('PojoConstructor + pojoFrom', function () {
               counts['a'] = 0;
             }
             counts['a']++;
-            return `a-string-${input}`;
+            return { value: `a-string-${input}` };
           },
         };
       }
@@ -724,7 +727,7 @@ describe('PojoConstructor + pojoFrom', function () {
               counts['b'] = 0;
             }
             counts['b']++;
-            return 'b';
+            return { value: 'b' };
           },
         };
       }
@@ -737,7 +740,7 @@ describe('PojoConstructor + pojoFrom', function () {
               counts['a'] = 0;
             }
             counts['a']++;
-            return `a`;
+            return { value: `a` };
           },
         };
       }
@@ -750,7 +753,7 @@ describe('PojoConstructor + pojoFrom', function () {
               counts['c'] = 0;
             }
             counts['c']++;
-            return 'c';
+            return { value: 'c' };
           },
         };
       }
@@ -763,7 +766,7 @@ describe('PojoConstructor + pojoFrom', function () {
               counts['d99'] = 0;
             }
             counts['d99']++;
-            return 'd99';
+            return { value: 'd99' };
           },
         };
       }
@@ -776,7 +779,7 @@ describe('PojoConstructor + pojoFrom', function () {
               counts['d10'] = 0;
             }
             counts['d10']++;
-            return 'd10';
+            return { value: 'd10' };
           },
         };
       }
@@ -789,7 +792,7 @@ describe('PojoConstructor + pojoFrom', function () {
               counts['d101'] = 0;
             }
             counts['d101']++;
-            return 'd101';
+            return { value: 'd101' };
           },
         };
       }
@@ -858,7 +861,7 @@ describe('PojoConstructor + pojoFrom', function () {
               counts['a'] = 0;
             }
             counts['a']++;
-            return `a-string-${input}`;
+            return { value: `a-string-${input}` };
           },
         };
       }
@@ -965,7 +968,7 @@ describe('PojoConstructor + pojoFrom', function () {
 
     class C implements PojoConstructor<T, boolean> {
       a(input?: boolean) {
-        return { sync: () => `a-${input}` };
+        return { sync: () => ({ value: `a-${input}` }) };
       }
 
       b(_: any, proxy: PojoConstructorCachingProxy<T, boolean>) {
@@ -998,7 +1001,7 @@ describe('PojoConstructor + pojoFrom', function () {
 
     class C implements PojoConstructor<T, boolean> {
       a(input?: boolean) {
-        return { sync: () => `a-${input}` };
+        return { sync: () => ({ value: `a-${input}` }) };
       }
 
       b() {
@@ -1028,8 +1031,8 @@ describe('PojoConstructor + pojoFrom', function () {
 
   test('it should resolve with concurrency setting', async () => {
     const c: PojoConstructor<{ a: string; b: number }> = {
-      a: () => ({ promise: async () => 'a-string' }),
-      b: () => ({ sync: () => 123 }),
+      a: () => ({ promise: async () => ({ value: 'a-string' }) }),
+      b: () => ({ sync: () => ({ value: 123 }) }),
     };
     const pojo = await constructPojoFromInstance(c, null, {
       concurrency: 100,
@@ -1054,7 +1057,7 @@ describe('PojoConstructor + pojoFrom', function () {
         return {
           sync: () => {
             acounter++;
-            return 'a-string';
+            return { value: 'a-string' };
           },
         };
       }
@@ -1104,7 +1107,7 @@ describe('PojoConstructor + pojoFrom', function () {
         return {
           sync: () => {
             acounter++;
-            return 'a-string';
+            return { value: 'a-string' };
           },
         };
       }
@@ -1146,8 +1149,8 @@ describe('PojoConstructor + pojoFrom', function () {
 
   test('it should throw when trying to .sync when property has no .sync', () => {
     const c: PojoConstructor<{ a: string; b: number }> = {
-      a: () => ({ sync: () => 'a-string' }),
-      b: () => ({ promise: async () => 123 }),
+      a: () => ({ sync: () => ({ value: 'a-string' }) }),
+      b: () => ({ promise: async () => ({ value: 123 }) }),
     };
     expect.assertions(1);
     try {
@@ -1163,9 +1166,9 @@ describe('PojoConstructor + pojoFrom', function () {
 
   test('limit keys', () => {
     const c: PojoConstructor<{ a: string; b: number; c: string }> = {
-      a: () => ({ sync: () => 'a-string' }),
-      b: () => ({ promise: async () => 123 }),
-      c: () => ({ sync: () => 'c-string' }),
+      a: () => ({ sync: () => ({ value: 'a-string' }) }),
+      b: () => ({ promise: async () => ({ value: 123 }) }),
+      c: () => ({ sync: () => ({ value: 'c-string' }) }),
     };
     const pojo = constructPojoFromInstance(c, null, {
       keys: () => ['a'],
@@ -1191,7 +1194,7 @@ describe('PojoConstructor + pojoFrom', function () {
       a: (input) => ({
         sync: () => {
           counters.a++;
-          return `a-${input.key}`;
+          return { value: `a-${input.key}` };
         },
       }),
       b: (input, cache) => ({
@@ -1262,7 +1265,8 @@ describe('PojoConstructor + pojoFrom', function () {
   test('promise caching (coverage)', async () => {
     const c: PojoConstructor<{ a: string; b: string }> = {
       a: () => ({
-        promise: () => new Promise((r) => setTimeout(() => r('a-string'), 100)),
+        promise: () =>
+          new Promise((r) => setTimeout(() => r({ value: 'a-string' }), 100)),
       }),
       b: (_, cache) => ({ promise: () => cache.a().promise!() }),
     };
@@ -1282,7 +1286,7 @@ describe('PojoConstructor + pojoFrom', function () {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       a: () => ({
-        _promise: () => 123,
+        _promise: () => ({ value: 123 }),
       }),
       b: (_, cache) => ({ promise: () => cache.a().promise!() }),
     };
@@ -1303,7 +1307,7 @@ describe('PojoConstructor + pojoFrom', function () {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       a: () => ({
-        _sync: () => 123,
+        _sync: () => ({ value: 123 }),
       }),
       b: (_, cache) => ({ sync: () => cache.a().sync!() }),
     };
@@ -1672,7 +1676,7 @@ describe('PojoConstructor + pojoFrom', function () {
   test('construct from class 1', () => {
     class C implements PojoConstructor<{ a: string; b: string }, number> {
       a(input: number) {
-        return { sync: () => `a-field-${input}` };
+        return { sync: () => ({ value: `a-field-${input}` }) };
       }
 
       b(input: number) {
@@ -1702,10 +1706,11 @@ describe('PojoConstructor + pojoFrom', function () {
 
       a(input: number, cachingProxy: any) {
         return {
-          sync: () =>
-            `a-field-${input}---${this[prvm]()}---${
+          sync: () => ({
+            value: `a-field-${input}---${this[prvm]()}---${
               this[prvv]
             }---${cachingProxy[prvm]()}---${cachingProxy[prvv]}`,
+          }),
         };
       }
 
@@ -1729,8 +1734,9 @@ describe('PojoConstructor + pojoFrom', function () {
 
       a(input: number, cachingProxy: any) {
         return {
-          sync: () =>
-            `a-field-${input}---${this.nonFunctionProp}---${cachingProxy.nonFunctionProp}`,
+          sync: () => ({
+            value: `a-field-${input}---${this.nonFunctionProp}---${cachingProxy.nonFunctionProp}`,
+          }),
         };
       }
 
@@ -1770,7 +1776,7 @@ describe('PojoConstructor + pojoFrom', function () {
 
       c() {
         return {
-          sync: () => 'c-string',
+          sync: () => ({ value: 'c-string' }),
         };
       }
     }
@@ -1838,7 +1844,7 @@ describe('PojoConstructor + pojoFrom', function () {
 
       c() {
         return {
-          sync: () => 'c-string',
+          sync: () => ({ value: 'c-string' }),
         };
       }
     }

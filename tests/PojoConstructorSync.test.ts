@@ -7,8 +7,8 @@ import { constructPojoFromInstanceSync, constructPojoSync } from '../src';
 describe('PojoConstructorSync + pojoFromSync', function () {
   test('it should construct from plain', () => {
     const c: PojoConstructorSync<{ a: string; b: number }> = {
-      a: () => 'a-string',
-      b: () => 123,
+      a: () => ({ value: 'a-string' }),
+      b: () => ({ value: 123 }),
     };
     const pojo = constructPojoFromInstanceSync(c);
     expect(pojo).toMatchInlineSnapshot(`
@@ -22,11 +22,11 @@ describe('PojoConstructorSync + pojoFromSync', function () {
   test('it should construct from class instance', () => {
     class C implements PojoConstructorSync<{ a: string; b: number }> {
       a() {
-        return 'a-string';
+        return { value: 'a-string' };
       }
 
       b() {
-        return 123;
+        return { value: 123 };
       }
     }
 
@@ -45,13 +45,13 @@ describe('PojoConstructorSync + pojoFromSync', function () {
 
     class Base implements Pick<PojoC, 'a'> {
       a() {
-        return 'a-string';
+        return { value: 'a-string' };
       }
     }
 
     class C extends Base implements PojoC {
       b() {
-        return 123;
+        return { value: 123 };
       }
     }
 
@@ -67,9 +67,10 @@ describe('PojoConstructorSync + pojoFromSync', function () {
 
   test('it should pass input', () => {
     const c: PojoConstructorSync<{ a: string; b: number }, boolean> = {
-      a: (input) =>
-        input ? 'a-string-truthy-variant' : 'a-string-falsy-variant',
-      b: (input) => (input ? 123 : 321),
+      a: (input) => ({
+        value: input ? 'a-string-truthy-variant' : 'a-string-falsy-variant',
+      }),
+      b: (input) => ({ value: input ? 123 : 321 }),
     };
     const pojo1 = constructPojoFromInstanceSync(c, true);
     expect(pojo1).toMatchInlineSnapshot(`
@@ -97,7 +98,7 @@ describe('PojoConstructorSync + pojoFromSync', function () {
     class C implements PojoConstructorSync<O> {
       a() {
         acounter++;
-        return 'a-string';
+        return { value: 'a-string' };
       }
 
       b(_: any, cachingProxy: PojoConstructorSyncCachingProxy<O>) {
@@ -135,7 +136,7 @@ describe('PojoConstructorSync + pojoFromSync', function () {
     {
       a() {
         acounter++;
-        return 'a-string';
+        return { value: 'a-string' };
       }
 
       b() {
@@ -170,7 +171,7 @@ describe('PojoConstructorSync + pojoFromSync', function () {
     const c: PojoConstructorSync<T, Input> = {
       a: () => {
         acount++;
-        return 'a-string';
+        return { value: 'a-string' };
       },
       b: (_, cachingProxy: PojoConstructorSyncCachingProxy<T, Input>) =>
         cachingProxy.a(),
@@ -213,7 +214,7 @@ describe('PojoConstructorSync + pojoFromSync', function () {
           counts['a'] = 0;
         }
         counts['a']++;
-        return `a-string-${input}`;
+        return { value: `a-string-${input}` };
       }
 
       c(
@@ -323,7 +324,7 @@ describe('PojoConstructorSync + pojoFromSync', function () {
           counts['a'] = 0;
         }
         counts['a']++;
-        return `a-string-${input}`;
+        return { value: `a-string-${input}` };
       }
 
       c(
@@ -416,7 +417,9 @@ describe('PojoConstructorSync + pojoFromSync', function () {
       {
         a: (input) => {
           acounter++;
-          return input ? 'a-string-truthy-variant' : 'a-string-falsy-variant';
+          return {
+            value: input ? 'a-string-truthy-variant' : 'a-string-falsy-variant',
+          };
         },
         b: (input, cachingProxy) => {
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -449,11 +452,11 @@ describe('PojoConstructorSync + pojoFromSync', function () {
 
   test('limit keys', () => {
     const c: PojoConstructorSync<{ a: string; b: number; c: string }> = {
-      a: () => 'a-string',
+      a: () => ({ value: 'a-string' }),
       b: () => {
         throw new Error('b-error');
       },
-      c: () => 'c-string',
+      c: () => ({ value: 'c-string' }),
     };
     const pojo = constructPojoFromInstanceSync(c, null, {
       keys: () => ['a'],
@@ -477,7 +480,7 @@ describe('PojoConstructorSync + pojoFromSync', function () {
     > = {
       a: (input) => {
         counters.a++;
-        return `a-${input.key}`;
+        return { value: `a-${input.key}` };
       },
       b: (input, cache) => {
         counters.b++;
@@ -542,7 +545,7 @@ describe('PojoConstructorSync + pojoFromSync', function () {
 
   test('input passing through', () => {
     const c: PojoConstructorSync<{ a: string; b: string }, boolean> = {
-      a: (input) => `a-string-${input}`,
+      a: (input) => ({ value: `a-string-${input}` }),
       b: (input, cachingProxy) => cachingProxy.a(input),
     };
     const pojo1 = constructPojoFromInstanceSync(c, true);
@@ -564,7 +567,7 @@ describe('PojoConstructorSync + pojoFromSync', function () {
   test('construct from class 1', () => {
     class C implements PojoConstructorSync<{ a: string; b: string }, number> {
       a(input?: number) {
-        return `a-field-${input}`;
+        return { value: `a-field-${input}` };
       }
 
       b(input: number) {
@@ -593,9 +596,11 @@ describe('PojoConstructorSync + pojoFromSync', function () {
       [prvv] = 'private-value-by-symbol-result';
 
       a(input: number, cachingProxy: any) {
-        return `a-field-${input}---${this[prvm]()}---${
-          this[prvv]
-        }---${cachingProxy[prvm]()}---${cachingProxy[prvv]}`;
+        return {
+          value: `a-field-${input}---${this[prvm]()}---${
+            this[prvv]
+          }---${cachingProxy[prvm]()}---${cachingProxy[prvv]}`,
+        };
       }
 
       b(input: number, cachingProxy: any) {
@@ -617,7 +622,9 @@ describe('PojoConstructorSync + pojoFromSync', function () {
       nonFunctionProp = 'simple-prop-value';
 
       a(input: number, cachingProxy: any) {
-        return `a-field-${input}---${this.nonFunctionProp}---${cachingProxy.nonFunctionProp}`;
+        return {
+          value: `a-field-${input}---${this.nonFunctionProp}---${cachingProxy.nonFunctionProp}`,
+        };
       }
 
       b(input: number, cachingProxy: any) {
@@ -642,7 +649,7 @@ describe('PojoConstructorSync + pojoFromSync', function () {
         throw new Error('a-error');
       },
       b(...args) {
-        return String(this.a(...args));
+        return { value: String(this.a(...args).value) };
       },
     };
     // expect.assertions(2);
@@ -667,10 +674,10 @@ describe('PojoConstructorSync + pojoFromSync', function () {
         throw new Error('a-error');
       },
       b(...args) {
-        return String(this.a(...args));
+        return { value: String(this.a(...args).value) };
       },
       c() {
-        return 'c-string';
+        return { value: 'c-string' };
       },
     };
     const savedCaught: unknown[] = [];

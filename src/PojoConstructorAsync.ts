@@ -1,5 +1,8 @@
 import pMap from '@esm2cjs/p-map';
-import type { ConstructPojoOptions } from './PojoConstructor';
+import type {
+  ConstructPojoOptions,
+  PojoConstructorPropMethodValue,
+} from './PojoConstructor';
 import { getSortedKeysForPojoConstructorInstance } from './getSortedKeysForPojoConstructorInstance';
 import { PojoConstructorCacheMap } from './PojoConstructorCacheMap';
 import { processCaughtInCachingProxy } from './processCaughtInCachingProxy';
@@ -9,7 +12,7 @@ export type PojoConstructorAsyncCachingProxy<
   CtorInput = unknown,
 > = {
   [K in keyof Pojo]: K extends string
-    ? (input?: CtorInput) => Promise<Pojo[K]>
+    ? (input?: CtorInput) => Promise<PojoConstructorPropMethodValue<Pojo[K]>>
     : never;
 };
 
@@ -40,7 +43,7 @@ export type PojoConstructorAsync<Pojo extends object, CtorInput = unknown> = {
     ? (
         input: CtorInput,
         cachingProxy: PojoConstructorAsyncCachingProxy<Pojo, CtorInput>,
-      ) => Promise<Pojo[K]>
+      ) => Promise<PojoConstructorPropMethodValue<Pojo[K]>>
     : unknown;
 };
 
@@ -148,8 +151,8 @@ export async function constructPojoFromInstanceAsync<
             } catch (caught) {
               await doCatch(caught, null, k);
             }
-            if (setv) {
-              return [[k, v]];
+            if (setv && 'value' in v) {
+              return [[k, v.value]];
             } else {
               return [];
             }
@@ -173,8 +176,8 @@ export async function constructPojoFromInstanceAsync<
       } catch (caught) {
         await doCatch(caught, i, k);
       }
-      if (setv) {
-        pojo[k] = v;
+      if (setv && 'value' in v) {
+        pojo[k] = v.value;
       }
       i++;
     }

@@ -1,4 +1,7 @@
-import type { ConstructPojoOptions } from './PojoConstructor';
+import type {
+  ConstructPojoOptions,
+  PojoConstructorPropMethodValue,
+} from './PojoConstructor';
 import { getSortedKeysForPojoConstructorInstance } from './getSortedKeysForPojoConstructorInstance';
 import { PojoConstructorCacheMap } from './PojoConstructorCacheMap';
 import { processCaughtInCachingProxy } from './processCaughtInCachingProxy';
@@ -8,7 +11,9 @@ export type PojoConstructorSyncCachingProxy<
   Pojo extends object,
   CtorInput = unknown,
 > = {
-  [K in keyof Pojo]: K extends string ? (input?: CtorInput) => Pojo[K] : never;
+  [K in keyof Pojo]: K extends string
+    ? (input?: CtorInput) => PojoConstructorPropMethodValue<Pojo[K]>
+    : never;
 };
 
 /**
@@ -38,7 +43,7 @@ export type PojoConstructorSync<Pojo extends object, CtorInput = unknown> = {
     ? (
         input: CtorInput,
         cachingProxy: PojoConstructorSyncCachingProxy<Pojo, CtorInput>,
-      ) => Pojo[K]
+      ) => PojoConstructorPropMethodValue<Pojo[K]>
     : unknown;
 };
 
@@ -137,8 +142,8 @@ export function constructPojoFromInstanceSync<
     } catch (caught) {
       doCatch(caught, i, k);
     }
-    if (setv) {
-      pojo[k] = v;
+    if (setv && 'value' in v) {
+      pojo[k] = v.value;
     }
     i++;
   }

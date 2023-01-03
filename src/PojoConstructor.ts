@@ -8,6 +8,14 @@ import { getSortedKeysForPojoConstructorInstance } from './getSortedKeysForPojoC
 import { PojoConstructorCacheMap } from './PojoConstructorCacheMap';
 import { processCaughtInCachingProxy } from './processCaughtInCachingProxy';
 
+export type PojoConstructorPropMethodValue<T> = undefined extends T
+  ? {
+      value?: T;
+    }
+  : {
+      value: T;
+    };
+
 export type PojoSyncAndPromiseResult<T> = {
   sync: () => T;
   promise: () => Promise<T>;
@@ -33,7 +41,9 @@ export type PojoConstructorCachingProxy<
   CtorInput = unknown,
 > = {
   [K in keyof Pojo]: K extends string
-    ? (input?: CtorInput) => PojoSyncOrPromiseResult<Pojo[K]>
+    ? (
+        input?: CtorInput,
+      ) => PojoSyncOrPromiseResult<PojoConstructorPropMethodValue<Pojo[K]>>
     : never;
 };
 
@@ -64,7 +74,7 @@ export type PojoConstructor<Pojo extends object, CtorInput = unknown> = {
     ? (
         input: CtorInput,
         cachingProxy: PojoConstructorCachingProxy<Pojo, CtorInput>,
-      ) => PojoSyncOrPromiseResult<Pojo[K]>
+      ) => PojoSyncOrPromiseResult<PojoConstructorPropMethodValue<Pojo[K]>>
     : unknown;
 };
 
@@ -93,7 +103,7 @@ export type ConstructPojoOptions<Pojo extends object, CtorInput> = {
    * Property names will be processed in this order, unless `concurrency` option is set.
    *
    * @default
-   * By default property names are sorted lexicographically.
+   * By default, property names are sorted lexicographically.
    */
   sortKeys?: (
     keys: Extract<keyof Pojo, string>[],
@@ -132,12 +142,12 @@ export function constructPojoFromInstance<
   Pojo extends object,
   CtorInput = unknown,
 >(
-  ctorInstance: PojoConstructor<Pojo, CtorInput>,
+  ctor: PojoConstructor<Pojo, CtorInput>,
   constructPojoInput?: CtorInput,
   constructPojoOptions?: ConstructPojoOptions<Pojo, CtorInput>,
 ): PojoSyncAndPromiseResult<Pojo> {
   const sortedKeys = getSortedKeysForPojoConstructorInstance(
-    ctorInstance,
+    ctor,
     constructPojoOptions,
   );
   const cacheKeyFn =
@@ -147,7 +157,7 @@ export function constructPojoFromInstance<
 
   const syncCache = new PojoConstructorCacheMap();
   const asyncCache = new PojoConstructorCacheMap();
-  const cachingProxy = new Proxy(ctorInstance, {
+  const cachingProxy = new Proxy(ctor, {
     get(target: PojoConstructor<Pojo, CtorInput>, key: string | symbol): any {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
@@ -284,8 +294,8 @@ export function constructPojoFromInstance<
       } catch (caught: unknown) {
         doCatch(caught, i, k);
       }
-      if (setv) {
-        pojo[k] = v;
+      if (setv && 'value' in v) {
+        pojo[k] = v.value;
       }
       i++;
     }
@@ -309,8 +319,8 @@ export function constructPojoFromInstance<
               } catch (caught) {
                 await doCatch(caught, null, k);
               }
-              if (setv) {
-                return [[k, v]];
+              if (setv && 'value' in v) {
+                return [[k, v.value]];
               } else {
                 return [];
               }
@@ -334,8 +344,8 @@ export function constructPojoFromInstance<
         } catch (caught) {
           await doCatch(caught, i, k);
         }
-        if (setv) {
-          pojo[k] = v;
+        if (setv && 'value' in v) {
+          pojo[k] = v.value;
         }
         i++;
       }

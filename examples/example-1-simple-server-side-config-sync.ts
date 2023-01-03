@@ -19,20 +19,20 @@ type Env = 'dev' | 'staging' | 'production';
  */
 class AppCfgCtor implements PojoConstructorSync<AppCfg, Env> {
   appName(env: Env) {
-    return `awesome-app-in-${env}`;
+    return { value: `awesome-app-in-${env}` };
   }
 
   listenOnPort() {
-    return 3003;
+    return { value: 3003 };
   }
 
   thirdPartyApiEndpoint(env: Env) {
     switch (env) {
       case 'dev':
       case 'staging':
-        return 'https://sandbox.thrird-party-api.example.com';
+        return { value: 'https://sandbox.thrird-party-api.example.com' };
       case 'production':
-        return 'https://api.example.com';
+        return { value: 'https://api.example.com' };
       default:
         throw new Error('Unknown env');
     }
