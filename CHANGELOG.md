@@ -1,3 +1,16 @@
+# [3.0.0](https://github.com/dany-fedorov/pojo-constructor/compare/v2.0.5...v3.0.0) (2023-01-03)
+
+
+### Features
+
+* Change value setting interface ([5622bc4](https://github.com/dany-fedorov/pojo-constructor/commit/5622bc497ce1d03a9cca9f2ff57764671c4e94e2))
+
+
+### BREAKING CHANGES
+
+* Methods that set value should reutrn { value } object.
+Methods that do not set a value should return empty object - {}.
+
 ## [2.0.5](https://github.com/dany-fedorov/pojo-constructor/compare/v2.0.4...v2.0.5) (2023-01-02)
 
 ## [2.0.4](https://github.com/dany-fedorov/pojo-constructor/compare/v2.0.3...v2.0.4) (2023-01-02)
