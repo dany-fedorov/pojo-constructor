@@ -39,8 +39,6 @@ Example use cases
     * [GitHub](#github)
     * [Npm](#npm)
 
-# [API](https://dany-fedorov.github.io/pojo-constructor/modules.html)
-
 # Examples
 
 ## 1. [Simple server-side config, sync mode](./examples/example-1-simple-server-side-config-sync.ts)
@@ -168,6 +166,8 @@ prints
   "listenOnPort": 3003
 }
 ```
+
+# [API](https://dany-fedorov.github.io/pojo-constructor/modules.html)
 
 ## Sync mode API
 
