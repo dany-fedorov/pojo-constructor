@@ -7,6 +7,9 @@ export class PojoConstructorError extends Error {
 }
 
 export class PojoConstructorCannotAsyncResolveError extends PojoConstructorError {
+  pojoConstructorThrownWhenProcessingKey: string;
+  pojoConstructorStack: { key: string; stage: PojoKeyProcessingStage }[];
+
   constructor(prefix: string, propName: string, propMetohdResult: unknown) {
     super(
       plines(
@@ -16,12 +19,14 @@ export class PojoConstructorCannotAsyncResolveError extends PojoConstructorError
         `- Result - ${_pojo_jsonStringifySafe(propMetohdResult)}`,
       ),
     );
+    this.pojoConstructorStack = [{ key: propName, stage: 'glue-code' }];
+    this.pojoConstructorThrownWhenProcessingKey = propName;
   }
 }
 
 export class PojoConstructorCannotSyncResolveError extends PojoConstructorError {
   pojoConstructorThrownWhenProcessingKey: string;
-  pojoConstructorThrownIn: PojoKeyProcessingStage;
+  pojoConstructorStack: { key: string; stage: PojoKeyProcessingStage }[];
 
   constructor(prefix: string, key: string, keyMethodResult: unknown) {
     super(
@@ -32,35 +37,35 @@ export class PojoConstructorCannotSyncResolveError extends PojoConstructorError 
         `- Result - ${_pojo_jsonStringifySafe(keyMethodResult)}`,
       ),
     );
-    this.pojoConstructorThrownIn = 'caching-proxy-glue-code';
+    this.pojoConstructorStack = [{ key, stage: 'glue-code' }];
     this.pojoConstructorThrownWhenProcessingKey = key;
   }
 }
 
 export type PojoKeyProcessingStage =
   | 'key-method'
-  | 'caching-proxy-glue-code'
+  | 'glue-code'
   | 'promise-result-method'
   | 'sync-result-method'
-  | 'promise'
+  | 'promise-resolution'
   | 'unknown';
 
 export class PojoConstructorNonErrorCaughtWrapperError extends Error {
   pojoConstructorOrigCaught: unknown;
-  pojoConstructorThrownIn: [string, PojoKeyProcessingStage][];
+  pojoConstructorStack: [{ key: string; stage: PojoKeyProcessingStage }];
 
   constructor(
     caught: unknown,
-    pojoConstructorThrownIn: [string, PojoKeyProcessingStage],
+    pojoConstructorStackEntry: { key: string; stage: PojoKeyProcessingStage },
   ) {
     const msg = plines(
       'PojoConstructorNonErrorCaughtWrapperError',
-      `Caught non error object when resolving "${pojoConstructorThrownIn[0]}" key in "${pojoConstructorThrownIn[1]}"`,
+      `Caught non error object when resolving "${pojoConstructorStackEntry.key}" key in "${pojoConstructorStackEntry.stage}"`,
       `- Caught object: ${_pojo_jsonStringifySafe(caught)}`,
     );
     super(msg);
     this.pojoConstructorOrigCaught = caught;
-    this.pojoConstructorThrownIn = [pojoConstructorThrownIn];
+    this.pojoConstructorStack = [{ ...pojoConstructorStackEntry }];
   }
 }
 

@@ -5,21 +5,21 @@ import {
 
 export const processCaughtInCachingProxy = (
   caught: unknown,
-  pojoConstructorThrownIn: [string, PojoKeyProcessingStage],
+  pojoConstructorStackEntry: { key: string; stage: PojoKeyProcessingStage },
 ): unknown => {
   if (caught instanceof Error) {
-    if (!Array.isArray((caught as any).pojoConstructorThrownIn)) {
-      (caught as any).pojoConstructorThrownIn = [];
+    if (!Array.isArray((caught as any).pojoConstructorStack)) {
+      (caught as any).pojoConstructorStack = [];
     }
-    (caught as any).pojoConstructorThrownIn = [
-      ...(caught as any).pojoConstructorThrownIn,
-      ...pojoConstructorThrownIn,
+    (caught as any).pojoConstructorStack = [
+      { ...pojoConstructorStackEntry },
+      ...(caught as any).pojoConstructorStack,
     ];
     return caught;
   } else {
     return new PojoConstructorNonErrorCaughtWrapperError(
       caught,
-      pojoConstructorThrownIn,
+      pojoConstructorStackEntry,
     );
   }
 };

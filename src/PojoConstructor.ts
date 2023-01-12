@@ -6,6 +6,7 @@ import type {
 } from './PojoConstructorProps';
 import type { PojoConstructorOptions } from './PojoConstructorOptions';
 import { PojoConstructorProxyHost } from './PojoConstructorProxyHost';
+import { PojoConstructorHelpersHost } from './PojoConstructorHelpersHost';
 
 export class PojoConstructor<Pojo extends object, CtorInput = unknown> {
   constructor(
@@ -28,8 +29,10 @@ export class PojoConstructor<Pojo extends object, CtorInput = unknown> {
       this.constructorProps,
       effectiveOptions,
     );
-    const proxyHost = new PojoConstructorProxyHost(
+    const helpersHost = Object.create(null);
+    const proxiesHost = new PojoConstructorProxyHost(
       this.constructorProps,
+      helpersHost,
       typeof effectiveOptions.cacheKeyFromConstructorInput !== 'function'
         ? {}
         : {
@@ -37,20 +40,17 @@ export class PojoConstructor<Pojo extends object, CtorInput = unknown> {
               effectiveOptions.cacheKeyFromConstructorInput,
           },
     );
-    const doCatch = (caught: unknown, i: number | null, key: string) => {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      caught.pojoConstructorThrownInKey = key;
+    const helpersHostPrototype = new PojoConstructorHelpersHost(
+      proxiesHost.cachingProxy,
+    );
+    Object.setPrototypeOf(helpersHost, helpersHostPrototype);
+    const doCatch = (caught: unknown, i: number | null) => {
       if (typeof options?.catch !== 'function') {
         throw caught;
       }
       return options?.catch(caught, {
-        pojoConstructorThrownInKey: key,
-        pojoConstructorThrownIn: (caught as any)?.pojoConstructorThrownIn ?? [
-          key,
-          'unknown',
-        ],
-        pojoConstructorSequentialIndex: i,
+        pojoConstructorStack: [...((caught as any).pojoConstructorStack ?? [])],
+        pojoConstructorKeySequentialIndex: i,
       });
     };
     const constructPojoSync = () => {
@@ -60,10 +60,12 @@ export class PojoConstructor<Pojo extends object, CtorInput = unknown> {
         let v;
         let setv = false;
         try {
-          v = (proxyHost.cachingProxy as any)[k](input).sync();
+          v = (proxiesHost.cachingProxy as any)[k]
+            .call(proxiesHost.errorCatchingProxy, input)
+            .sync();
           setv = true;
         } catch (caught: unknown) {
-          doCatch(caught, i, k);
+          doCatch(caught, i);
         }
         if (setv && 'value' in v) {
           pojo[k] = v.value;
@@ -83,10 +85,12 @@ export class PojoConstructor<Pojo extends object, CtorInput = unknown> {
                 let v;
                 let setv = false;
                 try {
-                  v = await (proxyHost.cachingProxy as any)[k](input).promise();
+                  v = await (proxiesHost.cachingProxy as any)[k]
+                    .call(proxiesHost.errorCatchingProxy, input)
+                    .promise();
                   setv = true;
                 } catch (caught) {
-                  await doCatch(caught, null, k);
+                  await doCatch(caught, null);
                 }
                 if (setv && 'value' in v) {
                   return [[k, v.value]];
@@ -108,10 +112,12 @@ export class PojoConstructor<Pojo extends object, CtorInput = unknown> {
           let v;
           let setv = false;
           try {
-            v = await (proxyHost.cachingProxy as any)[k](input).promise();
+            v = await (proxiesHost.cachingProxy as any)[k]
+              .call(proxiesHost.errorCatchingProxy, input)
+              .promise();
             setv = true;
           } catch (caught) {
-            await doCatch(caught, i, k);
+            await doCatch(caught, i);
           }
           if (setv && 'value' in v) {
             pojo[k] = v.value;

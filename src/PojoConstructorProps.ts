@@ -1,11 +1,11 @@
+import type { PojoConstructorHelpersHost } from './PojoConstructorHelpersHost';
+
 export type PojoKeyProcessingStage =
   | 'key-method'
-  | 'caching-proxy-glue-code'
+  | 'glue-code'
   | 'promise-result-method'
   | 'sync-result-method'
   | 'promise'
-  | 'unknown';
-
 
 export type PojoConstructorPropMethodValue<T> = undefined extends T
   ? {
@@ -50,7 +50,7 @@ export type PojoConstructorProps<Pojo extends object, CtorInput> = {
   [K in keyof Pojo]: K extends string
     ? (
         input: CtorInput,
-        cachingProxy: PojoConstructorCachingProxy<Pojo, CtorInput>,
+        helpers: PojoConstructorHelpersHost<Pojo, CtorInput>,
       ) => PojoSyncOrPromiseResult<PojoConstructorPropMethodValue<Pojo[K]>>
     : unknown;
 };

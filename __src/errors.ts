@@ -32,14 +32,14 @@ export class PojoConstructorCannotSyncResolveError extends PojoConstructorError 
         `- Result - ${_pojo_jsonStringifySafe(keyMethodResult)}`,
       ),
     );
-    this.pojoConstructorThrownIn = 'caching-proxy-glue-code';
+    this.pojoConstructorThrownIn = 'glue-code';
     this.pojoConstructorThrownWhenProcessingKey = key;
   }
 }
 
 export type PojoKeyProcessingStage =
   | 'key-method'
-  | 'caching-proxy-glue-code'
+  | 'glue-code'
   | 'promise-result-method'
   | 'sync-result-method'
   | 'promise'
