@@ -613,7 +613,7 @@ describe('PojoConstructorPropsSync + pojoFromSync', function () {
 
       [prvv] = 'private-value-by-symbol-result';
 
-      a(input: number, cachingProxy: any) {
+      a(input: number, { cache: cachingProxy }: any) {
         return {
           value: `a-field-${input}---${this[prvm]()}---${
             this[prvv]
@@ -621,7 +621,7 @@ describe('PojoConstructorPropsSync + pojoFromSync', function () {
         };
       }
 
-      b(input: number, cachingProxy: any) {
+      b(input: number, { cache: cachingProxy }: any) {
         return cachingProxy.a(input);
       }
     }
@@ -641,13 +641,13 @@ describe('PojoConstructorPropsSync + pojoFromSync', function () {
     {
       nonFunctionProp = 'simple-prop-value';
 
-      a(input: number, cachingProxy: any) {
+      a(input: number, { cache: cachingProxy }: any) {
         return {
           value: `a-field-${input}---${this.nonFunctionProp}---${cachingProxy.nonFunctionProp}`,
         };
       }
 
-      b(input: number, cachingProxy: any) {
+      b(input: number, { cache: cachingProxy }: any) {
         return cachingProxy.a(input);
       }
     }
@@ -679,10 +679,12 @@ describe('PojoConstructorPropsSync + pojoFromSync', function () {
       expect(caught).toMatchInlineSnapshot(`[Error: a-error]`);
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      expect(caught?.pojoConstructorThrownIn).toMatchInlineSnapshot(`
+      expect(caught?.pojoConstructorStack).toMatchInlineSnapshot(`
         Array [
-          "a",
-          "key-method",
+          Object {
+            "key": "a",
+            "stage": "sync-result-method",
+          },
         ]
       `);
     }
@@ -716,23 +718,25 @@ describe('PojoConstructorPropsSync + pojoFromSync', function () {
         Object {
           "caught": [Error: a-error],
           "options": Object {
-            "pojoConstructorSequentialIndex": 0,
-            "pojoConstructorThrownIn": Array [
-              "a",
-              "key-method",
+            "pojoConstructorKeySequentialIndex": 0,
+            "pojoConstructorStack": Array [
+              Object {
+                "key": "a",
+                "stage": "sync-result-method",
+              },
             ],
-            "pojoConstructorThrownInKey": "a",
           },
         },
         Object {
           "caught": [Error: a-error],
           "options": Object {
-            "pojoConstructorSequentialIndex": 1,
-            "pojoConstructorThrownIn": Array [
-              "b",
-              "key-method",
+            "pojoConstructorKeySequentialIndex": 1,
+            "pojoConstructorStack": Array [
+              Object {
+                "key": "b",
+                "stage": "sync-result-method",
+              },
             ],
-            "pojoConstructorThrownInKey": "b",
           },
         },
       ]
