@@ -181,7 +181,7 @@ Instantiates `CTorClass` passing `constructPojoInput` to constructor.
 
 Builds an object from `ctor` in sync mode by calling property constructor methods.
 
-#### [type PojoConstructorSync<Pojo, CtorInput>](https://dany-fedorov.github.io/pojo-constructor/types/PojoConstructorSync.html)
+#### [type PojoConstructorPropsSync<Pojo, CtorInput>](https://dany-fedorov.github.io/pojo-constructor/types/PojoConstructorPropsSync.html)
 
 A generic type that makes "Sync Pojo Constructor object" type from `Pojo` object type, check out the link for details.
 
@@ -197,7 +197,7 @@ Instantiates `CTorClass` passing `constructPojoInput` to constructor.
 
 Builds an object from `ctor` in async mode by calling property constructor methods.
 
-#### [type PojoConstructorAsync<Pojo, CtorInput>](https://dany-fedorov.github.io/pojo-constructor/types/PojoConstructorAsync.html)
+#### [type PojoConstructorPropsAsync<Pojo, CtorInput>](https://dany-fedorov.github.io/pojo-constructor/types/PojoConstructorPropsAsync.html)
 
 A generic type that makes "Async Pojo Constructor object" type from `Pojo` object type, check out the link for details.
 
@@ -218,7 +218,7 @@ In sync mode, only `sync` functions returned by property methods are called.
 In async mode, `promise` functions returned by property methods are called, but when there
 is no `promise` function, async mode falls back to `sync` function.
 
-#### [type PojoConstructor<Pojo, CtorInput>](https://dany-fedorov.github.io/pojo-constructor/types/PojoConstructor.html)
+#### [type PojoConstructorProps<Pojo, CtorInput>](https://dany-fedorov.github.io/pojo-constructor/types/PojoConstructorProps.html)
 
 A generic type that makes "Combined Sync + Async Pojo Constructor object" type from `Pojo` object type.
 

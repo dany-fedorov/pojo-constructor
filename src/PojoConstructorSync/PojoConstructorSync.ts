@@ -24,7 +24,7 @@ function cachingProxy2Sync<Pojo extends object, CtorInput = unknown>(
   }) as PojoConstructorCachingProxySync<Pojo, CtorInput>;
 }
 
-export function syncProps2Props<Pojo extends object, CtorInput = unknown>(
+function syncProps2Props<Pojo extends object, CtorInput = unknown>(
   constructorProps: PojoConstructorPropsSync<Pojo, CtorInput>,
 ): PojoConstructorProps<Pojo, CtorInput> {
   return decoratePojoConstructorMethods(constructorProps, (target, key) => {
