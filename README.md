@@ -60,7 +60,7 @@ type Env = 'dev' | 'staging' | 'production';
 /**
  * Define configuration properties in methods of a class.
  */
-class AppCfgCtor implements PojoConstructorSync<AppCfg, Env> {
+class AppCfgCtor implements PojoConstructorPropsSync<AppCfg, Env> {
   appName(env: Env) {
     return { value: `awesome-app-in-${env}` };
   }
@@ -119,7 +119,7 @@ type AppCfg = {
 
 type Env = 'dev' | 'staging' | 'production';
 
-class AppCfgCtor implements PojoConstructorAsync<AppCfg, Env> {
+class AppCfgCtor implements PojoConstructorPropsAsync<AppCfg, Env> {
   async appName(env: Env) {
     return { value: `awesome-app-in-${env}` };
   }
