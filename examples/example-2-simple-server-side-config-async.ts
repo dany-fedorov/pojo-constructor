@@ -1,8 +1,6 @@
-import {
-  PojoConstructorAsync,
-  constructPojoAsync,
-} from '../src/PojoConstructorAsync';
 import axios from 'axios';
+import type { PojoConstructorPropsAsync } from '../src/PojoConstructorAsync/PojoConstructorPropsAsync';
+import { constructPojoAsync } from '../src/PojoConstructorAsync/constructPojoAsync';
 
 type AppCfg = {
   appName: string;
@@ -15,7 +13,7 @@ type AppCfg = {
 
 type Env = 'dev' | 'staging' | 'production';
 
-class AppCfgCtor implements PojoConstructorAsync<AppCfg, Env> {
+class AppCfgCtor implements PojoConstructorPropsAsync<AppCfg, Env> {
   async appName(env: Env) {
     return { value: `awesome-app-in-${env}` };
   }

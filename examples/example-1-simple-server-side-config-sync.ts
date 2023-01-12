@@ -1,7 +1,5 @@
-import {
-  PojoConstructorSync,
-  constructPojoSync,
-} from '../src/PojoConstructorSync';
+import type { PojoConstructorPropsSync } from '../src/PojoConstructorSync/PojoConstructorPropsSync';
+import { constructPojoSync } from '../src/PojoConstructorSync/constructPojoSync';
 
 /**
  * Use TypeScript to make configuration type safe.
@@ -17,7 +15,7 @@ type Env = 'dev' | 'staging' | 'production';
 /**
  * Define configuration properties in methods of a class.
  */
-class AppCfgCtor implements PojoConstructorSync<AppCfg, Env> {
+class AppCfgCtor implements PojoConstructorPropsSync<AppCfg, Env> {
   appName(env: Env) {
     return { value: `awesome-app-in-${env}` };
   }

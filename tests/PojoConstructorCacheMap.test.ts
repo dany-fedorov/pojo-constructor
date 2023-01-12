@@ -1,4 +1,4 @@
-import { PojoConstructorCacheMap } from '../src/PojoConstructorCacheMap';
+import { PojoConstructorCacheMap } from '../src/PojoConstructor/PojoConstructorCacheMap';
 
 describe('PojoConstructorCacheMap', function () {
   test('Throws when cannot get', () => {

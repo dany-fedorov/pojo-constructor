@@ -26,15 +26,15 @@ Example use cases
     * [Sync mode API](#sync-mode-api)
         * [constructPojoSync(CTorClass, constructPojoInput?, constructPojoOptions?)](#constructpojosyncctorclass-constructpojoinput-constructpojooptions)
         * [constructPojoFromInstanceSync(ctor, constructPojoInput?, constructPojoOptions?)](#constructpojofrominstancesyncctor-constructpojoinput-constructpojooptions)
-        * [type PojoConstructorSync<Pojo, CtorInput>](#type-pojoconstructorsyncpojo-ctorinput)
+        * [type PojoConstructorPropsSync<Pojo, CtorInput>](#type-pojoconstructorsyncpojosync-ctorinput)
     * [Async mode API](#async-mode-api)
         * [constructPojoAsync(CTorClass, constructPojoInput?, constructPojoOptions?)](#constructpojoasyncctorclass-constructpojoinput-constructpojooptions)
         * [constructPojoFromInstanceAsync(ctor, constructPojoInput?, constructPojoOptions?)](#constructpojofrominstanceasyncctor-constructpojoinput-constructpojooptions)
-        * [type PojoConstructorAsync<Pojo, CtorInput>](#type-pojoconstructorasyncpojo-ctorinput)
+        * [type PojoConstructorPropsAsync<Pojo, CtorInput>](#type-pojoconstructorasyncpojoasync-ctorinput)
     * [Sync + Async Combined API](#sync--async-combined-api)
         * [constructPojo(CTorClass, constructPojoInput?, constructPojoOptions?)](#constructpojoctorclass-constructpojoinput-constructpojooptions)
         * [constructPojoFromInstance(ctor, constructPojoInput?, constructPojoOptions?)](#constructpojofrominstancector-constructpojoinput-constructpojooptions)
-        * [type PojoConstructor<Pojo, CtorInput>](#type-pojoconstructorpojo-ctorinput)
+        * [type PojoConstructorProps<Pojo, CtorInput>](#type-pojoconstructorpojo-ctorinput)
 * [Links](#links)
     * [GitHub](#github)
     * [Npm](#npm)
@@ -60,7 +60,7 @@ type Env = 'dev' | 'staging' | 'production';
 /**
  * Define configuration properties in methods of a class.
  */
-class AppCfgCtor implements PojoConstructorSync<AppCfg, Env> {
+class AppCfgCtor implements PojoConstructorPropsSync<AppCfg, Env> {
   appName(env: Env) {
     return { value: `awesome-app-in-${env}` };
   }
@@ -119,7 +119,7 @@ type AppCfg = {
 
 type Env = 'dev' | 'staging' | 'production';
 
-class AppCfgCtor implements PojoConstructorAsync<AppCfg, Env> {
+class AppCfgCtor implements PojoConstructorPropsAsync<AppCfg, Env> {
   async appName(env: Env) {
     return { value: `awesome-app-in-${env}` };
   }
