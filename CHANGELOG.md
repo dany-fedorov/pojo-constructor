@@ -1,3 +1,10 @@
+## [4.0.1](https://github.com/dany-fedorov/pojo-constructor/compare/v4.0.0...v4.0.1) (2023-01-12)
+
+
+### Bug Fixes
+
+* Do not export syncProps2Props and fix README link ([354a840](https://github.com/dany-fedorov/pojo-constructor/commit/354a840023adb37eae4f09ef1dfb626a4f146130))
+
 # [4.0.0](https://github.com/dany-fedorov/pojo-constructor/compare/v3.0.2...v4.0.0) (2023-01-12)
 
 
