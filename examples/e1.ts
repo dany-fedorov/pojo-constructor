@@ -1,10 +1,10 @@
-import { PojoConstructor } from '../src/PojoConstructor';
+import { PojoConstructor } from '../src/PojoConstructor/PojoConstructor';
 
 const ctor = new PojoConstructor<{ a: string; b: string; c: string }>({
   b() {
     return {
       sync: () => {
-        console.log('called');
+        // console.log('called');
         throw new Error('b err');
         // return { value: 'b-value' };
       },

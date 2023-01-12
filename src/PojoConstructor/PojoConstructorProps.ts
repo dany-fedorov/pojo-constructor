@@ -46,7 +46,7 @@ export type PojoConstructorCachingProxy<
     : never;
 };
 
-export type PojoConstructorProps<Pojo extends object, CtorInput> = {
+export type PojoConstructorProps<Pojo extends object, CtorInput = unknown> = {
   [K in keyof Pojo]: K extends string
     ? (
         input: CtorInput,

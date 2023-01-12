@@ -11,22 +11,40 @@ import { PojoConstructorCacheMap } from './PojoConstructorCacheMap';
 import type { PojoConstructorOptions } from './PojoConstructorOptions';
 import type { PojoConstructorHelpersHost } from './PojoConstructorHelpersHost';
 
+export function isPropProxiable(
+  target: object,
+  propName: string | symbol,
+): boolean {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  return typeof propName === 'string' && typeof target[propName] === 'function';
+}
+
+export function decoratePojoConstructorMethods<T extends object>(
+  obj: T,
+  makeDecorator: (target: T, key: string) => (...args: any[]) => unknown,
+): unknown {
+  const proxy = new Proxy(obj, {
+    get(target: T, propName: string | symbol): unknown {
+      if (!isPropProxiable(target, propName)) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        return target[propName];
+      }
+      return makeDecorator(target, propName as string);
+    },
+  });
+  return proxy;
+}
+
 function makeErrorCatchingProxy<Pojo extends object, CtorInput>(
   constructorProps: PojoConstructorProps<Pojo, CtorInput>,
   helpers: PojoConstructorHelpersHost<Pojo, CtorInput>,
 ) {
-  const errorCatchingProxy = new Proxy(constructorProps, {
-    get(
-      target: PojoConstructorProps<Pojo, CtorInput>,
-      key: string | symbol,
-    ): any {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      const propv = target[key];
-      if (typeof key === 'symbol' || typeof propv !== 'function') {
-        return propv;
-      }
-      return function constructPojo_errorCatchingProxyIntercepted(
+  const errorCatchingProxy = decoratePojoConstructorMethods(
+    constructorProps,
+    (target, key) => {
+      return function PojoConstructor_errorCatchingProxy_decoratorFn(
         interceptedInputArg?: CtorInput,
       ) {
         return {
@@ -46,7 +64,7 @@ function makeErrorCatchingProxy<Pojo extends object, CtorInput>(
             }
             if (typeof res.sync !== 'function') {
               throw new PojoConstructorCannotSyncResolveError(
-                `${constructPojo_errorCatchingProxyIntercepted.name}->sync`,
+                `${PojoConstructor_errorCatchingProxy_decoratorFn.name}->sync`,
                 key as string,
                 res,
               );
@@ -106,7 +124,7 @@ function makeErrorCatchingProxy<Pojo extends object, CtorInput>(
               }
             } else {
               throw new PojoConstructorCannotAsyncResolveError(
-                `${constructPojo_errorCatchingProxyIntercepted.name}->promise`,
+                `${PojoConstructor_errorCatchingProxy_decoratorFn.name}->promise`,
                 key as string,
                 res,
               );
@@ -116,7 +134,7 @@ function makeErrorCatchingProxy<Pojo extends object, CtorInput>(
         };
       };
     },
-  });
+  );
   return errorCatchingProxy as PojoConstructorProps<Pojo, CtorInput>;
 }
 
@@ -135,18 +153,10 @@ function makeCachingProxy<Pojo extends object, CtorInput>(
 
   const syncCache = new PojoConstructorCacheMap();
   const asyncCache = new PojoConstructorCacheMap();
-  const cachingProxy = new Proxy(constructorProps, {
-    get(
-      target: PojoConstructorProps<Pojo, CtorInput>,
-      key: string | symbol,
-    ): any {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      const propv = target[key];
-      if (typeof key === 'symbol' || typeof propv !== 'function') {
-        return propv;
-      }
-      return function constructPojo_cachingProxyIntercepted(
+  const cachingProxy = decoratePojoConstructorMethods(
+    constructorProps,
+    (target, key) => {
+      return function PojoConstructor_cachingProxy_decoratorFn(
         interceptedInputArg?: CtorInput,
       ) {
         const inputCacheKey = cacheKeyFn(interceptedInputArg);
@@ -165,19 +175,24 @@ function makeCachingProxy<Pojo extends object, CtorInput>(
             if (asyncCache.has(key, inputCacheKey)) {
               return asyncCache.get(key, inputCacheKey);
             }
-            const v = await (target as any)[key]
+            const p = (target as any)[key]
               .call(target, interceptedInputArg, helpers)
               .promise();
-            return v;
+            asyncCache.set(key, inputCacheKey, p);
+            p.then((v: unknown) => {
+              syncCache.set(key, inputCacheKey, v);
+              // eslint-disable-next-line @typescript-eslint/no-empty-function
+            }).catch(() => {});
+            return p;
           },
         };
       };
     },
-  });
+  );
   return cachingProxy as PojoConstructorCachingProxy<Pojo, CtorInput>;
 }
 
-export class PojoConstructorProxyHost<Pojo extends object, CtorInput> {
+export class PojoConstructorProxiesHost<Pojo extends object, CtorInput> {
   cachingProxy: PojoConstructorCachingProxy<Pojo, CtorInput>;
   errorCatchingProxy: PojoConstructorProps<Pojo, CtorInput>;
 

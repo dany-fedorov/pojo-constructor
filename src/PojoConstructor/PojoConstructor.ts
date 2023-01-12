@@ -2,10 +2,10 @@ import pMap from '@esm2cjs/p-map';
 import { getSortedKeysForPojoConstructorProps } from './getSortedKeysForPojoConstructorProps';
 import type {
   PojoConstructorProps,
-  PojoSyncOrPromiseResult,
+  PojoSyncAndPromiseResult,
 } from './PojoConstructorProps';
 import type { PojoConstructorOptions } from './PojoConstructorOptions';
-import { PojoConstructorProxyHost } from './PojoConstructorProxyHost';
+import { PojoConstructorProxiesHost } from './PojoConstructorProxiesHost';
 import { PojoConstructorHelpersHost } from './PojoConstructorHelpersHost';
 
 export class PojoConstructor<Pojo extends object, CtorInput = unknown> {
@@ -20,7 +20,7 @@ export class PojoConstructor<Pojo extends object, CtorInput = unknown> {
   new(
     input?: CtorInput,
     options?: PojoConstructorOptions<Pojo, CtorInput>,
-  ): PojoSyncOrPromiseResult<Pojo> {
+  ): PojoSyncAndPromiseResult<Pojo> {
     const effectiveOptions: PojoConstructorOptions<Pojo, CtorInput> = {
       ...(this.constructorOptions ?? {}),
       ...(options ?? {}),
@@ -30,7 +30,7 @@ export class PojoConstructor<Pojo extends object, CtorInput = unknown> {
       effectiveOptions,
     );
     const helpersHost = Object.create(null);
-    const proxiesHost = new PojoConstructorProxyHost(
+    const proxiesHost = new PojoConstructorProxiesHost(
       this.constructorProps,
       helpersHost,
       typeof effectiveOptions.cacheKeyFromConstructorInput !== 'function'
@@ -45,10 +45,10 @@ export class PojoConstructor<Pojo extends object, CtorInput = unknown> {
     );
     Object.setPrototypeOf(helpersHost, helpersHostPrototype);
     const doCatch = (caught: unknown, i: number | null) => {
-      if (typeof options?.catch !== 'function') {
+      if (typeof effectiveOptions?.catch !== 'function') {
         throw caught;
       }
-      return options?.catch(caught, {
+      return effectiveOptions?.catch(caught, {
         pojoConstructorStack: [...((caught as any).pojoConstructorStack ?? [])],
         pojoConstructorKeySequentialIndex: i,
       });
@@ -75,7 +75,7 @@ export class PojoConstructor<Pojo extends object, CtorInput = unknown> {
       return pojo as Pojo;
     };
     const constructPojoPromise = async () => {
-      const concurrency = options?.concurrency;
+      const concurrency = effectiveOptions?.concurrency;
       if (concurrency) {
         const pojo = Object.fromEntries(
           (
