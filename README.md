@@ -37,7 +37,7 @@ Example use cases
 
 ## 1. [Simple server-side config, sync mode](./examples/example-1-simple-server-side-config-sync-mode.ts)
 
-<small>(Run with `npm run ts-file ./examples/example-1-simple-server-side-config-sync-mode.ts`)</small>
+<sub>(Run with `npm run ts-file ./examples/example-1-simple-server-side-config-sync-mode.ts`)</sub>
 
 ```typescript
 /*
@@ -99,7 +99,7 @@ prints
 
 ## 2. [Server-side config with feature flags, async mode](./examples/example-2-simple-server-side-config-async-mode.ts)
 
-<small>(Run with `npm run ts-file ./examples/example-2-simple-server-side-config-async-mode.ts`)</small>
+<sub>(Run with `npm run ts-file ./examples/example-2-simple-server-side-config-async-mode.ts`)</sub>
 
 ```typescript
 type AppCfg = {
@@ -160,7 +160,7 @@ prints
 
 ## 3. [Using combined (sync + async) mode declaration](./examples/example-3-simple-server-side-config-combined-mode.ts)
 
-<small>(Run with `npm run ts-file ./examples/example-3-simple-server-side-config-combined-mode.ts`)</small>
+<sub>(Run with `npm run ts-file ./examples/example-3-simple-server-side-config-combined-mode.ts`)</sub>
 
 Using "sync mode" fails because `featureFlags` property constructor does not return a `sync` function, but this fail is
 handled by `handler` and so the rest of the object is still constructed.
@@ -236,7 +236,7 @@ console.log(configDev);
 
 ## 4. [Optional properties vs undefined value](./examples/example-4-optional-fields.ts)
 
-<small>(Run with `npm run ts-file ./examples/example-4-optional-fields.ts`)</small>
+<sub>(Run with `npm run ts-file ./examples/example-4-optional-fields.ts`)</sub>
 
 Notice that providing `{ value: undefined }` and empty object `{}` is different in the same way as having a property on
 an object with value `undefined` and not having a property on an object.
@@ -285,7 +285,7 @@ produces
 
 ## 5. [Using cache](./examples/example-5-cache.ts)
 
-<small>(Run with `npm run ts-file ./examples/example-5-cache.ts`)</small>
+<sub>(Run with `npm run ts-file ./examples/example-5-cache.ts`)</sub>
 
 Using `cache` proxy you can make sure that property constructor method is only called once.
 
