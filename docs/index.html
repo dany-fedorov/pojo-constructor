@@ -82,14 +82,23 @@ code.</p>
 <a href="#pojoconstructorsync" id="pojoconstructorsync" style="color: inherit; text-decoration: none;">
   <h2><a href="https://dany-fedorov.github.io/pojo-constructor/classes/PojoConstructorSync.html">PojoConstructorSync</a></h2>
 </a>
+<p>Constructor methods for each of properties returns <code>{ value }</code> object synchronously.</p>
 
 <a href="#pojoconstructorasync" id="pojoconstructorasync" style="color: inherit; text-decoration: none;">
   <h2><a href="https://dany-fedorov.github.io/pojo-constructor/classes/PojoConstructorAsync.html">PojoConstructorAsync</a></h2>
 </a>
+<p>Constructor methods for each of properties returns promise for <code>{ value }</code> object.</p>
 
 <a href="#pojoconstructor" id="pojoconstructor" style="color: inherit; text-decoration: none;">
   <h2><a href="https://dany-fedorov.github.io/pojo-constructor/classes/PojoConstructor.html">PojoConstructor</a></h2>
 </a>
+<p>Can operate in both sync mode and async mode.<br>
+Constructor methods for each of properties returns and object with either on of two methods or
+both - <code>{ sync, promise }</code>.</p>
+<ul>
+<li><code>promise</code> - returns promise for <code>{ value }</code> object</li>
+<li><code>sync</code> - returns <code>{ value }</code> object synchronously</li>
+</ul>
 
 <a href="#links" id="links" style="color: inherit; text-decoration: none;">
   <h1>Links</h1>
