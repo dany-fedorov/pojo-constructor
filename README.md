@@ -22,9 +22,9 @@ Example use cases
 * [Examples](#examples)
     * [1. Simple server-side config, sync mode](#1-simple-server-side-config-sync-mode)
     * [2. Server-side config with feature flags, async mode](#2-server-side-config-with-feature-flags-async-mode)
-    * [3. Using combined (sync + async) mode declaration](#3-using-combined--sync--async--mode-declaration)
-    * [4. Optional properties vs undefined value](#4-optional-properties-vs-undefined-value)
-    * [5. Using cache](#5-using-cache)
+    * [3. Using combined sync + async mode declaration](#3-using-combined-sync--async-mode-declaration)
+        * [4. Optional properties vs undefined value](#4-optional-properties-vs-undefined-value)
+        * [5. Using cache](#5-using-cache)
 * [API](#api)
     * [PojoConstructorSync](#pojoconstructorsync)
     * [PojoConstructorAsync](#pojoconstructorasync)
@@ -158,7 +158,7 @@ prints
 }
 ```
 
-## 3. [Using combined (sync + async) mode declaration](./examples/example-3-simple-server-side-config-combined-mode.ts)
+## 3. [Using combined sync + async mode declaration](./examples/example-3-simple-server-side-config-combined-mode.ts)
 
 <sub>(Run with `npm run ts-file ./examples/example-3-simple-server-side-config-combined-mode.ts`)</sub>
 
