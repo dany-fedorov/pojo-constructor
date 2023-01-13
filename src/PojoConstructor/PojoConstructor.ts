@@ -8,6 +8,97 @@ import type { PojoConstructorOptions } from './PojoConstructorOptions';
 import { PojoConstructorProxiesHost } from './PojoConstructorProxiesHost';
 import { PojoConstructorHelpersHost } from './PojoConstructorHelpersHost';
 
+function makePojoSyncConstructor<Pojo extends object, CtorInput>(
+  proxiesHost: PojoConstructorProxiesHost<Pojo, CtorInput>,
+  sortedKeys: string[],
+  input: CtorInput | undefined,
+  doCatch: (caught: unknown, i: number | null) => void,
+) {
+  return function constructPojoSync() {
+    const pojo: any = {};
+    let i = 0;
+    for (const k of sortedKeys) {
+      let v;
+      let setv = false;
+      try {
+        v = (proxiesHost.cachingProxy as any)[k]
+          .call(proxiesHost.errorCatchingProxy, input)
+          .sync();
+        setv = true;
+      } catch (caught: unknown) {
+        doCatch(caught, i);
+      }
+      if (setv && 'value' in v) {
+        pojo[k] = v.value;
+      }
+      i++;
+    }
+    return pojo as Pojo;
+  };
+}
+
+function makePojoPromiseConstructor<Pojo extends object, CtorInput>(
+  proxiesHost: PojoConstructorProxiesHost<Pojo, CtorInput>,
+  sortedKeys: string[],
+  input: CtorInput | undefined,
+  doCatch: (caught: unknown, i: number | null) => void,
+  effectiveOptions: PojoConstructorOptions<Pojo, CtorInput>,
+) {
+  return async function constructPojoPromise() {
+    const concurrency = effectiveOptions?.concurrency;
+    if (concurrency) {
+      const pojo = Object.fromEntries(
+        (
+          await pMap(
+            sortedKeys,
+            async (k) => {
+              let v;
+              let setv = false;
+              try {
+                v = await (proxiesHost.cachingProxy as any)[k]
+                  .call(proxiesHost.errorCatchingProxy, input)
+                  .promise();
+                setv = true;
+              } catch (caught) {
+                await doCatch(caught, null);
+              }
+              if (setv && 'value' in v) {
+                return [[k, v.value]];
+              } else {
+                return [];
+              }
+            },
+            {
+              concurrency,
+            },
+          )
+        ).flat(),
+      );
+      return pojo as Pojo;
+    } else {
+      const pojo: any = {};
+      let i = 0;
+      for (const k of sortedKeys) {
+        let v;
+        let setv = false;
+        try {
+          v = await (proxiesHost.cachingProxy as any)[k]
+            .call(proxiesHost.errorCatchingProxy, input)
+            .promise();
+          setv = true;
+        } catch (caught) {
+          await doCatch(caught, i);
+        }
+        if (setv && 'value' in v) {
+          pojo[k] = v.value;
+        }
+        i++;
+      }
+      return pojo as Pojo;
+    }
+  };
+}
+
 export class PojoConstructor<Pojo extends object, CtorInput = unknown> {
   constructor(
     public readonly constructorProps: PojoConstructorProps<Pojo, CtorInput>,
@@ -53,83 +144,20 @@ export class PojoConstructor<Pojo extends object, CtorInput = unknown> {
         pojoConstructorKeySequentialIndex: i,
       });
     };
-    const constructPojoSync = () => {
-      const pojo: any = {};
-      let i = 0;
-      for (const k of sortedKeys) {
-        let v;
-        let setv = false;
-        try {
-          v = (proxiesHost.cachingProxy as any)[k]
-            .call(proxiesHost.errorCatchingProxy, input)
-            .sync();
-          setv = true;
-        } catch (caught: unknown) {
-          doCatch(caught, i);
-        }
-        if (setv && 'value' in v) {
-          pojo[k] = v.value;
-        }
-        i++;
-      }
-      return pojo as Pojo;
-    };
-    const constructPojoPromise = async () => {
-      const concurrency = effectiveOptions?.concurrency;
-      if (concurrency) {
-        const pojo = Object.fromEntries(
-          (
-            await pMap(
-              sortedKeys,
-              async (k) => {
-                let v;
-                let setv = false;
-                try {
-                  v = await (proxiesHost.cachingProxy as any)[k]
-                    .call(proxiesHost.errorCatchingProxy, input)
-                    .promise();
-                  setv = true;
-                } catch (caught) {
-                  await doCatch(caught, null);
-                }
-                if (setv && 'value' in v) {
-                  return [[k, v.value]];
-                } else {
-                  return [];
-                }
-              },
-              {
-                concurrency,
-              },
-            )
-          ).flat(),
-        );
-        return pojo as Pojo;
-      } else {
-        const pojo: any = {};
-        let i = 0;
-        for (const k of sortedKeys) {
-          let v;
-          let setv = false;
-          try {
-            v = await (proxiesHost.cachingProxy as any)[k]
-              .call(proxiesHost.errorCatchingProxy, input)
-              .promise();
-            setv = true;
-          } catch (caught) {
-            await doCatch(caught, i);
-          }
-          if (setv && 'value' in v) {
-            pojo[k] = v.value;
-          }
-          i++;
-        }
-        return pojo as Pojo;
-      }
-    };
     return {
-      sync: constructPojoSync,
-      promise: constructPojoPromise,
+      sync: makePojoSyncConstructor<Pojo, CtorInput>(
+        proxiesHost,
+        sortedKeys,
+        input,
+        doCatch,
+      ),
+      promise: makePojoPromiseConstructor<Pojo, CtorInput>(
+        proxiesHost,
+        sortedKeys,
+        input,
+        doCatch,
+        effectiveOptions,
+      ),
     };
   }
 }
