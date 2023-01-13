@@ -369,7 +369,7 @@ Where
 - `sync` - returns `{ value }` object synchronously
 
 If you only specify `sync` methods, you can use them for "async mode" (calling `PojoConstructor#new().promise()`),
-but you cannot use "sync mode" (calling `PojoConstructor#new().sync()`) if you only specify `promise` method.
+but you cannot use "sync mode" (calling `PojoConstructor#new().sync()`) if you only specify `promise` methods.
 
 You can specify `promise` methods for some fields and still construct an object in "sync mode" if you also specify
 a `catch` option.
