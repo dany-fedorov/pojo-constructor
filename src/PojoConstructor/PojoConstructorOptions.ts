@@ -1,8 +1,9 @@
 import type { PojoKeyProcessingStage } from './PojoConstructorProps';
 
 export type PojoConstructorOptionsCatchFn = {
-  pojoConstructorStack: { key: string; stage: PojoKeyProcessingStage }[];
-  pojoConstructorKeySequentialIndex: number | null;
+  key: string;
+  keysStack: { key: string; stage: PojoKeyProcessingStage }[];
+  keySequentialIndex: number | null;
 };
 
 export type PojoConstructorOptions<Pojo extends object, CtorInput> = {

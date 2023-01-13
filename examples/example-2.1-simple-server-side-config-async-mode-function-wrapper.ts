@@ -43,18 +43,20 @@ class AppCfgCtor implements PojoConstructorPropsAsync<AppCfg, Env> {
 }
 
 (async () => {
-  console.log('--- dev ---');
+  console.log('- dev:');
   const configDev = await constructPojoAsync(AppCfgCtor, 'dev' as Env);
-  console.log(JSON.stringify(configDev, null, 2));
+  console.log(configDev);
 
-  console.log('--- staging ---');
+  console.log();
+  console.log('- staging:');
   const configStaging = await constructPojoAsync(AppCfgCtor, 'staging' as Env);
-  console.log(JSON.stringify(configStaging, null, 2));
+  console.log(configStaging);
 
-  console.log('--- production ---');
+  console.log();
+  console.log('- production:');
   const configProduction = await constructPojoAsync(
     AppCfgCtor,
     'production' as Env,
   );
-  console.log(JSON.stringify(configProduction, null, 2));
+  console.log(configProduction);
 })();

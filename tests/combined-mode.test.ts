@@ -1036,7 +1036,7 @@ describe('PojoConstructorProps + pojoFrom', function () {
     expect(pojo).toMatchInlineSnapshot(`
       Object {
         "a": "a-true",
-        "b": "a-undefined",
+        "b": "a-true",
         "c": "a-false",
         "d": "a-true",
       }
@@ -1069,7 +1069,7 @@ describe('PojoConstructorProps + pojoFrom', function () {
     expect(pojo).toMatchInlineSnapshot(`
       Object {
         "a": "a-true",
-        "b": "a-undefined",
+        "b": "a-true",
         "c": "a-false",
         "d": "a-true",
       }
@@ -1401,8 +1401,9 @@ describe('PojoConstructorProps + pojoFrom', function () {
         Object {
           "caught": [Error: Error!],
           "options": Object {
-            "pojoConstructorKeySequentialIndex": 0,
-            "pojoConstructorStack": Array [
+            "key": "a",
+            "keySequentialIndex": 0,
+            "keysStack": Array [
               Object {
                 "key": "a",
                 "stage": "key-method",
@@ -1413,8 +1414,9 @@ describe('PojoConstructorProps + pojoFrom', function () {
         Object {
           "caught": [Error: Error!],
           "options": Object {
-            "pojoConstructorKeySequentialIndex": 1,
-            "pojoConstructorStack": Array [
+            "key": "b",
+            "keySequentialIndex": 1,
+            "keysStack": Array [
               Object {
                 "key": "b",
                 "stage": "sync-result-method",
@@ -1463,8 +1465,9 @@ describe('PojoConstructorProps + pojoFrom', function () {
         Object {
           "caught": [Error: Error!],
           "options": Object {
-            "pojoConstructorKeySequentialIndex": 0,
-            "pojoConstructorStack": Array [
+            "key": "a",
+            "keySequentialIndex": 0,
+            "keysStack": Array [
               Object {
                 "key": "a",
                 "stage": "sync-result-method",
@@ -1475,8 +1478,9 @@ describe('PojoConstructorProps + pojoFrom', function () {
         Object {
           "caught": [Error: Error!],
           "options": Object {
-            "pojoConstructorKeySequentialIndex": 1,
-            "pojoConstructorStack": Array [
+            "key": "b",
+            "keySequentialIndex": 1,
+            "keysStack": Array [
               Object {
                 "key": "b",
                 "stage": "sync-result-method",
@@ -1521,8 +1525,9 @@ describe('PojoConstructorProps + pojoFrom', function () {
         Object {
           "caught": [Error: Error!],
           "options": Object {
-            "pojoConstructorKeySequentialIndex": 0,
-            "pojoConstructorStack": Array [
+            "key": "a",
+            "keySequentialIndex": 0,
+            "keysStack": Array [
               Object {
                 "key": "a",
                 "stage": "key-method",
@@ -1533,8 +1538,9 @@ describe('PojoConstructorProps + pojoFrom', function () {
         Object {
           "caught": [Error: Error!],
           "options": Object {
-            "pojoConstructorKeySequentialIndex": 1,
-            "pojoConstructorStack": Array [
+            "key": "b",
+            "keySequentialIndex": 1,
+            "keysStack": Array [
               Object {
                 "key": "b",
                 "stage": "promise-resolution",
@@ -1582,8 +1588,9 @@ describe('PojoConstructorProps + pojoFrom', function () {
         Object {
           "caught": [Error: Error!],
           "options": Object {
-            "pojoConstructorKeySequentialIndex": null,
-            "pojoConstructorStack": Array [
+            "key": "a",
+            "keySequentialIndex": null,
+            "keysStack": Array [
               Object {
                 "key": "a",
                 "stage": "key-method",
@@ -1594,8 +1601,9 @@ describe('PojoConstructorProps + pojoFrom', function () {
         Object {
           "caught": [Error: Error!],
           "options": Object {
-            "pojoConstructorKeySequentialIndex": null,
-            "pojoConstructorStack": Array [
+            "key": "b",
+            "keySequentialIndex": null,
+            "keysStack": Array [
               Object {
                 "key": "b",
                 "stage": "promise-resolution",
@@ -1645,8 +1653,9 @@ describe('PojoConstructorProps + pojoFrom', function () {
           "caught": [Error: PojoConstructorNonErrorCaughtWrapperError: Caught non error object when resolving "a" key in "key-method"
       PojoConstructorNonErrorCaughtWrapperError: - Caught object: "I'm thrown, but I'm not an error"],
           "options": Object {
-            "pojoConstructorKeySequentialIndex": null,
-            "pojoConstructorStack": Array [
+            "key": "a",
+            "keySequentialIndex": null,
+            "keysStack": Array [
               Object {
                 "key": "a",
                 "stage": "key-method",
@@ -1658,8 +1667,9 @@ describe('PojoConstructorProps + pojoFrom', function () {
           "caught": [Error: PojoConstructorNonErrorCaughtWrapperError: Caught non error object when resolving "a" key in "key-method"
       PojoConstructorNonErrorCaughtWrapperError: - Caught object: "I'm thrown, but I'm not an error"],
           "options": Object {
-            "pojoConstructorKeySequentialIndex": null,
-            "pojoConstructorStack": Array [
+            "key": "b",
+            "keySequentialIndex": null,
+            "keysStack": Array [
               Object {
                 "key": "b",
                 "stage": "promise-resolution",
@@ -1713,8 +1723,9 @@ describe('PojoConstructorProps + pojoFrom', function () {
           "caught": [Error: PojoConstructorNonErrorCaughtWrapperError: Caught non error object when resolving "a" key in "key-method"
       PojoConstructorNonErrorCaughtWrapperError: - Caught object: "I'm thrown, but I'm not an error"],
           "options": Object {
-            "pojoConstructorKeySequentialIndex": null,
-            "pojoConstructorStack": Array [
+            "key": "a",
+            "keySequentialIndex": null,
+            "keysStack": Array [
               Object {
                 "key": "a",
                 "stage": "key-method",
@@ -1725,8 +1736,9 @@ describe('PojoConstructorProps + pojoFrom', function () {
         Object {
           "caught": [Error: Hey],
           "options": Object {
-            "pojoConstructorKeySequentialIndex": null,
-            "pojoConstructorStack": Array [
+            "key": "b",
+            "keySequentialIndex": null,
+            "keysStack": Array [
               Object {
                 "key": "b",
                 "stage": "promise-result-method",
@@ -1865,8 +1877,9 @@ describe('PojoConstructorProps + pojoFrom', function () {
         Object {
           "caught": [Error: a-error],
           "options": Object {
-            "pojoConstructorKeySequentialIndex": 0,
-            "pojoConstructorStack": Array [
+            "key": "a",
+            "keySequentialIndex": 0,
+            "keysStack": Array [
               Object {
                 "key": "a",
                 "stage": "promise-result-method",
@@ -1877,8 +1890,9 @@ describe('PojoConstructorProps + pojoFrom', function () {
         Object {
           "caught": [TypeError: cachingProxy.a is not a function],
           "options": Object {
-            "pojoConstructorKeySequentialIndex": 1,
-            "pojoConstructorStack": Array [
+            "key": "b",
+            "keySequentialIndex": 1,
+            "keysStack": Array [
               Object {
                 "key": "b",
                 "stage": "promise-result-method",
@@ -1934,8 +1948,9 @@ describe('PojoConstructorProps + pojoFrom', function () {
         Object {
           "caught": [Error: a-error],
           "options": Object {
-            "pojoConstructorKeySequentialIndex": 0,
-            "pojoConstructorStack": Array [
+            "key": "a",
+            "keySequentialIndex": 0,
+            "keysStack": Array [
               Object {
                 "key": "a",
                 "stage": "promise-resolution",
@@ -1946,8 +1961,9 @@ describe('PojoConstructorProps + pojoFrom', function () {
         Object {
           "caught": [TypeError: cachingProxy.a is not a function],
           "options": Object {
-            "pojoConstructorKeySequentialIndex": 1,
-            "pojoConstructorStack": Array [
+            "key": "b",
+            "keySequentialIndex": 1,
+            "keysStack": Array [
               Object {
                 "key": "b",
                 "stage": "promise-result-method",

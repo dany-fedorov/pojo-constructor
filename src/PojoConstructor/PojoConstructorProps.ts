@@ -5,7 +5,7 @@ export type PojoKeyProcessingStage =
   | 'glue-code'
   | 'promise-result-method'
   | 'sync-result-method'
-  | 'promise'
+  | 'promise';
 
 export type PojoConstructorPropMethodValue<T> = undefined extends T
   ? {
@@ -35,10 +35,7 @@ export type PojoSyncOrPromiseResult<T> =
   | PojoSyncResult<T>
   | PojoPromiseResult<T>;
 
-export type PojoConstructorCachingProxy<
-  Pojo extends object,
-  CtorInput = unknown,
-> = {
+export type PojoConstructorProxy<Pojo extends object, CtorInput = unknown> = {
   [K in keyof Pojo]: K extends string
     ? (
         input?: CtorInput,

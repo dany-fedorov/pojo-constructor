@@ -1,7 +1,7 @@
 import type { PojoConstructorPropMethodValue } from '../PojoConstructor/PojoConstructorProps';
 import type { PojoConstructorHelpersHostAsync } from './PojoConstructorHelpersHostAsync';
 
-export type PojoConstructorCachingProxyAsync<
+export type PojoConstructorProxyAsync<
   Pojo extends object,
   CtorInput = unknown,
 > = {

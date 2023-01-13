@@ -36,14 +36,16 @@ const appCfgCtor = new PojoConstructorSync<AppCfg, Env>({
   },
 });
 
-console.log('--- dev ---');
+console.log('- dev:');
 const configDev = appCfgCtor.new('dev' as Env);
-console.log(JSON.stringify(configDev, null, 2));
+console.log(configDev);
 
-console.log('--- staging ---');
+console.log();
+console.log('- staging:');
 const configStaging = appCfgCtor.new('staging' as Env);
-console.log(JSON.stringify(configStaging, null, 2));
+console.log(configStaging);
 
-console.log('--- production ---');
+console.log();
+console.log('- production:');
 const configProduction = appCfgCtor.new('production' as Env);
-console.log(JSON.stringify(configProduction, null, 2));
+console.log(configProduction);

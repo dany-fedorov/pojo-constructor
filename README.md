@@ -19,9 +19,12 @@ Example use cases
 - Maintaining configuration for server-side application code
 - Building options for a complex JS class
 
+
 * [Examples](#examples)
     * [1. Simple server-side config, sync mode](#1-simple-server-side-config-sync-mode)
     * [2. Server-side config with feature flags, async mode](#2-server-side-config-with-feature-flags-async-mode)
+    * [3. Using combined (sync + async) mode declaration](#3-using-combined--sync--async--mode-declaration)
+    * [4. Optional properties vs undefined value](#4-optional-properties-vs-undefined-value)
 * [API](#api)
     * [PojoConstructorSync](#pojoconstructorsync)
     * [PojoConstructorAsync](#pojoconstructorasync)
@@ -34,7 +37,7 @@ Example use cases
 
 ## 1. [Simple server-side config, sync mode](./examples/example-1-simple-server-side-config-sync-mode.ts)
 
-(Run with `npm run ts-file ./examples/example-1-simple-server-side-config-sync-mode.ts`)
+<small>(Run with `npm run ts-file ./examples/example-1-simple-server-side-config-sync-mode.ts`)</small>
 
 ```typescript
 /*
@@ -86,17 +89,17 @@ console.log(JSON.stringify(configDev, null, 2));
 
 prints
 
-```json
+```
 {
-  "appName": "awesome-app-in-dev",
-  "listenOnPort": 3003,
-  "thirdPartyApiEndpoint": "https://sandbox.thrird-party-api.example.com"
+  appName: 'awesome-app-in-dev',
+  listenOnPort: 3003,
+  thirdPartyApiEndpoint: 'https://sandbox.thrird-party-api.example.com'
 }
 ```
 
 ## 2. [Server-side config with feature flags, async mode](./examples/example-2-simple-server-side-config-async-mode.ts)
 
-(Run with `npm run ts-file ./examples/example-2-simple-server-side-config-async-mode.ts`)
+<small>(Run with `npm run ts-file ./examples/example-2-simple-server-side-config-async-mode.ts`)</small>
 
 ```typescript
 type AppCfg = {
@@ -147,15 +150,197 @@ const appCfgCtor = new PojoConstructorAsync<AppCfg, Env>({
 
 prints
 
-```json
+```
 {
-  "appName": "awesome-app-in-dev",
-  "featureFlags": {
-    "feature1": false,
-    "feature2": true
-  },
-  "listenOnPort": 3003
+  appName: 'awesome-app-in-dev',
+  featureFlags: { feature1: false, feature2: true },
+  listenOnPort: 3003
 }
+```
+
+## 3. [Using combined (sync + async) mode declaration](./examples/example-3-simple-server-side-config-combined-mode.ts)
+
+<small>(Run with `npm run ts-file ./examples/example-3-simple-server-side-config-combined-mode.ts`)</small>
+
+Using "sync mode" fails because `featureFlags` property constructor does not return a `sync` function, but this fail is
+handled by `handler` and so the rest of the object is still constructed.
+
+Using "async mode" falls back on `sync` functions.
+
+```typescript
+type AppCfg = {
+  appName: string;
+  listenOnPort: number;
+  featureFlags: {
+    feature1: boolean;
+    feature2: boolean;
+  };
+};
+
+type Env = 'dev' | 'staging' | 'production';
+
+const appCfgCtor = new PojoConstructor<AppCfg, Env>({
+  appName(env: Env) {
+    const sync = () => {
+      return { value: `awesome-app-in-${env}` };
+    };
+    return { sync };
+  },
+
+  listenOnPort() {
+    const sync = () => {
+      return { value: 3003 };
+    };
+    return { sync };
+  },
+
+  /**
+   * Emulates fetching feature flags from database or a CMS.
+   */
+  featureFlags(env: Env) {
+    const promise = async () => {
+      const GET_0_OR_1 = `https://www.random.org/integers/?num=1&min=0&max=1&col=1&base=2&format=plain&rnd=id.${env}`;
+      const feature1Flag = Boolean(
+        Number((await axios.get(GET_0_OR_1 + 'feature1')).data),
+      );
+      const feature2Flag = Boolean(
+        Number((await axios.get(GET_0_OR_1 + 'feature2')).data),
+      );
+      return {
+        value: {
+          feature1: feature1Flag,
+          feature2: feature2Flag,
+        },
+      };
+    };
+    return { promise };
+  },
+});
+
+function handler(caught: unknown, { key }: PojoConstructorOptionsCatchFn) {
+  console.log(`- - Caught trying to construct ${key}`);
+  console.log(caught);
+  console.log('---');
+}
+
+console.log('- dev (sync mode):');
+const configDev = appCfgCtor.new('dev' as Env, { catch: handler }).sync();
+console.log(configDev);
+
+(async () => {
+  console.log('- dev (async mode):');
+  const configDev = await appCfgCtor.new('dev' as Env).promise();
+  console.log(configDev);
+})();
+```
+
+## 4. [Optional properties vs undefined value](./examples/example-4-optional-fields.ts)
+
+<small>(Run with `npm run ts-file ./examples/example-4-optional-fields.ts`)</small>
+
+Notice that providing `{ value: undefined }` and empty object `{}` is different in the same way as having a property on
+an object with value `undefined` and not having a property on an object.
+
+```typescript
+type AppCfg = {
+  dev_option?: string;
+  prod_option: string | undefined;
+};
+
+type Env = 'dev' | 'staging' | 'production';
+
+type Input = { env: Env; prodOption?: string };
+
+const appCfgCtor = new PojoConstructorSync<AppCfg, Input>({
+  dev_option({ env }) {
+    if (env === 'dev') {
+      return { value: 'this-option-is-only-set-in-dev' };
+    }
+    return {};
+  },
+
+  prod_option({ prodOption }) {
+    return {
+      value: prodOption,
+    };
+  },
+});
+```
+
+produces
+
+```
+- dev:
+{
+  dev_option: 'this-option-is-only-set-in-dev',
+  prod_option: undefined
+}
+
+- staging:
+{ prod_option: undefined }
+
+- production:
+{ prod_option: 'prodOption value' }
+```
+
+## 5. [Using cache](./examples/example-5-cache.ts)
+
+<small>(Run with `npm run ts-file ./examples/example-5-cache.ts`)</small>
+
+Using `cache` proxy you can make sure that property constructor method is only called once.
+
+```typescript
+type AppCfg = {
+  remote_fetched_option: string;
+  derived_option_1: string;
+  derived_option_2: string;
+};
+
+let remoteCalls = 0;
+
+const appCfgCtor = new PojoConstructorAsync<AppCfg>({
+  /**
+   * Emulates fetching feature flags from database or a CMS.
+   */
+  async remote_fetched_option() {
+    const GET_0_OR_1 = `https://www.random.org/integers/?num=1&min=0&max=1&col=1&base=2&format=plain&rnd=id.${Date.now()}`;
+    const value = (await axios.get(GET_0_OR_1)).data;
+    remoteCalls++;
+    return {
+      value: 'remote_fetched_option : ' + value,
+    };
+  },
+
+  async derived_option_1(_, { cache }) {
+    return {
+      value:
+        'derived_option_1 / ' + (await cache.remote_fetched_option()).value,
+    };
+  },
+
+  async derived_option_2(_, { cache }) {
+    return {
+      value: 'derived_option_2 / ' + (await cache.derived_option_1()).value,
+    };
+  },
+});
+
+(async () => {
+  const cfg = await appCfgCtor.new();
+  console.log(cfg);
+  console.log({ remoteCalls });
+})();
+```
+
+prints
+
+```
+{
+  derived_option_1: 'derived_option_1 / remote_fetched_option : 1',
+  derived_option_2: 'derived_option_2 / derived_option_1 / remote_fetched_option : 1',
+  remote_fetched_option: 'remote_fetched_option : 1'
+}
+{ remoteCalls: 1 }
 ```
 
 # API

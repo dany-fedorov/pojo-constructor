@@ -718,8 +718,9 @@ describe('PojoConstructorPropsSync + pojoFromSync', function () {
         Object {
           "caught": [Error: a-error],
           "options": Object {
-            "pojoConstructorKeySequentialIndex": 0,
-            "pojoConstructorStack": Array [
+            "key": "a",
+            "keySequentialIndex": 0,
+            "keysStack": Array [
               Object {
                 "key": "a",
                 "stage": "sync-result-method",
@@ -730,8 +731,9 @@ describe('PojoConstructorPropsSync + pojoFromSync', function () {
         Object {
           "caught": [Error: a-error],
           "options": Object {
-            "pojoConstructorKeySequentialIndex": 1,
-            "pojoConstructorStack": Array [
+            "key": "b",
+            "keySequentialIndex": 1,
+            "keysStack": Array [
               Object {
                 "key": "b",
                 "stage": "sync-result-method",

@@ -1,11 +1,11 @@
 import { PojoConstructor } from '../PojoConstructor/PojoConstructor';
 import type { PojoConstructorOptionsAsync } from './PojoConstructorOptionsAsync';
 import type {
-  PojoConstructorCachingProxyAsync,
+  PojoConstructorProxyAsync,
   PojoConstructorPropsAsync,
 } from './PojoConstructorPropsAsync';
 import type {
-  PojoConstructorCachingProxy,
+  PojoConstructorProxy,
   PojoConstructorProps,
 } from '../PojoConstructor/PojoConstructorProps';
 import { PojoConstructorHelpersHostAsync } from './PojoConstructorHelpersHostAsync';
@@ -13,7 +13,7 @@ import { decoratePojoConstructorMethods } from '../PojoConstructor/PojoConstruct
 import type { PojoConstructorHelpersHost } from '../PojoConstructor/PojoConstructorHelpersHost';
 
 function cachingProxy2Async<Pojo extends object, CtorInput = unknown>(
-  cachingProxy: PojoConstructorCachingProxy<Pojo, CtorInput>,
+  cachingProxy: PojoConstructorProxy<Pojo, CtorInput>,
 ) {
   return decoratePojoConstructorMethods(cachingProxy, (target, key) => {
     return function PojoConstructor_cachingProxy2Async_decoratorFn(
@@ -21,7 +21,7 @@ function cachingProxy2Async<Pojo extends object, CtorInput = unknown>(
     ) {
       return (target as any)[key](input).promise();
     };
-  }) as PojoConstructorCachingProxyAsync<Pojo, CtorInput>;
+  }) as PojoConstructorProxyAsync<Pojo, CtorInput>;
 }
 
 function asyncProps2Props<Pojo extends object, CtorInput = unknown>(
@@ -38,6 +38,7 @@ function asyncProps2Props<Pojo extends object, CtorInput = unknown>(
             input,
             new PojoConstructorHelpersHostAsync(
               cachingProxy2Async<Pojo, CtorInput>(helpers.cache),
+              cachingProxy2Async<Pojo, CtorInput>(helpers.proxy),
             ),
           );
         },

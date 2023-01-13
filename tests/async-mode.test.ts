@@ -250,26 +250,32 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
   test('it should reassign input - using cachingProxy argument', async () => {
     let acounter = 0;
     type O = { a: string; b: string; c: string; d: string };
-    const c: PojoConstructorPropsAsync<O, boolean> = {
+    const c: PojoConstructorPropsAsync<O, boolean | null> = {
       a: async (input) => {
         acounter++;
         return { value: `a-string-${input}` };
       },
       b: async (
         _,
-        { cache: cachingProxy }: PojoConstructorHelpersHostAsync<O, boolean>,
+        {
+          cache: cachingProxy,
+        }: PojoConstructorHelpersHostAsync<O, boolean | null>,
       ) => {
-        return cachingProxy.a();
+        return cachingProxy.a(null);
       },
       c: async (
         input,
-        { cache: cachingProxy }: PojoConstructorHelpersHostAsync<O, boolean>,
+        {
+          cache: cachingProxy,
+        }: PojoConstructorHelpersHostAsync<O, boolean | null>,
       ) => {
         return cachingProxy.a(!input);
       },
       d: async (
         input,
-        { cache: cachingProxy }: PojoConstructorHelpersHostAsync<O, boolean>,
+        {
+          cache: cachingProxy,
+        }: PojoConstructorHelpersHostAsync<O, boolean | null>,
       ) => {
         return cachingProxy.a(input);
       },
@@ -278,12 +284,12 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
     expect(pojo).toMatchInlineSnapshot(`
       Object {
         "a": "a-string-true",
-        "b": "a-string-undefined",
+        "b": "a-string-null",
         "c": "a-string-false",
         "d": "a-string-true",
       }
     `);
-    expect(acounter).toBe(3); // true, false, undefined
+    expect(acounter).toBe(3); // true, false, null
   });
 
   test('it should resolve with concurrency setting', async () => {
@@ -691,8 +697,9 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
         Object {
           "caught": [Error: Error!],
           "options": Object {
-            "pojoConstructorKeySequentialIndex": 0,
-            "pojoConstructorStack": Array [
+            "key": "a",
+            "keySequentialIndex": 0,
+            "keysStack": Array [
               Object {
                 "key": "a",
                 "stage": "promise-resolution",
@@ -703,8 +710,9 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
         Object {
           "caught": [Error: Error!],
           "options": Object {
-            "pojoConstructorKeySequentialIndex": 1,
-            "pojoConstructorStack": Array [
+            "key": "b",
+            "keySequentialIndex": 1,
+            "keysStack": Array [
               Object {
                 "key": "b",
                 "stage": "promise-resolution",
@@ -753,8 +761,9 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
         Object {
           "caught": [Error: Error!],
           "options": Object {
-            "pojoConstructorKeySequentialIndex": null,
-            "pojoConstructorStack": Array [
+            "key": "a",
+            "keySequentialIndex": null,
+            "keysStack": Array [
               Object {
                 "key": "a",
                 "stage": "promise-resolution",
@@ -765,8 +774,9 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
         Object {
           "caught": [Error: Error!],
           "options": Object {
-            "pojoConstructorKeySequentialIndex": null,
-            "pojoConstructorStack": Array [
+            "key": "b",
+            "keySequentialIndex": null,
+            "keysStack": Array [
               Object {
                 "key": "b",
                 "stage": "promise-resolution",
@@ -976,8 +986,9 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
         Object {
           "caught": [Error: a-error],
           "options": Object {
-            "pojoConstructorKeySequentialIndex": 0,
-            "pojoConstructorStack": Array [
+            "key": "a",
+            "keySequentialIndex": 0,
+            "keysStack": Array [
               Object {
                 "key": "a",
                 "stage": "promise-resolution",
@@ -988,8 +999,9 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
         Object {
           "caught": [Error: a-error],
           "options": Object {
-            "pojoConstructorKeySequentialIndex": 1,
-            "pojoConstructorStack": Array [
+            "key": "b",
+            "keySequentialIndex": 1,
+            "keysStack": Array [
               Object {
                 "key": "b",
                 "stage": "promise-resolution",
@@ -1029,8 +1041,9 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
         Object {
           "caught": [Error: a-error],
           "options": Object {
-            "pojoConstructorKeySequentialIndex": 0,
-            "pojoConstructorStack": Array [
+            "key": "a",
+            "keySequentialIndex": 0,
+            "keysStack": Array [
               Object {
                 "key": "a",
                 "stage": "promise-result-method",
@@ -1041,8 +1054,9 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
         Object {
           "caught": [Error: a-error],
           "options": Object {
-            "pojoConstructorKeySequentialIndex": 1,
-            "pojoConstructorStack": Array [
+            "key": "b",
+            "keySequentialIndex": 1,
+            "keysStack": Array [
               Object {
                 "key": "b",
                 "stage": "promise-resolution",
@@ -1083,8 +1097,9 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
         Object {
           "caught": [Error: a-error],
           "options": Object {
-            "pojoConstructorKeySequentialIndex": null,
-            "pojoConstructorStack": Array [
+            "key": "a",
+            "keySequentialIndex": null,
+            "keysStack": Array [
               Object {
                 "key": "a",
                 "stage": "promise-resolution",
@@ -1095,8 +1110,9 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
         Object {
           "caught": [Error: a-error],
           "options": Object {
-            "pojoConstructorKeySequentialIndex": null,
-            "pojoConstructorStack": Array [
+            "key": "b",
+            "keySequentialIndex": null,
+            "keysStack": Array [
               Object {
                 "key": "b",
                 "stage": "promise-resolution",

@@ -12,7 +12,7 @@ function makePojoSyncConstructor<Pojo extends object, CtorInput>(
   proxiesHost: PojoConstructorProxiesHost<Pojo, CtorInput>,
   sortedKeys: string[],
   input: CtorInput | undefined,
-  doCatch: (caught: unknown, i: number | null) => void,
+  doCatch: (caught: unknown, i: number | null, key: string) => void,
 ) {
   return function constructPojoSync() {
     const pojo: any = {};
@@ -26,7 +26,7 @@ function makePojoSyncConstructor<Pojo extends object, CtorInput>(
           .sync();
         setv = true;
       } catch (caught: unknown) {
-        doCatch(caught, i);
+        doCatch(caught, i, k);
       }
       if (setv && 'value' in v) {
         pojo[k] = v.value;
@@ -41,7 +41,7 @@ function makePojoPromiseConstructor<Pojo extends object, CtorInput>(
   proxiesHost: PojoConstructorProxiesHost<Pojo, CtorInput>,
   sortedKeys: string[],
   input: CtorInput | undefined,
-  doCatch: (caught: unknown, i: number | null) => void,
+  doCatch: (caught: unknown, i: number | null, key: string) => void,
   effectiveOptions: PojoConstructorOptions<Pojo, CtorInput>,
 ) {
   return async function constructPojoPromise() {
@@ -60,7 +60,7 @@ function makePojoPromiseConstructor<Pojo extends object, CtorInput>(
                   .promise();
                 setv = true;
               } catch (caught) {
-                await doCatch(caught, null);
+                await doCatch(caught, null, k);
               }
               if (setv && 'value' in v) {
                 return [[k, v.value]];
@@ -87,7 +87,7 @@ function makePojoPromiseConstructor<Pojo extends object, CtorInput>(
             .promise();
           setv = true;
         } catch (caught) {
-          await doCatch(caught, i);
+          await doCatch(caught, i, k);
         }
         if (setv && 'value' in v) {
           pojo[k] = v.value;
@@ -159,6 +159,7 @@ export class PojoConstructor<Pojo extends object, CtorInput = unknown> {
     const helpersHost = Object.create(null);
     const proxiesHost = new PojoConstructorProxiesHost(
       this.constructorProps,
+      input,
       helpersHost,
       typeof effectiveOptions.cacheKeyFromConstructorInput !== 'function'
         ? {}
@@ -169,15 +170,17 @@ export class PojoConstructor<Pojo extends object, CtorInput = unknown> {
     );
     const helpersHostPrototype = new PojoConstructorHelpersHost(
       proxiesHost.cachingProxy,
+      proxiesHost.errorCatchingProxy,
     );
     Object.setPrototypeOf(helpersHost, helpersHostPrototype);
-    const doCatch = (caught: unknown, i: number | null) => {
+    const doCatch = (caught: unknown, i: number | null, key: string) => {
       if (typeof effectiveOptions?.catch !== 'function') {
         throw caught;
       }
       return effectiveOptions?.catch(caught, {
-        pojoConstructorStack: [...((caught as any).pojoConstructorStack ?? [])],
-        pojoConstructorKeySequentialIndex: i,
+        key,
+        keysStack: [...((caught as any).pojoConstructorStack ?? [])],
+        keySequentialIndex: i,
       });
     };
     return {
