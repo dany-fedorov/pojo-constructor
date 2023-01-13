@@ -100,16 +100,25 @@ function makePojoPromiseConstructor<Pojo extends object, CtorInput>(
 }
 
 /**
+ * Can operate in both sync mode and async mode.<br>
+ * Constructor methods for each of properties returns and object with either on of two methods or both - `{ sync, promise }`.
+ * - `promise` - returns promise for `{ value }` object
+ * - `sync` - returns `{ value }` object synchronously
+ *
  * @usage
+ * ```typescript
  * // Sync mode
  * const ctor = new PojoConstructor<{ field: number }, number>({ field: (input) => ({ sync: () => ({ value: input + 2 })}) })
  * const obj = ctor.new(2).sync();
  * assert.strictEqual(obj.field, 4);
+ * ```
  *
+ * ```typescript
  * // Async mode
  * const ctor = new PojoConstructor<{ field: number }, number>({ field: (input) => ({ promise: () => ({ value: input + 2 })}) })
  * const obj = await ctor.new(2).promise();
  * assert.strictEqual(obj.field, 4);
+ * ```
  */
 export class PojoConstructor<Pojo extends object, CtorInput = unknown> {
   constructor(

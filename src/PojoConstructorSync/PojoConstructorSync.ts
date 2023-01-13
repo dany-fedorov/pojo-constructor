@@ -56,10 +56,14 @@ function syncProps2Props<Pojo extends object, CtorInput = unknown>(
 }
 
 /**
+ * Constructor methods for each of properties returns `{ value }` object synchronously.
+ *
  * @usage
+ * ```typescript
  * const ctor = new PojoConstructorSync<{ field: number }, number>({ field: (input) => ({ value: input + 2 }) })
  * const obj = ctor.new(2);
  * assert.strictEqual(obj.field, 4);
+ * ```
  */
 export class PojoConstructorSync<Pojo extends object, CtorInput = unknown> {
   public readonly pojoConstructor: PojoConstructor<Pojo, CtorInput>;

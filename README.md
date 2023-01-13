@@ -162,9 +162,20 @@ prints
 
 ## [PojoConstructorSync](https://dany-fedorov.github.io/pojo-constructor/classes/PojoConstructorSync.html)
 
+Constructor methods for each of properties returns `{ value }` object synchronously.
+
 ## [PojoConstructorAsync](https://dany-fedorov.github.io/pojo-constructor/classes/PojoConstructorAsync.html)
 
+Constructor methods for each of properties returns promise for `{ value }` object.
+
 ## [PojoConstructor](https://dany-fedorov.github.io/pojo-constructor/classes/PojoConstructor.html)
+
+Can operate in both sync mode and async mode.<br>
+Constructor methods for each of properties returns and object with either on of two methods or
+both - `{ sync, promise }`.
+
+- `promise` - returns promise for `{ value }` object
+- `sync` - returns `{ value }` object synchronously
 
 # Links
 
