@@ -99,6 +99,18 @@ function makePojoPromiseConstructor<Pojo extends object, CtorInput>(
   };
 }
 
+/**
+ * @usage
+ * // Sync mode
+ * const ctor = new PojoConstructor<{ field: number }, number>({ field: (input) => ({ sync: () => ({ value: input + 2 })}) })
+ * const obj = ctor.new(2).sync();
+ * assert.strictEqual(obj.field, 4);
+ *
+ * // Async mode
+ * const ctor = new PojoConstructor<{ field: number }, number>({ field: (input) => ({ promise: () => ({ value: input + 2 })}) })
+ * const obj = await ctor.new(2).promise();
+ * assert.strictEqual(obj.field, 4);
+ */
 export class PojoConstructor<Pojo extends object, CtorInput = unknown> {
   constructor(
     public readonly constructorProps: PojoConstructorProps<Pojo, CtorInput>,

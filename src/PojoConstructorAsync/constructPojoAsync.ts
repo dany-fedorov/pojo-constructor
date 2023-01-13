@@ -2,6 +2,9 @@ import type { PojoConstructorPropsAsync } from './PojoConstructorPropsAsync';
 import type { PojoConstructorOptionsAsync } from './PojoConstructorOptionsAsync';
 import { PojoConstructorAsync } from './PojoConstructorAsync';
 
+/**
+ * Wrapper for {@link PojoConstructorPropsAsync}.
+ */
 export function constructPojoFromInstanceAsync<
   Pojo extends object,
   CtorInput = unknown,
@@ -19,21 +22,17 @@ export function constructPojoFromInstanceAsync<
 
 /**
  * Wrapper for {@link constructPojoFromInstance}.<br>
- * Instantiates `CTorClass` passing `constructPojoInput` to constructor.
- *
- * @param CTorClass - Class object (constructor function).
- * @param pojoConstructorInput - An input that will be passed to each property constructor method.
- * @param pojoConstructorOptions
+ * Instantiates `CTorPropsAsyncClass` passing `constructPojoInput` to constructor.
  */
 export function constructPojoAsync<Pojo extends object, CtorInput = unknown>(
-  CTorClass: {
+  CTorPropsAsyncClass: {
     new (input?: CtorInput): PojoConstructorPropsAsync<Pojo, CtorInput>;
   },
   pojoConstructorInput?: CtorInput,
   pojoConstructorOptions?: PojoConstructorOptionsAsync<Pojo, CtorInput>,
 ): Promise<Pojo> {
   return constructPojoFromInstanceAsync(
-    new CTorClass(pojoConstructorInput),
+    new CTorPropsAsyncClass(pojoConstructorInput),
     pojoConstructorInput,
     pojoConstructorOptions,
   );

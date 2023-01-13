@@ -23,29 +23,20 @@ Example use cases
     * [1. Simple server-side config, sync mode](#1-simple-server-side-config-sync-mode)
     * [2. Server-side config with feature flags, async mode](#2-server-side-config-with-feature-flags-async-mode)
 * [API](#api)
-    * [Sync mode API](#sync-mode-api)
-        * [constructPojoSync(CTorClass, constructPojoInput?, constructPojoOptions?)](#constructpojosyncctorclass-constructpojoinput-constructpojooptions)
-        * [constructPojoFromInstanceSync(ctor, constructPojoInput?, constructPojoOptions?)](#constructpojofrominstancesyncctor-constructpojoinput-constructpojooptions)
-        * [type PojoConstructorPropsSync<Pojo, CtorInput>](#type-pojoconstructorsyncpojosync-ctorinput)
-    * [Async mode API](#async-mode-api)
-        * [constructPojoAsync(CTorClass, constructPojoInput?, constructPojoOptions?)](#constructpojoasyncctorclass-constructpojoinput-constructpojooptions)
-        * [constructPojoFromInstanceAsync(ctor, constructPojoInput?, constructPojoOptions?)](#constructpojofrominstanceasyncctor-constructpojoinput-constructpojooptions)
-        * [type PojoConstructorPropsAsync<Pojo, CtorInput>](#type-pojoconstructorasyncpojoasync-ctorinput)
-    * [Sync + Async Combined API](#sync--async-combined-api)
-        * [constructPojo(CTorClass, constructPojoInput?, constructPojoOptions?)](#constructpojoctorclass-constructpojoinput-constructpojooptions)
-        * [constructPojoFromInstance(ctor, constructPojoInput?, constructPojoOptions?)](#constructpojofrominstancector-constructpojoinput-constructpojooptions)
-        * [type PojoConstructorProps<Pojo, CtorInput>](#type-pojoconstructorpojo-ctorinput)
+    * [PojoConstructorSync](#pojoconstructorsync)
+    * [PojoConstructorAsync](#pojoconstructorasync)
+    * [PojoConstructor](#pojoconstructor)
 * [Links](#links)
     * [GitHub](#github)
     * [Npm](#npm)
 
 # Examples
 
-## 1. [Simple server-side config, sync mode](./examples/example-1-simple-server-side-config-sync.ts)
+## 1. [Simple server-side config, sync mode](./examples/example-1-simple-server-side-config-sync-mode.ts)
 
-(Run with `npm run ts-file ./examples/example-1-simple-server-side-config-sync.ts`)
+(Run with `npm run ts-file ./examples/example-1-simple-server-side-config-sync-mode.ts`)
 
-```ts
+```typescript
 /*
  * Use TypeScript to make configuration type safe.
  */
@@ -60,14 +51,14 @@ type Env = 'dev' | 'staging' | 'production';
 /**
  * Define configuration properties in methods of a class.
  */
-class AppCfgCtor implements PojoConstructorPropsSync<AppCfg, Env> {
+const appCfgCtor = new PojoConstructorSync<AppCfg, Env>({
   appName(env: Env) {
     return { value: `awesome-app-in-${env}` };
-  }
+  },
 
   listenOnPort() {
     return { value: 3003 };
-  }
+  },
 
   thirdPartyApiEndpoint(env: Env) {
     switch (env) {
@@ -79,13 +70,13 @@ class AppCfgCtor implements PojoConstructorPropsSync<AppCfg, Env> {
       default:
         throw new Error('Unknown env');
     }
-  }
-}
+  },
+});
 
 /**
  * Produce configuration for dev env.
  */
-const configDev = constructPojoSync(AppCfgCtor, 'dev' as Env);
+const configDev = appCfgCtor.new('dev' as Env);
 
 /**
  * Print result.
@@ -103,9 +94,9 @@ prints
 }
 ```
 
-## 2. [Server-side config with feature flags, async mode](./examples/example-2-simple-server-side-config-async.ts)
+## 2. [Server-side config with feature flags, async mode](./examples/example-2-simple-server-side-config-async-mode.ts)
 
-(Run with `npm run ts-file ./examples/example-2-simple-server-side-config-async.ts`)
+(Run with `npm run ts-file ./examples/example-2-simple-server-side-config-async-mode.ts`)
 
 ```typescript
 type AppCfg = {
@@ -119,14 +110,14 @@ type AppCfg = {
 
 type Env = 'dev' | 'staging' | 'production';
 
-class AppCfgCtor implements PojoConstructorPropsAsync<AppCfg, Env> {
+const appCfgCtor = new PojoConstructorAsync<AppCfg, Env>({
   async appName(env: Env) {
     return { value: `awesome-app-in-${env}` };
-  }
+  },
 
   async listenOnPort() {
     return { value: 3003 };
-  }
+  },
 
   /**
    * Emulates fetching feature flags from database or a CMS.
@@ -145,11 +136,11 @@ class AppCfgCtor implements PojoConstructorPropsAsync<AppCfg, Env> {
         feature2: feature2Flag,
       },
     };
-  }
-}
+  },
+});
 
 (async () => {
-  const configDev = await constructPojoAsync(AppCfgCtor, 'dev' as Env);
+  const configDev = await appCfgCtor.new('dev' as Env);
   console.log(JSON.stringify(configDev, null, 2));
 })();
 ```
@@ -167,60 +158,13 @@ prints
 }
 ```
 
-# [API](https://dany-fedorov.github.io/pojo-constructor/modules.html)
+# API
 
-## Sync mode API
+## [PojoConstructorSync](https://dany-fedorov.github.io/pojo-constructor/classes/PojoConstructorSync.html)
 
-#### [constructPojoSync(CTorClass, constructPojoInput?, constructPojoOptions?)](https://dany-fedorov.github.io/pojo-constructor/functions/constructPojoSync.html)
+## [PojoConstructorAsync](https://dany-fedorov.github.io/pojo-constructor/classes/PojoConstructorAsync.html)
 
-Wrapper
-for [constructPojoFromInstanceSync(ctor, constructPojoInput?, constructPojoOptions?)](https://dany-fedorov.github.io/pojo-constructor/functions/constructPojoFromInstanceSync.html).<br>
-Instantiates `CTorClass` passing `constructPojoInput` to constructor.
-
-#### [constructPojoFromInstanceSync(ctor, constructPojoInput?, constructPojoOptions?)](https://dany-fedorov.github.io/pojo-constructor/functions/constructPojoFromInstanceSync.html)
-
-Builds an object from `ctor` in sync mode by calling property constructor methods.
-
-#### [type PojoConstructorPropsSync<Pojo, CtorInput>](https://dany-fedorov.github.io/pojo-constructor/types/PojoConstructorPropsSync.html)
-
-A generic type that makes "Sync Pojo Constructor object" type from `Pojo` object type, check out the link for details.
-
-## Async mode API
-
-#### [constructPojoAsync(CTorClass, constructPojoInput?, constructPojoOptions?)](https://dany-fedorov.github.io/pojo-constructor/functions/constructPojoAsync.html)
-
-Wrapper
-for [constructPojoFromInstanceSync(ctor, constructPojoInput?, constructPojoOptions?)](https://dany-fedorov.github.io/pojo-constructor/functions/constructPojoFromInstanceAsync.html).<br>
-Instantiates `CTorClass` passing `constructPojoInput` to constructor.
-
-#### [constructPojoFromInstanceAsync(ctor, constructPojoInput?, constructPojoOptions?)](https://dany-fedorov.github.io/pojo-constructor/functions/constructPojoFromInstanceAsync.html)
-
-Builds an object from `ctor` in async mode by calling property constructor methods.
-
-#### [type PojoConstructorPropsAsync<Pojo, CtorInput>](https://dany-fedorov.github.io/pojo-constructor/types/PojoConstructorPropsAsync.html)
-
-A generic type that makes "Async Pojo Constructor object" type from `Pojo` object type, check out the link for details.
-
-## Sync + Async Combined API
-
-#### [constructPojo(CTorClass, constructPojoInput?, constructPojoOptions?)](https://dany-fedorov.github.io/pojo-constructor/functions/constructPojo.html)
-
-Wrapper
-for [constructPojoFromInstance(ctor, constructPojoInput?, constructPojoOptions?)](https://dany-fedorov.github.io/pojo-constructor/functions/constructPojoFromInstance.html).<br>
-Instantiates `CTorClass` passing `constructPojoInput` to constructor.
-
-#### [constructPojoFromInstance(ctor, constructPojoInput?, constructPojoOptions?)](https://dany-fedorov.github.io/pojo-constructor/functions/constructPojoFromInstance.html)
-
-Returns object with `sync`, `promise` functions that can be called to build
-an object from `ctor` in sync or async mode.
-
-In sync mode, only `sync` functions returned by property methods are called.
-In async mode, `promise` functions returned by property methods are called, but when there
-is no `promise` function, async mode falls back to `sync` function.
-
-#### [type PojoConstructorProps<Pojo, CtorInput>](https://dany-fedorov.github.io/pojo-constructor/types/PojoConstructorProps.html)
-
-A generic type that makes "Combined Sync + Async Pojo Constructor object" type from `Pojo` object type.
+## [PojoConstructor](https://dany-fedorov.github.io/pojo-constructor/classes/PojoConstructor.html)
 
 # Links
 

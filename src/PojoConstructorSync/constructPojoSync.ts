@@ -2,6 +2,9 @@ import type { PojoConstructorPropsSync } from './PojoConstructorPropsSync';
 import type { PojoConstructorOptionsSync } from './PojoConstructorOptionsSync';
 import { PojoConstructorSync } from './PojoConstructorSync';
 
+/**
+ * Wrapper for {@link PojoConstructorSync}.
+ */
 export function constructPojoFromInstanceSync<
   Pojo extends object,
   CtorInput = unknown,
@@ -19,21 +22,17 @@ export function constructPojoFromInstanceSync<
 
 /**
  * Wrapper for {@link constructPojoFromInstance}.<br>
- * Instantiates `CTorClass` passing `constructPojoInput` to constructor.
- *
- * @param CTorClass - Class object (constructor function).
- * @param pojoConstructorInput - An input that will be passed to each property constructor method.
- * @param pojoConstructorOptions
+ * Instantiates `CTorPropsSyncClass` passing `constructPojoInput` to constructor.
  */
 export function constructPojoSync<Pojo extends object, CtorInput = unknown>(
-  CTorClass: {
+  CTorPropsSyncClass: {
     new (input?: CtorInput): PojoConstructorPropsSync<Pojo, CtorInput>;
   },
   pojoConstructorInput?: CtorInput,
   pojoConstructorOptions?: PojoConstructorOptionsSync<Pojo, CtorInput>,
 ): Pojo {
   return constructPojoFromInstanceSync(
-    new CTorClass(pojoConstructorInput),
+    new CTorPropsSyncClass(pojoConstructorInput),
     pojoConstructorInput,
     pojoConstructorOptions,
   );

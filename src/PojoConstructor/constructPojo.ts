@@ -5,6 +5,9 @@ import type {
 import type { PojoConstructorOptions } from './PojoConstructorOptions';
 import { PojoConstructor } from './PojoConstructor';
 
+/**
+ * Wrapper for {@link PojoConstructor}.
+ */
 export function constructPojoFromInstance<
   Pojo extends object,
   CtorInput = unknown,
@@ -22,19 +25,17 @@ export function constructPojoFromInstance<
 
 /**
  * Wrapper for {@link constructPojoFromInstance}.<br>
- * Instantiates `CTorClass` passing `constructPojoInput` to constructor.
- *
- * @param CTorClass - Class object (constructor function).
- * @param constructPojoInput - An input that will be passed to each property constructor method.
- * @param constructPojoOptions
+ * Instantiates `CTorPropsClass` passing `constructPojoInput` to constructor.
  */
 export function constructPojo<Pojo extends object, CtorInput = unknown>(
-  CTorClass: { new (input?: CtorInput): PojoConstructorProps<Pojo, CtorInput> },
+  CTorPropsClass: {
+    new (input?: CtorInput): PojoConstructorProps<Pojo, CtorInput>;
+  },
   pojoConstructorInput?: CtorInput,
   pojoConstructorOptions?: PojoConstructorOptions<Pojo, CtorInput>,
 ): PojoSyncAndPromiseResult<Pojo> {
   return constructPojoFromInstance(
-    new CTorClass(pojoConstructorInput),
+    new CTorPropsClass(pojoConstructorInput),
     pojoConstructorInput,
     pojoConstructorOptions,
   );

@@ -46,6 +46,12 @@ function asyncProps2Props<Pojo extends object, CtorInput = unknown>(
   }) as PojoConstructorProps<Pojo, CtorInput>;
 }
 
+/**
+ * @usage
+ * const ctor = new PojoConstructorAsync<{ field: number }, number>({ field: async (input) => ({ value: input + 2 }) })
+ * const obj = await ctor.new(2);
+ * assert.strictEqual(obj.field, 4);
+ */
 export class PojoConstructorAsync<Pojo extends object, CtorInput = unknown> {
   public readonly pojoConstructor: PojoConstructor<Pojo, CtorInput>;
 
