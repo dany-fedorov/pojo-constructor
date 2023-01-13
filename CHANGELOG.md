@@ -1,3 +1,10 @@
+# [4.1.0](https://github.com/dany-fedorov/pojo-constructor/compare/v4.0.4...v4.1.0) (2023-01-13)
+
+
+### Features
+
+* Change some undocumented API and make more examples ([2e1d99c](https://github.com/dany-fedorov/pojo-constructor/commit/2e1d99ca16aa22fdeae2dbd7c98cb83633f17ab6))
+
 ## [4.0.4](https://github.com/dany-fedorov/pojo-constructor/compare/v4.0.3...v4.0.4) (2023-01-13)
 
 ## [4.0.3](https://github.com/dany-fedorov/pojo-constructor/compare/v4.0.2...v4.0.3) (2023-01-13)
