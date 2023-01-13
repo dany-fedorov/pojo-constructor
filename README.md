@@ -300,7 +300,7 @@ let remoteCalls = 0;
 
 const appCfgCtor = new PojoConstructorAsync<AppCfg>({
   /**
-   * Emulates fetching feature flags from database or a CMS.
+   * Emulates fetching config from database or a CMS.
    */
   async remote_fetched_option() {
     const GET_0_OR_1 = `https://www.random.org/integers/?num=1&min=0&max=1&col=1&base=2&format=plain&rnd=id.${Date.now()}`;
