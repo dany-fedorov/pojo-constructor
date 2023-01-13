@@ -1,3 +1,10 @@
+# [4.2.0](https://github.com/dany-fedorov/pojo-constructor/compare/v4.1.0...v4.2.0) (2023-01-13)
+
+
+### Features
+
+* Changes to helpers host API - add key and target props ([370a20b](https://github.com/dany-fedorov/pojo-constructor/commit/370a20bb50f80e229fdfd5066ce4bb44409ccd33))
+
 # [4.1.0](https://github.com/dany-fedorov/pojo-constructor/compare/v4.0.4...v4.1.0) (2023-01-13)
 
 
