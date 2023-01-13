@@ -1,6 +1,6 @@
 {
   "name": "pojo-constructor",
-  "version": "4.2.0",
+  "version": "4.2.1",
   "description": "Configuration as code helper for TypeScript.",
   "main": "./index.js",
   "scripts": {
