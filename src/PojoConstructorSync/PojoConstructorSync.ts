@@ -36,6 +36,8 @@ function syncProps2Props<Pojo extends object, CtorInput = unknown>(
         return (target as any)[key](
           input,
           new PojoConstructorHelpersHostSync(
+            target,
+            helpers.key,
             cachingProxy2Sync<Pojo, CtorInput>(helpers.cache),
             cachingProxy2Sync<Pojo, CtorInput>(helpers.proxy),
           ),

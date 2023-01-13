@@ -198,7 +198,14 @@ describe('PojoConstructorPropsSync + pojoFromSync', function () {
     const evalOrder: string[] = [];
     const counts: any = {};
 
-    type O = { a: string; b: string; c: string };
+    type O = {
+      a: string;
+      b: string;
+      c: string;
+      d99: string;
+      d10: string;
+      d101: string;
+    };
 
     class C implements PojoConstructorPropsSync<O, boolean> {
       b(
@@ -308,7 +315,14 @@ describe('PojoConstructorPropsSync + pojoFromSync', function () {
     const evalOrder: string[] = [];
     const counts: any = {};
 
-    type O = { a: string; b: string; c: string };
+    type O = {
+      a: string;
+      b: string;
+      c: string;
+      d99: string;
+      d10: string;
+      d101: string;
+    };
 
     class C implements PojoConstructorPropsSync<O, boolean> {
       b(

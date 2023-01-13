@@ -22,16 +22,15 @@ const appCfgCtor = new PojoConstructorAsync<AppCfg>({
     };
   },
 
-  async derived_option_1(_, { cache }) {
+  async derived_option_1(_, { key, cache }) {
     return {
-      value:
-        'derived_option_1 / ' + (await cache.remote_fetched_option()).value,
+      value: key + ' / ' + (await cache.remote_fetched_option()).value,
     };
   },
 
-  async derived_option_2(_, { cache }) {
+  async derived_option_2(_, { key, cache }) {
     return {
-      value: 'derived_option_2 / ' + (await cache.derived_option_1()).value,
+      value: key + ' / ' + (await cache.derived_option_1()).value,
     };
   },
 });

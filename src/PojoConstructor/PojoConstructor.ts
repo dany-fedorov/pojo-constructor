@@ -6,7 +6,7 @@ import type {
 } from './PojoConstructorProps';
 import type { PojoConstructorOptions } from './PojoConstructorOptions';
 import { PojoConstructorProxiesHost } from './PojoConstructorProxiesHost';
-import { PojoConstructorHelpersHost } from './PojoConstructorHelpersHost';
+import { PojoConstructorHelpersHostBase } from './PojoConstructorHelpersHost';
 
 function makePojoSyncConstructor<Pojo extends object, CtorInput>(
   proxiesHost: PojoConstructorProxiesHost<Pojo, CtorInput>,
@@ -156,7 +156,10 @@ export class PojoConstructor<Pojo extends object, CtorInput = unknown> {
       this.constructorProps,
       effectiveOptions,
     );
-    const helpersHost = Object.create(null);
+    const helpersHost = Object.create(null) as PojoConstructorHelpersHostBase<
+      Pojo,
+      CtorInput
+    >;
     const proxiesHost = new PojoConstructorProxiesHost(
       this.constructorProps,
       input,
@@ -168,7 +171,7 @@ export class PojoConstructor<Pojo extends object, CtorInput = unknown> {
               effectiveOptions.cacheKeyFromConstructorInput,
           },
     );
-    const helpersHostPrototype = new PojoConstructorHelpersHost(
+    const helpersHostPrototype = new PojoConstructorHelpersHostBase(
       proxiesHost.cachingProxy,
       proxiesHost.errorCatchingProxy,
     );

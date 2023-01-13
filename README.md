@@ -302,25 +302,24 @@ const appCfgCtor = new PojoConstructorAsync<AppCfg>({
   /**
    * Emulates fetching config from database or a CMS.
    */
-  async remote_fetched_option() {
+  async remote_fetched_option(_, { key }) {
     const GET_0_OR_1 = `https://www.random.org/integers/?num=1&min=0&max=1&col=1&base=2&format=plain&rnd=id.${Date.now()}`;
     const value = (await axios.get(GET_0_OR_1)).data;
     remoteCalls++;
     return {
-      value: 'remote_fetched_option : ' + value,
+      value: key + ' : ' + value,
     };
   },
 
-  async derived_option_1(_, { cache }) {
+  async derived_option_1(_, { key, cache }) {
     return {
-      value:
-        'derived_option_1 / ' + (await cache.remote_fetched_option()).value,
+      value: key + ' / ' + (await cache.remote_fetched_option()).value,
     };
   },
 
-  async derived_option_2(_, { cache }) {
+  async derived_option_2(_, { key, cache }) {
     return {
-      value: 'derived_option_2 / ' + (await cache.derived_option_1()).value,
+      value: key + ' / ' + (await cache.derived_option_1()).value,
     };
   },
 });

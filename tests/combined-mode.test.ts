@@ -366,7 +366,14 @@ describe('PojoConstructorProps + pojoFrom', function () {
     const evalOrder: string[] = [];
     const counts: any = {};
 
-    type O = { a: string; b: string; c: string };
+    type O = {
+      a: string;
+      b: string;
+      c: string;
+      d99: string;
+      d10: string;
+      d101: string;
+    };
 
     class C implements PojoConstructorProps<O, boolean> {
       b(
@@ -500,10 +507,16 @@ describe('PojoConstructorProps + pojoFrom', function () {
     const evalOrder: string[] = [];
     const counts: any = {};
 
-    class C
-      implements
-        PojoConstructorProps<{ a: string; b: string; c: string }, null>
-    {
+    type O = {
+      a: string;
+      b: string;
+      c: string;
+      d99: string;
+      d10: string;
+      d101: string;
+    };
+
+    class C implements PojoConstructorProps<O, null> {
       b() {
         evalOrder.push('b');
         return {
@@ -622,7 +635,14 @@ describe('PojoConstructorProps + pojoFrom', function () {
     const evalOrder: string[] = [];
     const counts: any = {};
 
-    type O = { a: string; b: string; c: string };
+    type O = {
+      a: string;
+      b: string;
+      c: string;
+      d99: string;
+      d10: string;
+      d101: string;
+    };
 
     class C implements PojoConstructorProps<O, boolean> {
       b(
@@ -878,7 +898,14 @@ describe('PojoConstructorProps + pojoFrom', function () {
     const evalOrder: string[] = [];
     const counts: any = {};
 
-    type O = { a: string; b: string; c: string };
+    type O = {
+      a: string;
+      b: string;
+      c: string;
+      d99: string;
+      d10: string;
+      d101: string;
+    };
 
     class C implements PojoConstructorProps<O, boolean> {
       b(

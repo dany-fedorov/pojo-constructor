@@ -37,6 +37,8 @@ function asyncProps2Props<Pojo extends object, CtorInput = unknown>(
           return (target as any)[key](
             input,
             new PojoConstructorHelpersHostAsync(
+              target,
+              helpers.key,
               cachingProxy2Async<Pojo, CtorInput>(helpers.cache),
               cachingProxy2Async<Pojo, CtorInput>(helpers.proxy),
             ),
