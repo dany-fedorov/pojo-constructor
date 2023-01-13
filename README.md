@@ -355,7 +355,7 @@ Constructor methods for each of properties returns promise for `{ value }` objec
 ## [PojoConstructor](https://dany-fedorov.github.io/pojo-constructor/classes/PojoConstructor.html)
 
 Can operate in both sync mode and async mode.<br>
-Constructor methods for each of properties returns and object with either one of `sync`, `promise` methods or both.
+Constructor methods for each of properties returns an object with either one of `sync`, `promise` methods or both.
 
 All of these are valid:<br>
 
