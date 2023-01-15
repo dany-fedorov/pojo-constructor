@@ -12,7 +12,7 @@ export class PojoConstructorHelpersHostBase<
     public readonly proxy: PojoConstructorProxy<Pojo, CtorInput>,
   ) {}
 
-  forKey(key: string): PojoConstructorHelpersHostForKey<Pojo, CtorInput> {
+  forKey(key: Extract<keyof Pojo, string>): PojoConstructorHelpersHostForKey<Pojo, CtorInput> {
     return new PojoConstructorHelpersHostForKey(key, this.cache, this.proxy);
   }
 }
@@ -22,7 +22,7 @@ export class PojoConstructorHelpersHostForKey<
   CtorInput = unknown,
 > extends PojoConstructorHelpersHostBase<Pojo, CtorInput> {
   constructor(
-    public readonly key: string,
+    public readonly key: Extract<keyof Pojo, string>,
     cache: PojoConstructorProxy<Pojo, CtorInput>,
     proxy: PojoConstructorProxy<Pojo, CtorInput>,
   ) {
@@ -47,7 +47,7 @@ export class PojoConstructorHelpersHost<
 > extends PojoConstructorHelpersHostBase<Pojo, CtorInput> {
   constructor(
     public readonly target: PojoConstructorProps<Pojo, CtorInput>,
-    public readonly key: string,
+    public readonly key: Extract<keyof Pojo, string>,
     cache: PojoConstructorProxy<Pojo, CtorInput>,
     proxy: PojoConstructorProxy<Pojo, CtorInput>,
   ) {

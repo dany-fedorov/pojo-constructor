@@ -9,7 +9,7 @@ export class PojoConstructorHelpersHostAsync<
 > {
   constructor(
     public readonly target: PojoConstructorPropsAsync<Pojo, CtorInput>,
-    public readonly key: string,
+    public readonly key: Extract<keyof Pojo, string>,
     public readonly cache: PojoConstructorProxyAsync<Pojo, CtorInput>,
     public readonly proxy: PojoConstructorProxyAsync<Pojo, CtorInput>,
   ) {}

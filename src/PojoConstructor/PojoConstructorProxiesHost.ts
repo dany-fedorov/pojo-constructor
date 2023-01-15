@@ -26,7 +26,10 @@ export function isPropProxiable(
 
 export function decoratePojoConstructorMethods<T extends object>(
   obj: T,
-  makeDecorator: (target: T, key: string) => (...args: any[]) => unknown,
+  makeDecorator: (
+    target: T,
+    key: Extract<keyof T, string>,
+  ) => (...args: any[]) => unknown,
 ): unknown {
   const proxy = new Proxy(obj, {
     get(target: T, propName: string | symbol): unknown {
@@ -35,7 +38,7 @@ export function decoratePojoConstructorMethods<T extends object>(
         // @ts-ignore
         return target[propName];
       }
-      return makeDecorator(target, propName as string);
+      return makeDecorator(target, propName as Extract<keyof T, string>);
     },
   });
   return proxy;
@@ -46,7 +49,7 @@ function resolveHelpers<Pojo extends object, CtorInput>(
   interceptedHelpersArg:
     | PojoConstructorHelpersHostBase<Pojo, CtorInput>
     | undefined,
-  key: string,
+  key: Extract<keyof Pojo, string>,
   target?: PojoConstructorProps<Pojo, CtorInput>,
 ) {
   // The most specific, with key and target
