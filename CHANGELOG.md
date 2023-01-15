@@ -1,3 +1,10 @@
+# [4.3.0](https://github.com/dany-fedorov/pojo-constructor/compare/v4.2.2...v4.3.0) (2023-01-15)
+
+
+### Features
+
+* Better type for key prop on helpers host ([2e596b8](https://github.com/dany-fedorov/pojo-constructor/commit/2e596b86e5451deb4c4b94d3eb37c29e20bcbb17))
+
 ## [4.2.2](https://github.com/dany-fedorov/pojo-constructor/compare/v4.2.1...v4.2.2) (2023-01-13)
 
 ## [4.2.1](https://github.com/dany-fedorov/pojo-constructor/compare/v4.2.0...v4.2.1) (2023-01-13)
