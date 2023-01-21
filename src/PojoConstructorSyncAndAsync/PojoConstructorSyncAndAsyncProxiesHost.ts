@@ -15,13 +15,19 @@ import {
   PojoConstructorHelpersHostForKey,
 } from './PojoConstructorSyncAndAsyncHelpersHost';
 
-export function isPropProxiable(
+export function isPropNameProxiable(propName: string | symbol): boolean {
+  return typeof propName === 'string';
+}
+
+export function isMethodPropProxiable(
   target: object,
   propName: string | symbol,
 ): boolean {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  return typeof propName === 'string' && typeof target[propName] === 'function';
+  return (
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    isPropNameProxiable(propName) && typeof target[propName] === 'function'
+  );
 }
 
 export function decoratePojoConstructorMethods<T extends object>(
@@ -33,7 +39,7 @@ export function decoratePojoConstructorMethods<T extends object>(
 ): unknown {
   const proxy = new Proxy(obj, {
     get(target: T, propName: string | symbol): unknown {
-      if (!isPropProxiable(target, propName)) {
+      if (!isMethodPropProxiable(target, propName)) {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         return target[propName];
@@ -78,7 +84,7 @@ function resolveHelpers<Pojo extends object, CtorInput>(
   return forKeyHelpers.forTarget(target);
 }
 
-function makeErrorCatchingProxy<Pojo extends object, CtorInput>(
+export function makeErrorCatchingProxy<Pojo extends object, CtorInput>(
   constructorProps: PojoConstructorSyncAndAsyncProps<Pojo, CtorInput>,
   input: CtorInput | undefined,
   helpers: PojoConstructorHelpersHostBase<Pojo, CtorInput>,
@@ -195,7 +201,7 @@ function makeErrorCatchingProxy<Pojo extends object, CtorInput>(
   >;
 }
 
-function makeCachingProxy<Pojo extends object, CtorInput>(
+export function makeCachingProxy<Pojo extends object, CtorInput>(
   errorCatchingProxy: PojoConstructorSyncAndAsyncProxy<Pojo, CtorInput>,
   input: CtorInput | undefined,
   helpers: PojoConstructorHelpersHostBase<Pojo, CtorInput>,
