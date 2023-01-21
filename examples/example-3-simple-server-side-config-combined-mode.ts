@@ -73,16 +73,16 @@ console.log(configProduction);
 
 (async () => {
   console.log('- dev (async mode):');
-  const configDev = await appCfgCtor.new('dev' as Env).promise();
+  const configDev = await appCfgCtor.new('dev' as Env).async();
   console.log(configDev);
 
   console.log();
   console.log('- staging (async mode):');
-  const configStaging = await appCfgCtor.new('staging' as Env).promise();
+  const configStaging = await appCfgCtor.new('staging' as Env).async();
   console.log(configStaging);
 
   console.log();
   console.log('- production (async mode):');
-  const configProduction = await appCfgCtor.new('production' as Env).promise();
+  const configProduction = await appCfgCtor.new('production' as Env).async();
   console.log(configProduction);
 })();

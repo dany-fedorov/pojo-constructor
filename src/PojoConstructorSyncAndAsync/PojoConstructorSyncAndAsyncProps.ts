@@ -15,27 +15,30 @@ export type PojoConstructorPropMethodValue<T> = undefined extends T
       value: T;
     };
 
-export type PojoSyncAndPromiseResult<T> = {
+export type PojoSyncAndAsyncResult<T> = {
   sync: () => T;
-  promise: () => Promise<T>;
+  async: () => Promise<T>;
 };
 
 export type PojoSyncResult<T> = {
   sync: () => T;
-  promise?: never;
+  async?: never;
 };
 
-export type PojoPromiseResult<T> = {
+export type PojoAsyncResult<T> = {
   sync?: never;
-  promise: () => Promise<T>;
+  async: () => Promise<T>;
 };
 
 export type PojoSyncOrPromiseResult<T> =
-  | PojoSyncAndPromiseResult<T>
+  | PojoSyncAndAsyncResult<T>
   | PojoSyncResult<T>
-  | PojoPromiseResult<T>;
+  | PojoAsyncResult<T>;
 
-export type PojoConstructorSyncAndAsyncProxy<Pojo extends object, CtorInput = unknown> = {
+export type PojoConstructorSyncAndAsyncProxy<
+  Pojo extends object,
+  CtorInput = unknown,
+> = {
   [K in keyof Pojo]: K extends string
     ? (
         input?: CtorInput,
@@ -43,7 +46,10 @@ export type PojoConstructorSyncAndAsyncProxy<Pojo extends object, CtorInput = un
     : never;
 };
 
-export type PojoConstructorSyncAndAsyncProps<Pojo extends object, CtorInput = unknown> = {
+export type PojoConstructorSyncAndAsyncProps<
+  Pojo extends object,
+  CtorInput = unknown,
+> = {
   [K in keyof Pojo]: K extends string
     ? (
         input: CtorInput,

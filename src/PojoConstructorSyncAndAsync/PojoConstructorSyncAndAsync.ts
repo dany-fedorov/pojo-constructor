@@ -2,7 +2,7 @@ import pMap from '@esm2cjs/p-map';
 import { getSortedKeysForPojoConstructorSyncAndAsyncProps } from './getSortedKeysForPojoConstructorSyncAndAsyncProps';
 import type {
   PojoConstructorSyncAndAsyncProps,
-  PojoSyncAndPromiseResult,
+  PojoSyncAndAsyncResult,
 } from './PojoConstructorSyncAndAsyncProps';
 import type { PojoConstructorSyncAndAsyncOptions } from './PojoConstructorSyncAndAsyncOptions';
 import { PojoConstructorSyncAndAsyncProxiesHost } from './PojoConstructorSyncAndAsyncProxiesHost';
@@ -57,7 +57,7 @@ function makePojoPromiseConstructor<Pojo extends object, CtorInput>(
               try {
                 v = await (proxiesHost.cachingProxy as any)[k]
                   .call(proxiesHost.errorCatchingProxy, input)
-                  .promise();
+                  .async();
                 setv = true;
               } catch (caught) {
                 await doCatch(caught, null, k);
@@ -84,7 +84,7 @@ function makePojoPromiseConstructor<Pojo extends object, CtorInput>(
         try {
           v = await (proxiesHost.cachingProxy as any)[k]
             .call(proxiesHost.errorCatchingProxy, input)
-            .promise();
+            .async();
           setv = true;
         } catch (caught) {
           await doCatch(caught, i, k);
@@ -114,7 +114,7 @@ function makePojoPromiseConstructor<Pojo extends object, CtorInput>(
  * - `promise` - returns promise for `{ value }` object
  * - `sync` - returns `{ value }` object synchronously
  *
- * If you only specify `sync` methods, you can use them for "async mode" (calling `PojoConstructor#new().promise()`),
+ * If you only specify `sync` methods, you can use them for "async mode" (calling `PojoConstructor#new().async()`),
  * but you cannot use "sync mode" (calling `PojoConstructor#new().sync()`) if you only specify `promise` methods.
  *
  * You can specify `promise` methods for some fields and still construct an object in "sync mode" if you also specify a `catch` option.
@@ -130,8 +130,8 @@ function makePojoPromiseConstructor<Pojo extends object, CtorInput>(
  *
  * ```typescript
  * // Async mode
- * const ctor = new PojoConstructor<{ field: number }, number>({ field: (input) => ({ promise: () => ({ value: input + 2 })}) })
- * const obj = await ctor.new(2).promise();
+ * const ctor = new PojoConstructor<{ field: number }, number>({ field: (input) => ({ async: () => ({ value: input + 2 })}) })
+ * const obj = await ctor.new(2).async();
  * assert.strictEqual(obj.field, 4);
  * ```
  */
@@ -140,11 +140,8 @@ export class PojoConstructorSyncAndAsync<
   CtorInput = unknown,
 > {
   constructor(
-    public readonly constructorProps: PojoConstructorSyncAndAsyncProps<
-      Pojo,
-      CtorInput
-    >,
-    public readonly constructorOptions?: PojoConstructorSyncAndAsyncOptions<
+    public readonly props: PojoConstructorSyncAndAsyncProps<Pojo, CtorInput>,
+    public readonly options?: PojoConstructorSyncAndAsyncOptions<
       Pojo,
       CtorInput
     >,
@@ -153,16 +150,16 @@ export class PojoConstructorSyncAndAsync<
   new(
     input?: CtorInput,
     options?: PojoConstructorSyncAndAsyncOptions<Pojo, CtorInput>,
-  ): PojoSyncAndPromiseResult<Pojo> {
+  ): PojoSyncAndAsyncResult<Pojo> {
     const effectiveOptions: PojoConstructorSyncAndAsyncOptions<
       Pojo,
       CtorInput
     > = {
-      ...(this.constructorOptions ?? {}),
+      ...(this.options ?? {}),
       ...(options ?? {}),
     };
     const sortedKeys = getSortedKeysForPojoConstructorSyncAndAsyncProps(
-      this.constructorProps,
+      this.props,
       effectiveOptions,
     );
     const helpersHost = Object.create(null) as PojoConstructorHelpersHostBase<
@@ -170,7 +167,7 @@ export class PojoConstructorSyncAndAsync<
       CtorInput
     >;
     const proxiesHost = new PojoConstructorSyncAndAsyncProxiesHost(
-      this.constructorProps,
+      this.props,
       input,
       helpersHost,
       typeof effectiveOptions.cacheKeyFromConstructorInput !== 'function'
@@ -202,7 +199,7 @@ export class PojoConstructorSyncAndAsync<
         input,
         doCatch,
       ),
-      promise: makePojoPromiseConstructor<Pojo, CtorInput>(
+      async: makePojoPromiseConstructor<Pojo, CtorInput>(
         proxiesHost,
         sortedKeys,
         input,

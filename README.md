@@ -229,7 +229,7 @@ console.log(configDev);
 
 (async () => {
   console.log('- dev (async mode):');
-  const configDev = await appCfgCtor.new('dev' as Env).promise();
+  const configDev = await appCfgCtor.new('dev' as Env).async();
   console.log(configDev);
 })();
 ```
@@ -368,7 +368,7 @@ Where
 - `promise` - returns promise for `{ value }` object
 - `sync` - returns `{ value }` object synchronously
 
-If you only specify `sync` methods, you can use them for "async mode" (calling `PojoConstructorSyncAndAsync#new().promise()`),
+If you only specify `sync` methods, you can use them for "async mode" (calling `PojoConstructorSyncAndAsync#new().async()`),
 but you cannot use "sync mode" (calling `PojoConstructorSyncAndAsync#new().sync()`) if you only specify `promise` methods.
 
 You can specify `promise` methods for some fields and still construct an object in "sync mode" if you also specify

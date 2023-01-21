@@ -140,7 +140,7 @@ export function makeErrorCatchingProxy<Pojo extends object, CtorInput>(
             }
             return v;
           },
-          promise: async () => {
+          async: async () => {
             let res;
             try {
               res = (target as any)[key].call(
@@ -155,10 +155,10 @@ export function makeErrorCatchingProxy<Pojo extends object, CtorInput>(
               });
             }
             let v;
-            if (typeof res?.promise === 'function') {
+            if (typeof res?.async === 'function') {
               let vpromise;
               try {
-                vpromise = res?.promise();
+                vpromise = res?.async();
               } catch (caught: unknown) {
                 throw processCaughtInCachingProxy(caught, {
                   key,
@@ -184,7 +184,7 @@ export function makeErrorCatchingProxy<Pojo extends object, CtorInput>(
               }
             } else {
               throw new PojoConstructorCannotAsyncResolveError(
-                `${PojoConstructor_errorCatchingProxy_decoratorFn.name}->promise`,
+                `${PojoConstructor_errorCatchingProxy_decoratorFn.name}->async`,
                 key as string,
                 res,
               );
@@ -246,13 +246,13 @@ export function makeCachingProxy<Pojo extends object, CtorInput>(
             syncCache.set(key, inputCacheKey, v);
             return v;
           },
-          promise: async () => {
+          async: async () => {
             if (asyncCache.has(key, inputCacheKey)) {
               return asyncCache.get(key, inputCacheKey);
             }
             const p = (target as any)[key]
               .call(target, effectiveInput, effectiveHelpers)
-              .promise();
+              .async();
             asyncCache.set(key, inputCacheKey, p);
             p.then((v: unknown) => {
               syncCache.set(key, inputCacheKey, v);

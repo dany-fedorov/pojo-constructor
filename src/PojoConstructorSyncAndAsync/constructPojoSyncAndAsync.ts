@@ -1,6 +1,6 @@
 import type {
   PojoConstructorSyncAndAsyncProps,
-  PojoSyncAndPromiseResult,
+  PojoSyncAndAsyncResult,
 } from './PojoConstructorSyncAndAsyncProps';
 import type { PojoConstructorSyncAndAsyncOptions } from './PojoConstructorSyncAndAsyncOptions';
 import { PojoConstructorSyncAndAsync } from './PojoConstructorSyncAndAsync';
@@ -15,7 +15,7 @@ export function constructPojoFromInstance<
   ctorProps: PojoConstructorSyncAndAsyncProps<Pojo, CtorInput>,
   pojoConstructorInput?: CtorInput,
   pojoConstructorOptions?: PojoConstructorSyncAndAsyncOptions<Pojo, CtorInput>,
-): PojoSyncAndPromiseResult<Pojo> {
+): PojoSyncAndAsyncResult<Pojo> {
   const ctor = new PojoConstructorSyncAndAsync<Pojo, CtorInput>(
     ctorProps,
     pojoConstructorOptions,
@@ -33,7 +33,7 @@ export function constructPojoSyncAndAsync<Pojo extends object, CtorInput = unkno
   },
   pojoConstructorInput?: CtorInput,
   pojoConstructorOptions?: PojoConstructorSyncAndAsyncOptions<Pojo, CtorInput>,
-): PojoSyncAndPromiseResult<Pojo> {
+): PojoSyncAndAsyncResult<Pojo> {
   return constructPojoFromInstance(
     new CTorPropsClass(pojoConstructorInput),
     pojoConstructorInput,

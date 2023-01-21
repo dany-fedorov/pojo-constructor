@@ -161,7 +161,7 @@ export class PojoConstructorAdapters {
                   ) {
                     function promise() {
                       return Promise.resolve(
-                        (target as any)[key](input).promise(),
+                        (target as any)[key](input).async(),
                       );
                     }
 
@@ -201,7 +201,7 @@ export class PojoConstructorAdapters {
                   return function PojoConstructorAdapters_proxy_syncAndAsync2Async_decoratorFn(
                     input: CtorInput,
                   ) {
-                    return (target as any)[key](input).promise();
+                    return (target as any)[key](input).async();
                   };
                 },
               ) as PojoConstructorAsyncProxy<Pojo, CtorInput>;

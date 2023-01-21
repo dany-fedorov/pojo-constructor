@@ -15,7 +15,7 @@ export class PojoConstructorCannotAsyncResolveError extends PojoConstructorError
       plines(
         prefix,
         `Could not resolve property "${propName}"`,
-        `- Result of "${propName}" method does not have neither "promise" nor "sync" properties`,
+        `- Result of "${propName}" method does not have neither "async" nor "sync" properties`,
         `- Result - ${_pojo_jsonStringifySafe(propMetohdResult)}`,
       ),
     );

@@ -19,7 +19,7 @@ function cachingProxy2Async<Pojo extends object, CtorInput = unknown>(
     return function PojoConstructor_cachingProxy2Async_decoratorFn(
       input: CtorInput,
     ) {
-      return (target as any)[key](input).promise();
+      return (target as any)[key](input).async();
     };
   }) as PojoConstructorAsyncProxy<Pojo, CtorInput>;
 }
@@ -33,7 +33,7 @@ function asyncProps2Props<Pojo extends object, CtorInput = unknown>(
       helpers: PojoConstructorSyncAndAsyncHelpersHost<Pojo, CtorInput>,
     ) {
       return {
-        promise: () => {
+        async: () => {
           return (target as any)[key](
             input,
             new PojoConstructorAsyncHelpersHost(
@@ -82,6 +82,6 @@ export class PojoConstructorAsync<Pojo extends object, CtorInput = unknown> {
     input?: CtorInput,
     options?: PojoConstructorAsyncOptions<Pojo, CtorInput>,
   ): Promise<Pojo> {
-    return this.pojoConstructor.new(input, options).promise!();
+    return this.pojoConstructor.new(input, options).async!();
   }
 }

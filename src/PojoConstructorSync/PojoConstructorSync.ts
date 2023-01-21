@@ -52,7 +52,7 @@ function syncProps2Props<Pojo extends object, CtorInput = unknown>(
 
       return {
         sync: PojoConstructor_asyncProps2Props_decoratorFn_sync,
-        promise: PojoConstructor_asyncProps2Props_decoratorFn_promise,
+        async: PojoConstructor_asyncProps2Props_decoratorFn_promise,
       };
     };
   }) as PojoConstructorSyncAndAsyncProps<Pojo, CtorInput>;
