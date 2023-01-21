@@ -13,3 +13,4 @@ export * from './PojoConstructorSync/PojoConstructorSyncOptions';
 export * from './PojoConstructorSync/PojoConstructorSyncProps';
 export * from './PojoConstructorSync/PojoConstructorSyncHelpersHost';
 export * from './PojoConstructorSync/constructPojoSync';
+export * from './PojoConstructorAdapters';
