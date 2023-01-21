@@ -1,3 +1,22 @@
+# [5.0.0](https://github.com/dany-fedorov/pojo-constructor/compare/v4.3.0...v5.0.0) (2023-01-21)
+
+
+### Bug Fixes
+
+* Export PojoConstructorAdapters ([e2d4dc3](https://github.com/dany-fedorov/pojo-constructor/commit/e2d4dc3c452e36a904d6150802ac1a5f9f0a6fd4))
+
+
+### Features
+
+* Change names to be more verbose but more consistent ([7ddbe9e](https://github.com/dany-fedorov/pojo-constructor/commit/7ddbe9e027c1659b6346f1d4c56afca9c062c7fa))
+* Finish code for PojoConstructorAdapters ([0881a60](https://github.com/dany-fedorov/pojo-constructor/commit/0881a601602293a4ea5f3e1afe673ec48ef6213a))
+* WIP on PojoConstructorAdapters ([f6bcbe8](https://github.com/dany-fedorov/pojo-constructor/commit/f6bcbe83bad50c67027760f1c80a4f1375cc6c6f))
+
+
+### BREAKING CHANGES
+
+* Change names to be more verbose but more consistent
+
 # [4.3.0](https://github.com/dany-fedorov/pojo-constructor/compare/v4.2.2...v4.3.0) (2023-01-15)
 
 
