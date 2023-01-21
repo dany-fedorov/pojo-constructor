@@ -1,17 +1,17 @@
-import type { PojoConstructorPropsAsync } from './PojoConstructorPropsAsync';
-import type { PojoConstructorOptionsAsync } from './PojoConstructorOptionsAsync';
+import type { PojoConstructorAsyncProps } from './PojoConstructorAsyncProps';
+import type { PojoConstructorAsyncOptions } from './PojoConstructorAsyncOptions';
 import { PojoConstructorAsync } from './PojoConstructorAsync';
 
 /**
- * Wrapper for {@link PojoConstructorPropsAsync}.
+ * Wrapper for {@link PojoConstructorAsyncProps}.
  */
 export function constructPojoFromInstanceAsync<
   Pojo extends object,
   CtorInput = unknown,
 >(
-  ctorProps: PojoConstructorPropsAsync<Pojo, CtorInput>,
+  ctorProps: PojoConstructorAsyncProps<Pojo, CtorInput>,
   pojoConstructorInput?: CtorInput,
-  pojoConstructorOptions?: PojoConstructorOptionsAsync<Pojo, CtorInput>,
+  pojoConstructorOptions?: PojoConstructorAsyncOptions<Pojo, CtorInput>,
 ): Promise<Pojo> {
   const ctor = new PojoConstructorAsync<Pojo, CtorInput>(
     ctorProps,
@@ -26,10 +26,10 @@ export function constructPojoFromInstanceAsync<
  */
 export function constructPojoAsync<Pojo extends object, CtorInput = unknown>(
   CTorPropsAsyncClass: {
-    new (input?: CtorInput): PojoConstructorPropsAsync<Pojo, CtorInput>;
+    new (input?: CtorInput): PojoConstructorAsyncProps<Pojo, CtorInput>;
   },
   pojoConstructorInput?: CtorInput,
-  pojoConstructorOptions?: PojoConstructorOptionsAsync<Pojo, CtorInput>,
+  pojoConstructorOptions?: PojoConstructorAsyncOptions<Pojo, CtorInput>,
 ): Promise<Pojo> {
   return constructPojoFromInstanceAsync(
     new CTorPropsAsyncClass(pojoConstructorInput),

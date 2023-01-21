@@ -1,19 +1,19 @@
-import { PojoConstructor } from '../PojoConstructor/PojoConstructor';
-import type { PojoConstructorOptionsSync } from './PojoConstructorOptionsSync';
+import { PojoConstructorSyncAndAsync } from '../PojoConstructorSyncAndAsync/PojoConstructorSyncAndAsync';
+import type { PojoConstructorSyncOptions } from './PojoConstructorSyncOptions';
 import type {
-  PojoConstructorProxySync,
-  PojoConstructorPropsSync,
-} from './PojoConstructorPropsSync';
+  PojoConstructorSyncProxy,
+  PojoConstructorSyncProps,
+} from './PojoConstructorSyncProps';
 import type {
-  PojoConstructorProxy,
-  PojoConstructorProps,
-} from '../PojoConstructor/PojoConstructorProps';
-import { decoratePojoConstructorMethods } from '../PojoConstructor/PojoConstructorProxiesHost';
-import type { PojoConstructorHelpersHost } from '../PojoConstructor/PojoConstructorHelpersHost';
-import { PojoConstructorHelpersHostSync } from './PojoConstructorHelpersHostSync';
+  PojoConstructorSyncAndAsyncProxy,
+  PojoConstructorSyncAndAsyncProps,
+} from '../PojoConstructorSyncAndAsync/PojoConstructorSyncAndAsyncProps';
+import { decoratePojoConstructorMethods } from '../PojoConstructorSyncAndAsync/PojoConstructorSyncAndAsyncProxiesHost';
+import type { PojoConstructorSyncAndAsyncHelpersHost } from '../PojoConstructorSyncAndAsync/PojoConstructorSyncAndAsyncHelpersHost';
+import { PojoConstructorSyncHelpersHost } from './PojoConstructorSyncHelpersHost';
 
 function cachingProxy2Sync<Pojo extends object, CtorInput = unknown>(
-  cachingProxy: PojoConstructorProxy<Pojo, CtorInput>,
+  cachingProxy: PojoConstructorSyncAndAsyncProxy<Pojo, CtorInput>,
 ) {
   return decoratePojoConstructorMethods(cachingProxy, (target, key) => {
     return function PojoConstructor_cachingProxy2Sync_decoratorFn(
@@ -21,21 +21,21 @@ function cachingProxy2Sync<Pojo extends object, CtorInput = unknown>(
     ) {
       return (target as any)[key](input).sync();
     };
-  }) as PojoConstructorProxySync<Pojo, CtorInput>;
+  }) as PojoConstructorSyncProxy<Pojo, CtorInput>;
 }
 
 function syncProps2Props<Pojo extends object, CtorInput = unknown>(
-  constructorProps: PojoConstructorPropsSync<Pojo, CtorInput>,
-): PojoConstructorProps<Pojo, CtorInput> {
+  constructorProps: PojoConstructorSyncProps<Pojo, CtorInput>,
+): PojoConstructorSyncAndAsyncProps<Pojo, CtorInput> {
   return decoratePojoConstructorMethods(constructorProps, (target, key) => {
     return function PojoConstructor_asyncProps2Props_decoratorFn(
       input: CtorInput,
-      helpers: PojoConstructorHelpersHost<Pojo, CtorInput>,
+      helpers: PojoConstructorSyncAndAsyncHelpersHost<Pojo, CtorInput>,
     ) {
       function PojoConstructor_asyncProps2Props_decoratorFn_sync() {
         return (target as any)[key](
           input,
-          new PojoConstructorHelpersHostSync(
+          new PojoConstructorSyncHelpersHost(
             target,
             helpers.key,
             cachingProxy2Sync<Pojo, CtorInput>(helpers.cache),
@@ -55,7 +55,7 @@ function syncProps2Props<Pojo extends object, CtorInput = unknown>(
         promise: PojoConstructor_asyncProps2Props_decoratorFn_promise,
       };
     };
-  }) as PojoConstructorProps<Pojo, CtorInput>;
+  }) as PojoConstructorSyncAndAsyncProps<Pojo, CtorInput>;
 }
 
 /**
@@ -69,16 +69,16 @@ function syncProps2Props<Pojo extends object, CtorInput = unknown>(
  * ```
  */
 export class PojoConstructorSync<Pojo extends object, CtorInput = unknown> {
-  public readonly pojoConstructor: PojoConstructor<Pojo, CtorInput>;
+  public readonly pojoConstructor: PojoConstructorSyncAndAsync<Pojo, CtorInput>;
 
   constructor(
-    public readonly constructorProps: PojoConstructorPropsSync<Pojo, CtorInput>,
-    public readonly constructorOptions?: PojoConstructorOptionsSync<
+    public readonly constructorProps: PojoConstructorSyncProps<Pojo, CtorInput>,
+    public readonly constructorOptions?: PojoConstructorSyncOptions<
       Pojo,
       CtorInput
     >,
   ) {
-    this.pojoConstructor = new PojoConstructor<Pojo, CtorInput>(
+    this.pojoConstructor = new PojoConstructorSyncAndAsync<Pojo, CtorInput>(
       syncProps2Props(this.constructorProps),
       this.constructorOptions,
     );
@@ -86,7 +86,7 @@ export class PojoConstructorSync<Pojo extends object, CtorInput = unknown> {
 
   new(
     input?: CtorInput,
-    options?: PojoConstructorOptionsSync<Pojo, CtorInput>,
+    options?: PojoConstructorSyncOptions<Pojo, CtorInput>,
   ): Pojo {
     return this.pojoConstructor.new(input, options).sync!();
   }

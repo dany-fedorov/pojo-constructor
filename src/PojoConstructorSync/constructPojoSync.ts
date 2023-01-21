@@ -1,5 +1,5 @@
-import type { PojoConstructorPropsSync } from './PojoConstructorPropsSync';
-import type { PojoConstructorOptionsSync } from './PojoConstructorOptionsSync';
+import type { PojoConstructorSyncProps } from './PojoConstructorSyncProps';
+import type { PojoConstructorSyncOptions } from './PojoConstructorSyncOptions';
 import { PojoConstructorSync } from './PojoConstructorSync';
 
 /**
@@ -9,9 +9,9 @@ export function constructPojoFromInstanceSync<
   Pojo extends object,
   CtorInput = unknown,
 >(
-  ctorProps: PojoConstructorPropsSync<Pojo, CtorInput>,
+  ctorProps: PojoConstructorSyncProps<Pojo, CtorInput>,
   pojoConstructorInput?: CtorInput,
-  pojoConstructorOptions?: PojoConstructorOptionsSync<Pojo, CtorInput>,
+  pojoConstructorOptions?: PojoConstructorSyncOptions<Pojo, CtorInput>,
 ): Pojo {
   const ctor = new PojoConstructorSync<Pojo, CtorInput>(
     ctorProps,
@@ -26,10 +26,10 @@ export function constructPojoFromInstanceSync<
  */
 export function constructPojoSync<Pojo extends object, CtorInput = unknown>(
   CTorPropsSyncClass: {
-    new (input?: CtorInput): PojoConstructorPropsSync<Pojo, CtorInput>;
+    new (input?: CtorInput): PojoConstructorSyncProps<Pojo, CtorInput>;
   },
   pojoConstructorInput?: CtorInput,
-  pojoConstructorOptions?: PojoConstructorOptionsSync<Pojo, CtorInput>,
+  pojoConstructorOptions?: PojoConstructorSyncOptions<Pojo, CtorInput>,
 ): Pojo {
   return constructPojoFromInstanceSync(
     new CTorPropsSyncClass(pojoConstructorInput),

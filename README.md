@@ -28,7 +28,7 @@ Example use cases
 * [API](#api)
     * [PojoConstructorSync](#pojoconstructorsync)
     * [PojoConstructorAsync](#pojoconstructorasync)
-    * [PojoConstructor](#pojoconstructor)
+    * [PojoConstructorSyncAndAsync](#pojoconstructorsyncandasync)
 * [Links](#links)
     * [GitHub](#github)
     * [Npm](#npm)
@@ -352,7 +352,7 @@ Constructor methods for each of properties returns `{ value }` object synchronou
 
 Constructor methods for each of properties returns promise for `{ value }` object.
 
-## [PojoConstructor](https://dany-fedorov.github.io/pojo-constructor/classes/PojoConstructor.html)
+## [PojoConstructorSyncAndAsync](https://dany-fedorov.github.io/pojo-constructor/classes/PojoConstructorSyncAndAsync.html)
 
 Can operate in both sync mode and async mode.<br>
 Constructor methods for each of properties returns an object with either one of `sync`, `promise` methods or both.
@@ -368,8 +368,8 @@ Where
 - `promise` - returns promise for `{ value }` object
 - `sync` - returns `{ value }` object synchronously
 
-If you only specify `sync` methods, you can use them for "async mode" (calling `PojoConstructor#new().promise()`),
-but you cannot use "sync mode" (calling `PojoConstructor#new().sync()`) if you only specify `promise` methods.
+If you only specify `sync` methods, you can use them for "async mode" (calling `PojoConstructorSyncAndAsync#new().promise()`),
+but you cannot use "sync mode" (calling `PojoConstructorSyncAndAsync#new().sync()`) if you only specify `promise` methods.
 
 You can specify `promise` methods for some fields and still construct an object in "sync mode" if you also specify
 a `catch` option.

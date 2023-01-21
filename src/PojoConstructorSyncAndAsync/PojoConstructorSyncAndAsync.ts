@@ -1,15 +1,15 @@
 import pMap from '@esm2cjs/p-map';
-import { getSortedKeysForPojoConstructorProps } from './getSortedKeysForPojoConstructorProps';
+import { getSortedKeysForPojoConstructorSyncAndAsyncProps } from './getSortedKeysForPojoConstructorSyncAndAsyncProps';
 import type {
-  PojoConstructorProps,
+  PojoConstructorSyncAndAsyncProps,
   PojoSyncAndPromiseResult,
-} from './PojoConstructorProps';
-import type { PojoConstructorOptions } from './PojoConstructorOptions';
-import { PojoConstructorProxiesHost } from './PojoConstructorProxiesHost';
-import { PojoConstructorHelpersHostBase } from './PojoConstructorHelpersHost';
+} from './PojoConstructorSyncAndAsyncProps';
+import type { PojoConstructorSyncAndAsyncOptions } from './PojoConstructorSyncAndAsyncOptions';
+import { PojoConstructorSyncAndAsyncProxiesHost } from './PojoConstructorSyncAndAsyncProxiesHost';
+import { PojoConstructorHelpersHostBase } from './PojoConstructorSyncAndAsyncHelpersHost';
 
 function makePojoSyncConstructor<Pojo extends object, CtorInput>(
-  proxiesHost: PojoConstructorProxiesHost<Pojo, CtorInput>,
+  proxiesHost: PojoConstructorSyncAndAsyncProxiesHost<Pojo, CtorInput>,
   sortedKeys: string[],
   input: CtorInput | undefined,
   doCatch: (caught: unknown, i: number | null, key: string) => void,
@@ -38,11 +38,11 @@ function makePojoSyncConstructor<Pojo extends object, CtorInput>(
 }
 
 function makePojoPromiseConstructor<Pojo extends object, CtorInput>(
-  proxiesHost: PojoConstructorProxiesHost<Pojo, CtorInput>,
+  proxiesHost: PojoConstructorSyncAndAsyncProxiesHost<Pojo, CtorInput>,
   sortedKeys: string[],
   input: CtorInput | undefined,
   doCatch: (caught: unknown, i: number | null, key: string) => void,
-  effectiveOptions: PojoConstructorOptions<Pojo, CtorInput>,
+  effectiveOptions: PojoConstructorSyncAndAsyncOptions<Pojo, CtorInput>,
 ) {
   return async function constructPojoPromise() {
     const concurrency = effectiveOptions?.concurrency;
@@ -135,10 +135,16 @@ function makePojoPromiseConstructor<Pojo extends object, CtorInput>(
  * assert.strictEqual(obj.field, 4);
  * ```
  */
-export class PojoConstructor<Pojo extends object, CtorInput = unknown> {
+export class PojoConstructorSyncAndAsync<
+  Pojo extends object,
+  CtorInput = unknown,
+> {
   constructor(
-    public readonly constructorProps: PojoConstructorProps<Pojo, CtorInput>,
-    public readonly constructorOptions?: PojoConstructorOptions<
+    public readonly constructorProps: PojoConstructorSyncAndAsyncProps<
+      Pojo,
+      CtorInput
+    >,
+    public readonly constructorOptions?: PojoConstructorSyncAndAsyncOptions<
       Pojo,
       CtorInput
     >,
@@ -146,13 +152,16 @@ export class PojoConstructor<Pojo extends object, CtorInput = unknown> {
 
   new(
     input?: CtorInput,
-    options?: PojoConstructorOptions<Pojo, CtorInput>,
+    options?: PojoConstructorSyncAndAsyncOptions<Pojo, CtorInput>,
   ): PojoSyncAndPromiseResult<Pojo> {
-    const effectiveOptions: PojoConstructorOptions<Pojo, CtorInput> = {
+    const effectiveOptions: PojoConstructorSyncAndAsyncOptions<
+      Pojo,
+      CtorInput
+    > = {
       ...(this.constructorOptions ?? {}),
       ...(options ?? {}),
     };
-    const sortedKeys = getSortedKeysForPojoConstructorProps(
+    const sortedKeys = getSortedKeysForPojoConstructorSyncAndAsyncProps(
       this.constructorProps,
       effectiveOptions,
     );
@@ -160,7 +169,7 @@ export class PojoConstructor<Pojo extends object, CtorInput = unknown> {
       Pojo,
       CtorInput
     >;
-    const proxiesHost = new PojoConstructorProxiesHost(
+    const proxiesHost = new PojoConstructorSyncAndAsyncProxiesHost(
       this.constructorProps,
       input,
       helpersHost,

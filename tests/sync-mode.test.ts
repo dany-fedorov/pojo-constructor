@@ -1,13 +1,13 @@
-import type { PojoConstructorPropsSync } from '../src/PojoConstructorSync/PojoConstructorPropsSync';
+import type { PojoConstructorSyncProps } from '../src/PojoConstructorSync/PojoConstructorSyncProps';
 import {
   constructPojoFromInstanceSync,
   constructPojoSync,
 } from '../src/PojoConstructorSync/constructPojoSync';
-import type { PojoConstructorHelpersHostSync } from '../src/PojoConstructorSync/PojoConstructorHelpersHostSync';
+import type { PojoConstructorSyncHelpersHost } from '../src/PojoConstructorSync/PojoConstructorSyncHelpersHost';
 
 describe('PojoConstructorPropsSync + pojoFromSync', function () {
   test('it should construct from plain', () => {
-    const c: PojoConstructorPropsSync<{ a: string; b: number }> = {
+    const c: PojoConstructorSyncProps<{ a: string; b: number }> = {
       a: () => ({ value: 'a-string' }),
       b: () => ({ value: 123 }),
     };
@@ -21,7 +21,7 @@ describe('PojoConstructorPropsSync + pojoFromSync', function () {
   });
 
   test('it should construct from class instance', () => {
-    class C implements PojoConstructorPropsSync<{ a: string; b: number }> {
+    class C implements PojoConstructorSyncProps<{ a: string; b: number }> {
       a() {
         return { value: 'a-string' };
       }
@@ -42,7 +42,7 @@ describe('PojoConstructorPropsSync + pojoFromSync', function () {
   });
 
   test('it should construct from nested class instance', () => {
-    type PojoC = PojoConstructorPropsSync<{ a: string; b: number }>;
+    type PojoC = PojoConstructorSyncProps<{ a: string; b: number }>;
 
     class Base implements Pick<PojoC, 'a'> {
       a() {
@@ -67,7 +67,7 @@ describe('PojoConstructorPropsSync + pojoFromSync', function () {
   });
 
   test('it should pass input', () => {
-    const c: PojoConstructorPropsSync<{ a: string; b: number }, boolean> = {
+    const c: PojoConstructorSyncProps<{ a: string; b: number }, boolean> = {
       a: (input) => ({
         value: input ? 'a-string-truthy-variant' : 'a-string-falsy-variant',
       }),
@@ -96,18 +96,18 @@ describe('PojoConstructorPropsSync + pojoFromSync', function () {
 
     type O = { a: string; b: string; c: string };
 
-    class C implements PojoConstructorPropsSync<O> {
+    class C implements PojoConstructorSyncProps<O> {
       a() {
         acounter++;
         return { value: 'a-string' };
       }
 
-      b(_: any, { cache: cachingProxy }: PojoConstructorHelpersHostSync<O>) {
+      b(_: any, { cache: cachingProxy }: PojoConstructorSyncHelpersHost<O>) {
         bcounter++;
         return cachingProxy.a();
       }
 
-      c(_: any, { cache: cachingProxy }: PojoConstructorHelpersHostSync<O>) {
+      c(_: any, { cache: cachingProxy }: PojoConstructorSyncHelpersHost<O>) {
         ccounter++;
         return cachingProxy.b();
       }
@@ -133,7 +133,7 @@ describe('PojoConstructorPropsSync + pojoFromSync', function () {
     let ccounter = 0;
 
     class C
-      implements PojoConstructorPropsSync<{ a: string; b: string; c: string }>
+      implements PojoConstructorSyncProps<{ a: string; b: string; c: string }>
     {
       a() {
         acounter++;
@@ -169,18 +169,18 @@ describe('PojoConstructorPropsSync + pojoFromSync', function () {
     let acount = 0;
     type T = { a: string; b: string; c: string };
     type Input = null;
-    const c: PojoConstructorPropsSync<T, Input> = {
+    const c: PojoConstructorSyncProps<T, Input> = {
       a: () => {
         acount++;
         return { value: 'a-string' };
       },
       b: (
         _,
-        { cache: cachingProxy }: PojoConstructorHelpersHostSync<T, Input>,
+        { cache: cachingProxy }: PojoConstructorSyncHelpersHost<T, Input>,
       ) => cachingProxy.a(),
       c: (
         _,
-        { cache: cachingProxy }: PojoConstructorHelpersHostSync<T, Input>,
+        { cache: cachingProxy }: PojoConstructorSyncHelpersHost<T, Input>,
       ) => cachingProxy.b(),
     };
     const pojo = constructPojoFromInstanceSync(c);
@@ -207,10 +207,10 @@ describe('PojoConstructorPropsSync + pojoFromSync', function () {
       d101: string;
     };
 
-    class C implements PojoConstructorPropsSync<O, boolean> {
+    class C implements PojoConstructorSyncProps<O, boolean> {
       b(
         input: boolean,
-        { cache: cachingProxy }: PojoConstructorHelpersHostSync<O, boolean>,
+        { cache: cachingProxy }: PojoConstructorSyncHelpersHost<O, boolean>,
       ) {
         evalOrder.push('b');
         if (!counts['b']) {
@@ -231,7 +231,7 @@ describe('PojoConstructorPropsSync + pojoFromSync', function () {
 
       c(
         input: boolean,
-        { cache: cachingProxy }: PojoConstructorHelpersHostSync<O, boolean>,
+        { cache: cachingProxy }: PojoConstructorSyncHelpersHost<O, boolean>,
       ) {
         evalOrder.push('c');
         if (!counts['c']) {
@@ -243,7 +243,7 @@ describe('PojoConstructorPropsSync + pojoFromSync', function () {
 
       d99(
         input: boolean,
-        { cache: cachingProxy }: PojoConstructorHelpersHostSync<O, boolean>,
+        { cache: cachingProxy }: PojoConstructorSyncHelpersHost<O, boolean>,
       ) {
         evalOrder.push('d99');
         if (!counts['d99']) {
@@ -255,7 +255,7 @@ describe('PojoConstructorPropsSync + pojoFromSync', function () {
 
       d10(
         input: boolean,
-        { cache: cachingProxy }: PojoConstructorHelpersHostSync<O, boolean>,
+        { cache: cachingProxy }: PojoConstructorSyncHelpersHost<O, boolean>,
       ) {
         evalOrder.push('d10');
         if (!counts['d10']) {
@@ -267,7 +267,7 @@ describe('PojoConstructorPropsSync + pojoFromSync', function () {
 
       d101(
         input: boolean,
-        { cache: cachingProxy }: PojoConstructorHelpersHostSync<O, boolean>,
+        { cache: cachingProxy }: PojoConstructorSyncHelpersHost<O, boolean>,
       ) {
         evalOrder.push('d101');
         if (!counts['d101']) {
@@ -324,10 +324,10 @@ describe('PojoConstructorPropsSync + pojoFromSync', function () {
       d101: string;
     };
 
-    class C implements PojoConstructorPropsSync<O, boolean> {
+    class C implements PojoConstructorSyncProps<O, boolean> {
       b(
         input: boolean,
-        { cache: cachingProxy }: PojoConstructorHelpersHostSync<O, boolean>,
+        { cache: cachingProxy }: PojoConstructorSyncHelpersHost<O, boolean>,
       ) {
         evalOrder.push('b');
         if (!counts['b']) {
@@ -348,7 +348,7 @@ describe('PojoConstructorPropsSync + pojoFromSync', function () {
 
       c(
         input: boolean,
-        { cache: cachingProxy }: PojoConstructorHelpersHostSync<O, boolean>,
+        { cache: cachingProxy }: PojoConstructorSyncHelpersHost<O, boolean>,
       ) {
         evalOrder.push('c');
         if (!counts['c']) {
@@ -360,7 +360,7 @@ describe('PojoConstructorPropsSync + pojoFromSync', function () {
 
       d99(
         input: boolean,
-        { cache: cachingProxy }: PojoConstructorHelpersHostSync<O, boolean>,
+        { cache: cachingProxy }: PojoConstructorSyncHelpersHost<O, boolean>,
       ) {
         evalOrder.push('d99');
         if (!counts['d99']) {
@@ -372,7 +372,7 @@ describe('PojoConstructorPropsSync + pojoFromSync', function () {
 
       d10(
         input: boolean,
-        { cache: cachingProxy }: PojoConstructorHelpersHostSync<O, boolean>,
+        { cache: cachingProxy }: PojoConstructorSyncHelpersHost<O, boolean>,
       ) {
         evalOrder.push('d10');
         if (!counts['d10']) {
@@ -384,7 +384,7 @@ describe('PojoConstructorPropsSync + pojoFromSync', function () {
 
       d101(
         input: boolean,
-        { cache: cachingProxy }: PojoConstructorHelpersHostSync<O, boolean>,
+        { cache: cachingProxy }: PojoConstructorSyncHelpersHost<O, boolean>,
       ) {
         evalOrder.push('d101');
         if (!counts['d101']) {
@@ -433,7 +433,7 @@ describe('PojoConstructorPropsSync + pojoFromSync', function () {
   test('caching by input - using cachingProxy argument', async () => {
     let acounter = 0;
     type O = { a: string; b: string; c: string };
-    const c: PojoConstructorPropsSync<O, boolean> = {
+    const c: PojoConstructorSyncProps<O, boolean> = {
       a: (input) => {
         acounter++;
         return {
@@ -442,7 +442,7 @@ describe('PojoConstructorPropsSync + pojoFromSync', function () {
       },
       b: (
         input,
-        { cache: cachingProxy }: PojoConstructorHelpersHostSync<O, boolean>,
+        { cache: cachingProxy }: PojoConstructorSyncHelpersHost<O, boolean>,
       ) => {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
@@ -450,7 +450,7 @@ describe('PojoConstructorPropsSync + pojoFromSync', function () {
       },
       c: (
         input,
-        { cache: cachingProxy }: PojoConstructorHelpersHostSync<O, boolean>,
+        { cache: cachingProxy }: PojoConstructorSyncHelpersHost<O, boolean>,
       ) => {
         return cachingProxy.a(input);
       },
@@ -476,7 +476,7 @@ describe('PojoConstructorPropsSync + pojoFromSync', function () {
   });
 
   test('limit keys', () => {
-    const c: PojoConstructorPropsSync<{ a: string; b: number; c: string }> = {
+    const c: PojoConstructorSyncProps<{ a: string; b: number; c: string }> = {
       a: () => ({ value: 'a-string' }),
       b: () => {
         throw new Error('b-error');
@@ -501,20 +501,20 @@ describe('PojoConstructorPropsSync + pojoFromSync', function () {
     };
     type O = { a: string; b: string; c: string; d: string };
     type In = { key: boolean };
-    const c: PojoConstructorPropsSync<O, In> = {
+    const c: PojoConstructorSyncProps<O, In> = {
       a: (input) => {
         counters.a++;
         return { value: `a-${input.key}` };
       },
-      b: (input, { cache }: PojoConstructorHelpersHostSync<O, In>) => {
+      b: (input, { cache }: PojoConstructorSyncHelpersHost<O, In>) => {
         counters.b++;
         return cache.a({ key: !input.key });
       },
-      c: (input, { cache }: PojoConstructorHelpersHostSync<O, In>) => {
+      c: (input, { cache }: PojoConstructorSyncHelpersHost<O, In>) => {
         counters.c++;
         return cache.b({ key: !input.key });
       },
-      d: (input, { cache }: PojoConstructorHelpersHostSync<O, In>) => {
+      d: (input, { cache }: PojoConstructorSyncHelpersHost<O, In>) => {
         counters.d++;
         return cache.c({ key: !input.key });
       },
@@ -569,11 +569,11 @@ describe('PojoConstructorPropsSync + pojoFromSync', function () {
 
   test('input passing through', () => {
     type O = { a: string; b: string };
-    const c: PojoConstructorPropsSync<O, boolean> = {
+    const c: PojoConstructorSyncProps<O, boolean> = {
       a: (input) => ({ value: `a-string-${input}` }),
       b: (
         input,
-        { cache: cachingProxy }: PojoConstructorHelpersHostSync<O, boolean>,
+        { cache: cachingProxy }: PojoConstructorSyncHelpersHost<O, boolean>,
       ) => cachingProxy.a(input),
     };
     const pojo1 = constructPojoFromInstanceSync(c, true);
@@ -594,7 +594,7 @@ describe('PojoConstructorPropsSync + pojoFromSync', function () {
 
   test('construct from class 1', () => {
     class C
-      implements PojoConstructorPropsSync<{ a: string; b: string }, number>
+      implements PojoConstructorSyncProps<{ a: string; b: string }, number>
     {
       a(input?: number) {
         return { value: `a-field-${input}` };
@@ -619,7 +619,7 @@ describe('PojoConstructorPropsSync + pojoFromSync', function () {
     const prvv = Symbol('prvv');
 
     class C
-      implements PojoConstructorPropsSync<{ a: string; b: string }, number>
+      implements PojoConstructorSyncProps<{ a: string; b: string }, number>
     {
       [prvm]() {
         return 'private-method-by-symbol-result';
@@ -651,7 +651,7 @@ describe('PojoConstructorPropsSync + pojoFromSync', function () {
 
   test('non-function values can be accessed (is not supported for TS)', () => {
     class C
-      implements PojoConstructorPropsSync<{ a: string; b: string }, number>
+      implements PojoConstructorSyncProps<{ a: string; b: string }, number>
     {
       nonFunctionProp = 'simple-prop-value';
 
@@ -678,7 +678,7 @@ describe('PojoConstructorPropsSync + pojoFromSync', function () {
   });
 
   test('throws in key-method', () => {
-    const c: PojoConstructorPropsSync<{ a: number; b: string }> = {
+    const c: PojoConstructorSyncProps<{ a: number; b: string }> = {
       a() {
         throw new Error('a-error');
       },
@@ -705,7 +705,7 @@ describe('PojoConstructorPropsSync + pojoFromSync', function () {
   });
 
   test('throws in key-method - uses catch method', () => {
-    const c: PojoConstructorPropsSync<{ a: number; b: string; c: string }> = {
+    const c: PojoConstructorSyncProps<{ a: number; b: string; c: string }> = {
       a() {
         throw new Error('a-error');
       },

@@ -1,15 +1,15 @@
 import type {
-  PojoConstructorProps,
-  PojoConstructorProxy,
-} from './PojoConstructorProps';
+  PojoConstructorSyncAndAsyncProps,
+  PojoConstructorSyncAndAsyncProxy,
+} from './PojoConstructorSyncAndAsyncProps';
 
 export class PojoConstructorHelpersHostBase<
   Pojo extends object,
   CtorInput = unknown,
 > {
   constructor(
-    public readonly cache: PojoConstructorProxy<Pojo, CtorInput>,
-    public readonly proxy: PojoConstructorProxy<Pojo, CtorInput>,
+    public readonly cache: PojoConstructorSyncAndAsyncProxy<Pojo, CtorInput>,
+    public readonly proxy: PojoConstructorSyncAndAsyncProxy<Pojo, CtorInput>,
   ) {}
 
   forKey(key: Extract<keyof Pojo, string>): PojoConstructorHelpersHostForKey<Pojo, CtorInput> {
@@ -23,16 +23,16 @@ export class PojoConstructorHelpersHostForKey<
 > extends PojoConstructorHelpersHostBase<Pojo, CtorInput> {
   constructor(
     public readonly key: Extract<keyof Pojo, string>,
-    cache: PojoConstructorProxy<Pojo, CtorInput>,
-    proxy: PojoConstructorProxy<Pojo, CtorInput>,
+    cache: PojoConstructorSyncAndAsyncProxy<Pojo, CtorInput>,
+    proxy: PojoConstructorSyncAndAsyncProxy<Pojo, CtorInput>,
   ) {
     super(cache, proxy);
   }
 
   forTarget(
-    target: PojoConstructorProps<Pojo, CtorInput>,
-  ): PojoConstructorHelpersHost<Pojo, CtorInput> {
-    return new PojoConstructorHelpersHost(
+    target: PojoConstructorSyncAndAsyncProps<Pojo, CtorInput>,
+  ): PojoConstructorSyncAndAsyncHelpersHost<Pojo, CtorInput> {
+    return new PojoConstructorSyncAndAsyncHelpersHost(
       target,
       this.key,
       this.cache,
@@ -41,15 +41,15 @@ export class PojoConstructorHelpersHostForKey<
   }
 }
 
-export class PojoConstructorHelpersHost<
+export class PojoConstructorSyncAndAsyncHelpersHost<
   Pojo extends object,
   CtorInput = unknown,
 > extends PojoConstructorHelpersHostBase<Pojo, CtorInput> {
   constructor(
-    public readonly target: PojoConstructorProps<Pojo, CtorInput>,
+    public readonly target: PojoConstructorSyncAndAsyncProps<Pojo, CtorInput>,
     public readonly key: Extract<keyof Pojo, string>,
-    cache: PojoConstructorProxy<Pojo, CtorInput>,
-    proxy: PojoConstructorProxy<Pojo, CtorInput>,
+    cache: PojoConstructorSyncAndAsyncProxy<Pojo, CtorInput>,
+    proxy: PojoConstructorSyncAndAsyncProxy<Pojo, CtorInput>,
   ) {
     super(cache, proxy);
   }

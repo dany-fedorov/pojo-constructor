@@ -1,19 +1,19 @@
 import type {
-  PojoConstructorProxy,
-  PojoConstructorProps,
-} from './PojoConstructorProps';
+  PojoConstructorSyncAndAsyncProxy,
+  PojoConstructorSyncAndAsyncProps,
+} from './PojoConstructorSyncAndAsyncProps';
 import { processCaughtInCachingProxy } from './processCaughtInCachingProxy';
 import {
   PojoConstructorCannotAsyncResolveError,
   PojoConstructorCannotSyncResolveError,
 } from './errors';
-import { PojoConstructorCacheMap } from './PojoConstructorCacheMap';
-import type { PojoConstructorOptions } from './PojoConstructorOptions';
+import { PojoConstructorSyncAndAsyncCacheMap } from './PojoConstructorSyncAndAsyncCacheMap';
+import type { PojoConstructorSyncAndAsyncOptions } from './PojoConstructorSyncAndAsyncOptions';
 import {
-  PojoConstructorHelpersHost,
+  PojoConstructorSyncAndAsyncHelpersHost,
   PojoConstructorHelpersHostBase,
   PojoConstructorHelpersHostForKey,
-} from './PojoConstructorHelpersHost';
+} from './PojoConstructorSyncAndAsyncHelpersHost';
 
 export function isPropProxiable(
   target: object,
@@ -50,10 +50,10 @@ function resolveHelpers<Pojo extends object, CtorInput>(
     | PojoConstructorHelpersHostBase<Pojo, CtorInput>
     | undefined,
   key: Extract<keyof Pojo, string>,
-  target?: PojoConstructorProps<Pojo, CtorInput>,
+  target?: PojoConstructorSyncAndAsyncProps<Pojo, CtorInput>,
 ) {
   // The most specific, with key and target
-  if (interceptedHelpersArg instanceof PojoConstructorHelpersHost) {
+  if (interceptedHelpersArg instanceof PojoConstructorSyncAndAsyncHelpersHost) {
     return interceptedHelpersArg;
   }
   if (interceptedHelpersArg instanceof PojoConstructorHelpersHostForKey) {
@@ -79,7 +79,7 @@ function resolveHelpers<Pojo extends object, CtorInput>(
 }
 
 function makeErrorCatchingProxy<Pojo extends object, CtorInput>(
-  constructorProps: PojoConstructorProps<Pojo, CtorInput>,
+  constructorProps: PojoConstructorSyncAndAsyncProps<Pojo, CtorInput>,
   input: CtorInput | undefined,
   helpers: PojoConstructorHelpersHostBase<Pojo, CtorInput>,
 ) {
@@ -88,7 +88,10 @@ function makeErrorCatchingProxy<Pojo extends object, CtorInput>(
     (target, key) => {
       return function PojoConstructor_errorCatchingProxy_decoratorFn(
         interceptedInputArg?: CtorInput,
-        interceptedHelpersArg?: PojoConstructorHelpersHost<Pojo, CtorInput>,
+        interceptedHelpersArg?: PojoConstructorSyncAndAsyncHelpersHost<
+          Pojo,
+          CtorInput
+        >,
       ) {
         const effectiveInput =
           interceptedInputArg !== undefined ? interceptedInputArg : input;
@@ -186,15 +189,18 @@ function makeErrorCatchingProxy<Pojo extends object, CtorInput>(
       };
     },
   );
-  return errorCatchingProxy as PojoConstructorProxy<Pojo, CtorInput>;
+  return errorCatchingProxy as PojoConstructorSyncAndAsyncProxy<
+    Pojo,
+    CtorInput
+  >;
 }
 
 function makeCachingProxy<Pojo extends object, CtorInput>(
-  errorCatchingProxy: PojoConstructorProxy<Pojo, CtorInput>,
+  errorCatchingProxy: PojoConstructorSyncAndAsyncProxy<Pojo, CtorInput>,
   input: CtorInput | undefined,
   helpers: PojoConstructorHelpersHostBase<Pojo, CtorInput>,
   options: Pick<
-    PojoConstructorOptions<Pojo, CtorInput>,
+    PojoConstructorSyncAndAsyncOptions<Pojo, CtorInput>,
     'cacheKeyFromConstructorInput'
   >,
 ) {
@@ -203,14 +209,17 @@ function makeCachingProxy<Pojo extends object, CtorInput>(
       ? options?.cacheKeyFromConstructorInput
       : (x?: CtorInput) => x;
 
-  const syncCache = new PojoConstructorCacheMap();
-  const asyncCache = new PojoConstructorCacheMap();
+  const syncCache = new PojoConstructorSyncAndAsyncCacheMap();
+  const asyncCache = new PojoConstructorSyncAndAsyncCacheMap();
   const cachingProxy = decoratePojoConstructorMethods(
     errorCatchingProxy,
     (target, key) => {
       return function PojoConstructor_cachingProxy_decoratorFn(
         interceptedInputArg?: CtorInput,
-        interceptedHelpersArg?: PojoConstructorHelpersHost<Pojo, CtorInput>,
+        interceptedHelpersArg?: PojoConstructorSyncAndAsyncHelpersHost<
+          Pojo,
+          CtorInput
+        >,
       ) {
         const effectiveInput =
           interceptedInputArg !== undefined ? interceptedInputArg : input;
@@ -249,19 +258,25 @@ function makeCachingProxy<Pojo extends object, CtorInput>(
       };
     },
   );
-  return cachingProxy as PojoConstructorProxy<Pojo, CtorInput>;
+  return cachingProxy as PojoConstructorSyncAndAsyncProxy<Pojo, CtorInput>;
 }
 
-export class PojoConstructorProxiesHost<Pojo extends object, CtorInput> {
-  cachingProxy: PojoConstructorProxy<Pojo, CtorInput>;
-  errorCatchingProxy: PojoConstructorProxy<Pojo, CtorInput>;
+export class PojoConstructorSyncAndAsyncProxiesHost<
+  Pojo extends object,
+  CtorInput,
+> {
+  cachingProxy: PojoConstructorSyncAndAsyncProxy<Pojo, CtorInput>;
+  errorCatchingProxy: PojoConstructorSyncAndAsyncProxy<Pojo, CtorInput>;
 
   constructor(
-    public readonly constructorProps: PojoConstructorProps<Pojo, CtorInput>,
+    public readonly constructorProps: PojoConstructorSyncAndAsyncProps<
+      Pojo,
+      CtorInput
+    >,
     input: CtorInput | undefined,
     helpers: PojoConstructorHelpersHostBase<Pojo, CtorInput>,
     options: Pick<
-      PojoConstructorOptions<Pojo, CtorInput>,
+      PojoConstructorSyncAndAsyncOptions<Pojo, CtorInput>,
       'cacheKeyFromConstructorInput'
     >,
   ) {

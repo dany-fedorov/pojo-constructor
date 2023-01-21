@@ -1,6 +1,6 @@
 import { PojoConstructorCacheMapCannotGet } from './errors';
 
-export class PojoConstructorCacheMap<T> {
+export class PojoConstructorSyncAndAsyncCacheMap<T> {
   private map: Map<any, any> = new Map();
 
   has(propName: any, inputCacheKey: any): boolean {

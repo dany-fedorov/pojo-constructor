@@ -1,8 +1,8 @@
-import { PojoConstructorCacheMap } from '../src/PojoConstructor/PojoConstructorCacheMap';
+import { PojoConstructorSyncAndAsyncCacheMap } from '../src/PojoConstructorSyncAndAsync/PojoConstructorSyncAndAsyncCacheMap';
 
 describe('PojoConstructorCacheMap', function () {
   test('Throws when cannot get', () => {
-    const cacheMap = new PojoConstructorCacheMap();
+    const cacheMap = new PojoConstructorSyncAndAsyncCacheMap();
     const p1 = 'p1';
     const p2 = 'p2';
     const i1 = 'i1';

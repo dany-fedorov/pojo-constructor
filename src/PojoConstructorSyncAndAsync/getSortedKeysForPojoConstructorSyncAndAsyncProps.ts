@@ -1,5 +1,5 @@
-import type { PojoConstructorProps } from './PojoConstructorProps';
-import type { PojoConstructorOptions } from './PojoConstructorOptions';
+import type { PojoConstructorSyncAndAsyncProps } from './PojoConstructorSyncAndAsyncProps';
+import type { PojoConstructorSyncAndAsyncOptions } from './PojoConstructorSyncAndAsyncOptions';
 
 const OBJ_DEFAULT_PROTOTYPE = Object.getPrototypeOf({});
 
@@ -7,10 +7,7 @@ export function extractMethodKeysForPojoConstructorInstance<
   Pojo extends object,
   CtorInput,
 >(
-  ctorProps: PojoConstructorProps<Pojo, CtorInput>,
-  // | PojoConstructorProps<Pojo, CtorInput>
-  // | PojoConstructorPropsSync<Pojo, CtorInput>
-  // | PojoConstructorPropsAsync<Pojo, CtorInput>,
+  ctorProps: PojoConstructorSyncAndAsyncProps<Pojo, CtorInput>,
   isPrototype = false,
 ): Extract<keyof Pojo, string>[] {
   const keys = Object.getOwnPropertyNames(ctorProps).filter(
@@ -30,15 +27,15 @@ export function extractMethodKeysForPojoConstructorInstance<
   }
 }
 
-export function getSortedKeysForPojoConstructorProps<
+export function getSortedKeysForPojoConstructorSyncAndAsyncProps<
   Pojo extends object,
   CtorInput,
 >(
-  ctorProps: PojoConstructorProps<Pojo, CtorInput>,
-  // | PojoConstructorProps<Pojo, CtorInput>
-  // | PojoConstructorPropsSync<Pojo, CtorInput>
-  // | PojoConstructorPropsAsync<Pojo, CtorInput>,
-  options?: Pick<PojoConstructorOptions<Pojo, CtorInput>, 'keys' | 'sortKeys'>,
+  ctorProps: PojoConstructorSyncAndAsyncProps<Pojo, CtorInput>,
+  options?: Pick<
+    PojoConstructorSyncAndAsyncOptions<Pojo, CtorInput>,
+    'keys' | 'sortKeys'
+  >,
 ): Extract<keyof Pojo, string>[] {
   const keys =
     typeof options?.keys === 'function'

@@ -1,13 +1,13 @@
-import type { PojoConstructorPropsAsync } from '../src/PojoConstructorAsync/PojoConstructorPropsAsync';
+import type { PojoConstructorAsyncProps } from '../src/PojoConstructorAsync/PojoConstructorAsyncProps';
 import {
   constructPojoAsync,
   constructPojoFromInstanceAsync,
 } from '../src/PojoConstructorAsync/constructPojoAsync';
-import type { PojoConstructorHelpersHostAsync } from '../src/PojoConstructorAsync/PojoConstructorHelpersHostAsync';
+import type { PojoConstructorAsyncHelpersHost } from '../src/PojoConstructorAsync/PojoConstructorAsyncHelpersHost';
 
 describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
   test('it should construct from plain', async () => {
-    const c: PojoConstructorPropsAsync<{ a: string; b: number }> = {
+    const c: PojoConstructorAsyncProps<{ a: string; b: number }> = {
       a: async () => ({ value: 'a-string' }),
       b: async () => ({ value: 123 }),
     };
@@ -21,7 +21,7 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
   });
 
   test('it should construct from class instance', async () => {
-    class C implements PojoConstructorPropsAsync<{ a: string; b: number }> {
+    class C implements PojoConstructorAsyncProps<{ a: string; b: number }> {
       async a() {
         return { value: 'a-string' };
       }
@@ -42,7 +42,7 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
   });
 
   test('it should construct from nested class instance', async () => {
-    type PojoC = PojoConstructorPropsAsync<{ a: string; b: number }>;
+    type PojoC = PojoConstructorAsyncProps<{ a: string; b: number }>;
 
     class Base implements Pick<PojoC, 'a'> {
       async a() {
@@ -67,7 +67,7 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
   });
 
   test('it should pass input', async () => {
-    const c: PojoConstructorPropsAsync<{ a: string; b: number }, boolean> = {
+    const c: PojoConstructorAsyncProps<{ a: string; b: number }, boolean> = {
       a: async (input) => ({
         value: input ? 'a-string-truthy-variant' : 'a-string-falsy-variant',
       }),
@@ -95,7 +95,7 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
     let ccounter = 0;
 
     class C
-      implements PojoConstructorPropsAsync<{ a: string; b: string; c: string }>
+      implements PojoConstructorAsyncProps<{ a: string; b: string; c: string }>
     {
       async a() {
         acounter++;
@@ -134,7 +134,7 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
 
     type O = { a: string; b: string; c: string };
 
-    class C implements PojoConstructorPropsAsync<O> {
+    class C implements PojoConstructorAsyncProps<O> {
       async a() {
         acounter++;
         return { value: 'a-string' };
@@ -142,7 +142,7 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
 
       async b(
         _: any,
-        { cache: cachingProxy }: PojoConstructorHelpersHostAsync<O>,
+        { cache: cachingProxy }: PojoConstructorAsyncHelpersHost<O>,
       ) {
         bcounter++;
         return cachingProxy.a();
@@ -150,7 +150,7 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
 
       async c(
         _: any,
-        { cache: cachingProxy }: PojoConstructorHelpersHostAsync<O>,
+        { cache: cachingProxy }: PojoConstructorAsyncHelpersHost<O>,
       ) {
         ccounter++;
         return cachingProxy.b();
@@ -175,7 +175,7 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
     let acount = 0;
     type T = { a: string; b: string; c: string };
     type Input = null;
-    const c: PojoConstructorPropsAsync<T, Input> = {
+    const c: PojoConstructorAsyncProps<T, Input> = {
       a: async () => {
         acount++;
         return new Promise((r) =>
@@ -184,11 +184,11 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
       },
       b: async (
         _,
-        { cache: cachingProxy }: PojoConstructorHelpersHostAsync<T, Input>,
+        { cache: cachingProxy }: PojoConstructorAsyncHelpersHost<T, Input>,
       ) => cachingProxy.a(),
       c: async (
         _,
-        { cache: cachingProxy }: PojoConstructorHelpersHostAsync<T, Input>,
+        { cache: cachingProxy }: PojoConstructorAsyncHelpersHost<T, Input>,
       ) => cachingProxy.b(),
     };
     const pojo = await constructPojoFromInstanceAsync(c);
@@ -205,7 +205,7 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
   test('caching by input - using cachingProxy argument', async () => {
     let acounter = 0;
     type O = { a: string; b: string; c: string };
-    const c: PojoConstructorPropsAsync<O, boolean> = {
+    const c: PojoConstructorAsyncProps<O, boolean> = {
       a: async (input) => {
         acounter++;
         return {
@@ -214,7 +214,7 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
       },
       b: async (
         input,
-        { cache: cachingProxy }: PojoConstructorHelpersHostAsync<O, boolean>,
+        { cache: cachingProxy }: PojoConstructorAsyncHelpersHost<O, boolean>,
       ) => {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
@@ -222,7 +222,7 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
       },
       c: async (
         input,
-        { cache: cachingProxy }: PojoConstructorHelpersHostAsync<O, boolean>,
+        { cache: cachingProxy }: PojoConstructorAsyncHelpersHost<O, boolean>,
       ) => {
         return cachingProxy.a(input);
       },
@@ -250,7 +250,7 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
   test('it should reassign input - using cachingProxy argument', async () => {
     let acounter = 0;
     type O = { a: string; b: string; c: string; d: string };
-    const c: PojoConstructorPropsAsync<O, boolean | null> = {
+    const c: PojoConstructorAsyncProps<O, boolean | null> = {
       a: async (input) => {
         acounter++;
         return { value: `a-string-${input}` };
@@ -259,7 +259,7 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
         _,
         {
           cache: cachingProxy,
-        }: PojoConstructorHelpersHostAsync<O, boolean | null>,
+        }: PojoConstructorAsyncHelpersHost<O, boolean | null>,
       ) => {
         return cachingProxy.a(null);
       },
@@ -267,7 +267,7 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
         input,
         {
           cache: cachingProxy,
-        }: PojoConstructorHelpersHostAsync<O, boolean | null>,
+        }: PojoConstructorAsyncHelpersHost<O, boolean | null>,
       ) => {
         return cachingProxy.a(!input);
       },
@@ -275,7 +275,7 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
         input,
         {
           cache: cachingProxy,
-        }: PojoConstructorHelpersHostAsync<O, boolean | null>,
+        }: PojoConstructorAsyncHelpersHost<O, boolean | null>,
       ) => {
         return cachingProxy.a(input);
       },
@@ -293,7 +293,7 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
   });
 
   test('it should resolve with concurrency setting', async () => {
-    const c: PojoConstructorPropsAsync<{ a: string; b: number }> = {
+    const c: PojoConstructorAsyncProps<{ a: string; b: number }> = {
       a: async () => ({ value: 'a-string' }),
       b: async () => ({ value: 123 }),
     };
@@ -315,7 +315,7 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
 
     type O = { a: string; b: string; c: string };
 
-    class C implements PojoConstructorPropsAsync<O> {
+    class C implements PojoConstructorAsyncProps<O> {
       async a() {
         acounter++;
         return { value: 'a-string' };
@@ -323,7 +323,7 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
 
       async b(
         _: any,
-        { cache: cachingProxy }: PojoConstructorHelpersHostAsync<O>,
+        { cache: cachingProxy }: PojoConstructorAsyncHelpersHost<O>,
       ) {
         bcounter++;
         return cachingProxy.a();
@@ -331,7 +331,7 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
 
       async c(
         _: any,
-        { cache: cachingProxy }: PojoConstructorHelpersHostAsync<O>,
+        { cache: cachingProxy }: PojoConstructorAsyncHelpersHost<O>,
       ) {
         ccounter++;
         return cachingProxy.b();
@@ -367,10 +367,10 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
       d101: string;
     };
 
-    class C implements PojoConstructorPropsAsync<O, boolean> {
+    class C implements PojoConstructorAsyncProps<O, boolean> {
       async b(
         input: boolean,
-        { cache: cachingProxy }: PojoConstructorHelpersHostAsync<O, boolean>,
+        { cache: cachingProxy }: PojoConstructorAsyncHelpersHost<O, boolean>,
       ) {
         evalOrder.push('b');
         if (!counts['b']) {
@@ -391,7 +391,7 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
 
       async c(
         input: boolean,
-        { cache: cachingProxy }: PojoConstructorHelpersHostAsync<O, boolean>,
+        { cache: cachingProxy }: PojoConstructorAsyncHelpersHost<O, boolean>,
       ) {
         evalOrder.push('c');
         if (!counts['c']) {
@@ -403,7 +403,7 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
 
       async d99(
         input: boolean,
-        { cache: cachingProxy }: PojoConstructorHelpersHostAsync<O, boolean>,
+        { cache: cachingProxy }: PojoConstructorAsyncHelpersHost<O, boolean>,
       ) {
         evalOrder.push('d99');
         if (!counts['d99']) {
@@ -415,7 +415,7 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
 
       async d10(
         input: boolean,
-        { cache: cachingProxy }: PojoConstructorHelpersHostAsync<O, boolean>,
+        { cache: cachingProxy }: PojoConstructorAsyncHelpersHost<O, boolean>,
       ) {
         evalOrder.push('d10');
         if (!counts['d10']) {
@@ -427,7 +427,7 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
 
       async d101(
         input: boolean,
-        { cache: cachingProxy }: PojoConstructorHelpersHostAsync<O, boolean>,
+        { cache: cachingProxy }: PojoConstructorAsyncHelpersHost<O, boolean>,
       ) {
         evalOrder.push('d101');
         if (!counts['d101']) {
@@ -484,10 +484,10 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
       d101: string;
     };
 
-    class C implements PojoConstructorPropsAsync<O, boolean> {
+    class C implements PojoConstructorAsyncProps<O, boolean> {
       async b(
         input: boolean,
-        { cache: cachingProxy }: PojoConstructorHelpersHostAsync<O, boolean>,
+        { cache: cachingProxy }: PojoConstructorAsyncHelpersHost<O, boolean>,
       ) {
         evalOrder.push('b');
         if (!counts['b']) {
@@ -508,7 +508,7 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
 
       async c(
         input: boolean,
-        { cache: cachingProxy }: PojoConstructorHelpersHostAsync<O, boolean>,
+        { cache: cachingProxy }: PojoConstructorAsyncHelpersHost<O, boolean>,
       ) {
         evalOrder.push('c');
         if (!counts['c']) {
@@ -520,7 +520,7 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
 
       async d99(
         input: boolean,
-        { cache: cachingProxy }: PojoConstructorHelpersHostAsync<O, boolean>,
+        { cache: cachingProxy }: PojoConstructorAsyncHelpersHost<O, boolean>,
       ) {
         evalOrder.push('d99');
         if (!counts['d99']) {
@@ -532,7 +532,7 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
 
       async d10(
         input: boolean,
-        { cache: cachingProxy }: PojoConstructorHelpersHostAsync<O, boolean>,
+        { cache: cachingProxy }: PojoConstructorAsyncHelpersHost<O, boolean>,
       ) {
         evalOrder.push('d10');
         if (!counts['d10']) {
@@ -544,7 +544,7 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
 
       async d101(
         input: boolean,
-        { cache: cachingProxy }: PojoConstructorHelpersHostAsync<O, boolean>,
+        { cache: cachingProxy }: PojoConstructorAsyncHelpersHost<O, boolean>,
       ) {
         evalOrder.push('d101');
         if (!counts['d101']) {
@@ -591,7 +591,7 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
   });
 
   test('limit keys', async () => {
-    const c: PojoConstructorPropsAsync<{ a: string; b: number; c: string }> = {
+    const c: PojoConstructorAsyncProps<{ a: string; b: number; c: string }> = {
       a: async () => ({ value: 'a-string' }),
       b: async () => {
         throw new Error('b-error');
@@ -617,20 +617,20 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
     };
     type O = { a: string; b: string; c: string; d: string };
     type In = { key: boolean };
-    const c: PojoConstructorPropsAsync<O, In> = {
+    const c: PojoConstructorAsyncProps<O, In> = {
       a: async (input) => {
         counters.a++;
         return { value: `a-${input.key}` };
       },
-      b: async (input, { cache }: PojoConstructorHelpersHostAsync<O, In>) => {
+      b: async (input, { cache }: PojoConstructorAsyncHelpersHost<O, In>) => {
         counters.b++;
         return cache.a({ key: !input.key });
       },
-      c: async (input, { cache }: PojoConstructorHelpersHostAsync<O, In>) => {
+      c: async (input, { cache }: PojoConstructorAsyncHelpersHost<O, In>) => {
         counters.c++;
         return cache.b({ key: !input.key });
       },
-      d: async (input, { cache }: PojoConstructorHelpersHostAsync<O, In>) => {
+      d: async (input, { cache }: PojoConstructorAsyncHelpersHost<O, In>) => {
         counters.d++;
         return cache.c({ key: !input.key });
       },
@@ -683,13 +683,13 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
 
   test('custom catch - pojoConstructorStack: key-method', async () => {
     type O = { a: string; b: string };
-    const c: PojoConstructorPropsAsync<O> = {
+    const c: PojoConstructorAsyncProps<O> = {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       a: async () => {
         throw new Error('Error!');
       },
-      b: async (_, { cache }: PojoConstructorHelpersHostAsync<O>) => {
+      b: async (_, { cache }: PojoConstructorAsyncHelpersHost<O>) => {
         return cache.a();
       },
     };
@@ -744,13 +744,13 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
 
   test('concur custom catch - pojoConstructorStack: key-method', async () => {
     type O = { a: string; b: string };
-    const c: PojoConstructorPropsAsync<O> = {
+    const c: PojoConstructorAsyncProps<O> = {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       a: async () => {
         throw new Error('Error!');
       },
-      b: async (_, { cache }: PojoConstructorHelpersHostAsync<O>) => {
+      b: async (_, { cache }: PojoConstructorAsyncHelpersHost<O>) => {
         return cache.a();
       },
     };
@@ -808,11 +808,11 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
 
   test('passing input through', async () => {
     type O = { a: string; b: string };
-    const c: PojoConstructorPropsAsync<O, boolean> = {
+    const c: PojoConstructorAsyncProps<O, boolean> = {
       a: async (input) => ({ value: `a-string-${input}` }),
       b: async (
         input,
-        { cache: cachingProxy }: PojoConstructorHelpersHostAsync<O, boolean>,
+        { cache: cachingProxy }: PojoConstructorAsyncHelpersHost<O, boolean>,
       ) => cachingProxy.a(input),
     };
     const pojo1 = await constructPojoFromInstanceAsync(c, true);
@@ -833,7 +833,7 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
 
   test('construct from class 1', async () => {
     class C
-      implements PojoConstructorPropsAsync<{ a: string; b: string }, number>
+      implements PojoConstructorAsyncProps<{ a: string; b: string }, number>
     {
       async a(input: number) {
         return { value: `a-field-${input}` };
@@ -858,7 +858,7 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
     const prvv = Symbol('prvv');
 
     class C
-      implements PojoConstructorPropsAsync<{ a: string; b: string }, number>
+      implements PojoConstructorAsyncProps<{ a: string; b: string }, number>
     {
       [prvm]() {
         return 'private-method-by-symbol-result';
@@ -890,7 +890,7 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
 
   test('non-function values can be accessed (is not supported for TS)', async () => {
     class C
-      implements PojoConstructorPropsAsync<{ a: string; b: string }, number>
+      implements PojoConstructorAsyncProps<{ a: string; b: string }, number>
     {
       nonFunctionProp = 'simple-prop-value';
 
@@ -917,7 +917,7 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
   });
 
   test('throws in key-method', async () => {
-    const c: PojoConstructorPropsAsync<{ a: number; b: string }> = {
+    const c: PojoConstructorAsyncProps<{ a: number; b: string }> = {
       async a() {
         throw new Error('a-error');
       },
@@ -944,7 +944,7 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
   });
 
   test('throws in key-method - concur', async () => {
-    const c: PojoConstructorPropsAsync<{ a: number; b: string }> = {
+    const c: PojoConstructorAsyncProps<{ a: number; b: string }> = {
       async a() {
         throw new Error('a-error');
       },
@@ -973,7 +973,7 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
   });
 
   test('throws in key-method - uses catch method', async () => {
-    const c: PojoConstructorPropsAsync<{ a: number; b: string; c: string }> = {
+    const c: PojoConstructorAsyncProps<{ a: number; b: string; c: string }> = {
       async a() {
         throw new Error('a-error');
       },
@@ -1028,7 +1028,7 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
   });
 
   test('throws in key-method - uses catch method - sync throw', async () => {
-    const c: PojoConstructorPropsAsync<{ a: number; b: string; c: string }> = {
+    const c: PojoConstructorAsyncProps<{ a: number; b: string; c: string }> = {
       a() {
         throw new Error('a-error');
       },
@@ -1083,7 +1083,7 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
   });
 
   test('throws in key-method - uses catch method - concur', async () => {
-    const c: PojoConstructorPropsAsync<{ a: number; b: string; c: string }> = {
+    const c: PojoConstructorAsyncProps<{ a: number; b: string; c: string }> = {
       async a() {
         throw new Error('a-error');
       },

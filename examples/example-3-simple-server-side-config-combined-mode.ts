@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { PojoConstructor, PojoConstructorOptionsCatchFn } from '../src';
+import { PojoConstructorSyncAndAsync, PojoConstructorOptionsCatchFn } from '../src';
 
 type AppCfg = {
   appName: string;
@@ -12,7 +12,7 @@ type AppCfg = {
 
 type Env = 'dev' | 'staging' | 'production';
 
-const appCfgCtor = new PojoConstructor<AppCfg, Env>({
+const appCfgCtor = new PojoConstructorSyncAndAsync<AppCfg, Env>({
   appName(env: Env) {
     const sync = () => {
       return { value: `awesome-app-in-${env}` };
