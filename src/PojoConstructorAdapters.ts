@@ -2,104 +2,162 @@ import type { PojoConstructorAsyncProxy } from './PojoConstructorAsync/PojoConst
 import type { PojoConstructorSyncProxy } from './PojoConstructorSync/PojoConstructorSyncProps';
 import type { PojoConstructorSyncAndAsyncProxy } from './PojoConstructorSyncAndAsync/PojoConstructorSyncAndAsyncProps';
 
-type PojoConstructorAdapterType = 'sync' | 'async' | 'sync-and-async';
+type PojoConstructorAdapterSrc =
+  | 'sync'
+  | 'async'
+  | 'sync-and-async'
+  | 'plain-object';
+type PojoConstructorAdapterDst = 'sync' | 'async' | 'sync-and-async';
 
-export class PojoConstructorAdapters {
-  static proxy<
-    SrcType extends PojoConstructorAdapterType,
-    DstType extends PojoConstructorAdapterType,
-  >(cfg: {
-    src: SrcType;
-    dst: DstType;
-  }): SrcType extends 'sync'
-    ? <Pojo extends object, CtorInput = unknown>(
-        srcInstance: PojoConstructorSyncProxy<Pojo, CtorInput>,
-      ) => DstType extends 'sync'
-        ? PojoConstructorSyncProxy<Pojo, CtorInput>
-        : DstType extends 'async'
-        ? PojoConstructorAsyncProxy<Pojo, CtorInput>
-        : DstType extends 'sync-and-async'
-        ? PojoConstructorSyncAndAsyncProxy<Pojo, CtorInput>
-        : never
-    : SrcType extends 'async'
-    ? <Pojo extends object, CtorInput = unknown>(
-        srcInstance: PojoConstructorAsyncProxy<Pojo, CtorInput>,
-      ) => DstType extends 'sync'
-        ? PojoConstructorSyncProxy<Pojo, CtorInput>
-        : DstType extends 'async'
-        ? PojoConstructorAsyncProxy<Pojo, CtorInput>
-        : DstType extends 'sync-and-async'
-        ? PojoConstructorSyncAndAsyncProxy<Pojo, CtorInput>
-        : never
-    : SrcType extends 'sync-and-async'
-    ? <Pojo extends object, CtorInput = unknown>(
-        srcInstance: PojoConstructorSyncAndAsyncProxy<Pojo, CtorInput>,
-      ) => DstType extends 'sync'
-        ? PojoConstructorSyncProxy<Pojo, CtorInput>
-        : DstType extends 'async'
-        ? PojoConstructorAsyncProxy<Pojo, CtorInput>
-        : DstType extends 'sync-and-async'
-        ? PojoConstructorSyncAndAsyncProxy<Pojo, CtorInput>
-        : never
-    : never {
-    // const { src, dst } = cfg;
-    // if (dst === 'sync') {
-    //   return <Pojo extends object>(
-    //     srcInstance: PojoConstructorSyncProxy<Pojo>,
-    //   ): PojoConstructorSyncProxy<Pojo> => {
-    //     return srcInstance as PojoConstructorSyncProxy<Pojo>;
-    //   };
-    // }
-    return (<Pojo extends object, CtorInput = unknown>(
-      proxyInstance:
-        | PojoConstructorAsyncProxy<Pojo, CtorInput>
-        | PojoConstructorSyncProxy<Pojo, CtorInput>
-        | PojoConstructorSyncAndAsyncProxy<Pojo, CtorInput>,
-    ): DstType extends 'sync'
+type ProxyAdapterFunction<
+  SrcType extends PojoConstructorAdapterSrc,
+  DstType extends PojoConstructorAdapterDst,
+> = SrcType extends 'sync'
+  ? <Pojo extends object, CtorInput = unknown>(
+      srcInstance: PojoConstructorSyncProxy<Pojo, CtorInput>,
+    ) => DstType extends 'sync'
       ? PojoConstructorSyncProxy<Pojo, CtorInput>
       : DstType extends 'async'
       ? PojoConstructorAsyncProxy<Pojo, CtorInput>
       : DstType extends 'sync-and-async'
       ? PojoConstructorSyncAndAsyncProxy<Pojo, CtorInput>
-      : never => {
-      return proxyInstance as unknown as DstType extends 'sync'
-        ? PojoConstructorSyncProxy<Pojo, CtorInput>
-        : DstType extends 'async'
-        ? PojoConstructorAsyncProxy<Pojo, CtorInput>
-        : DstType extends 'sync-and-async'
-        ? PojoConstructorSyncAndAsyncProxy<Pojo, CtorInput>
-        : never;
-    }) as unknown as SrcType extends 'sync'
-      ? <Pojo extends object, CtorInput = unknown>(
-          proxyInstance: PojoConstructorSyncProxy<Pojo, CtorInput>,
-        ) => DstType extends 'sync'
-          ? PojoConstructorSyncProxy<Pojo, CtorInput>
-          : DstType extends 'async'
-          ? PojoConstructorAsyncProxy<Pojo, CtorInput>
-          : DstType extends 'sync-and-async'
-          ? PojoConstructorSyncAndAsyncProxy<Pojo, CtorInput>
-          : never
-      : SrcType extends 'async'
-      ? <Pojo extends object, CtorInput = unknown>(
-          proxyInstance: PojoConstructorAsyncProxy<Pojo, CtorInput>,
-        ) => DstType extends 'sync'
-          ? PojoConstructorSyncProxy<Pojo, CtorInput>
-          : DstType extends 'async'
-          ? PojoConstructorAsyncProxy<Pojo, CtorInput>
-          : DstType extends 'sync-and-async'
-          ? PojoConstructorSyncAndAsyncProxy<Pojo, CtorInput>
-          : never
-      : SrcType extends 'sync-and-async'
-      ? <Pojo extends object, CtorInput = unknown>(
-          proxyInstance: PojoConstructorSyncAndAsyncProxy<Pojo, CtorInput>,
-        ) => DstType extends 'sync'
-          ? PojoConstructorSyncProxy<Pojo, CtorInput>
-          : DstType extends 'async'
-          ? PojoConstructorAsyncProxy<Pojo, CtorInput>
-          : DstType extends 'sync-and-async'
-          ? PojoConstructorSyncAndAsyncProxy<Pojo, CtorInput>
-          : never
-      : never;
+      : never
+  : SrcType extends 'async'
+  ? <Pojo extends object, CtorInput = unknown>(
+      srcInstance: PojoConstructorAsyncProxy<Pojo, CtorInput>,
+    ) => DstType extends 'sync'
+      ? PojoConstructorSyncProxy<Pojo, CtorInput>
+      : DstType extends 'async'
+      ? PojoConstructorAsyncProxy<Pojo, CtorInput>
+      : DstType extends 'sync-and-async'
+      ? PojoConstructorSyncAndAsyncProxy<Pojo, CtorInput>
+      : never
+  : SrcType extends 'sync-and-async'
+  ? <Pojo extends object, CtorInput = unknown>(
+      srcInstance: PojoConstructorSyncAndAsyncProxy<Pojo, CtorInput>,
+    ) => DstType extends 'sync'
+      ? PojoConstructorSyncProxy<Pojo, CtorInput>
+      : DstType extends 'async'
+      ? PojoConstructorAsyncProxy<Pojo, CtorInput>
+      : DstType extends 'sync-and-async'
+      ? PojoConstructorSyncAndAsyncProxy<Pojo, CtorInput>
+      : never
+  : SrcType extends 'plain-object'
+  ? <Pojo extends object>(
+      srcInstance: Pojo,
+    ) => DstType extends 'sync'
+      ? PojoConstructorSyncProxy<Pojo>
+      : DstType extends 'async'
+      ? PojoConstructorAsyncProxy<Pojo>
+      : DstType extends 'sync-and-async'
+      ? PojoConstructorSyncAndAsyncProxy<Pojo>
+      : never
+  : never;
+
+export class PojoConstructorAdapters {
+  static proxy<
+    SrcType extends PojoConstructorAdapterSrc,
+    DstType extends PojoConstructorAdapterDst,
+  >(cfg: {
+    src: SrcType;
+    dst: DstType;
+  }): ProxyAdapterFunction<SrcType, DstType> {
+    const { src, dst } = cfg;
+    switch (src) {
+      case 'sync': {
+        switch (dst) {
+          case 'sync': {
+            return ((srcInstance: any) => srcInstance) as ProxyAdapterFunction<
+              SrcType,
+              DstType
+            >;
+          }
+          case 'async': {
+            return ((srcInstance: any) => srcInstance) as ProxyAdapterFunction<
+              SrcType,
+              DstType
+            >;
+          }
+          case 'sync-and-async':
+          default: {
+            return ((srcInstance: any) => srcInstance) as ProxyAdapterFunction<
+              SrcType,
+              DstType
+            >;
+          }
+        }
+      }
+      case 'async': {
+        switch (dst) {
+          case 'sync': {
+            return ((srcInstance: any) => srcInstance) as ProxyAdapterFunction<
+              SrcType,
+              DstType
+            >;
+          }
+          case 'async': {
+            return ((srcInstance: any) => srcInstance) as ProxyAdapterFunction<
+              SrcType,
+              DstType
+            >;
+          }
+          case 'sync-and-async':
+          default: {
+            return ((srcInstance: any) => srcInstance) as ProxyAdapterFunction<
+              SrcType,
+              DstType
+            >;
+          }
+        }
+      }
+      case 'sync-and-async': {
+        switch (dst) {
+          case 'sync': {
+            return ((srcInstance: any) => srcInstance) as ProxyAdapterFunction<
+              SrcType,
+              DstType
+            >;
+          }
+          case 'async': {
+            return ((srcInstance: any) => srcInstance) as ProxyAdapterFunction<
+              SrcType,
+              DstType
+            >;
+          }
+          case 'sync-and-async':
+          default: {
+            return ((srcInstance: any) => srcInstance) as ProxyAdapterFunction<
+              SrcType,
+              DstType
+            >;
+          }
+        }
+      }
+      case 'plain-object':
+      default: {
+        switch (dst) {
+          case 'sync': {
+            return ((srcInstance: any) => srcInstance) as ProxyAdapterFunction<
+              SrcType,
+              DstType
+            >;
+          }
+          case 'async': {
+            return ((srcInstance: any) => srcInstance) as ProxyAdapterFunction<
+              SrcType,
+              DstType
+            >;
+          }
+          case 'sync-and-async':
+          default: {
+            return ((srcInstance: any) => srcInstance) as ProxyAdapterFunction<
+              SrcType,
+              DstType
+            >;
+          }
+        }
+      }
+    }
   }
 }
 
