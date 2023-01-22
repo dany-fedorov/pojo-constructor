@@ -352,23 +352,25 @@ Constructor methods for each of properties returns promise for `{ value }` objec
 ## [PojoConstructorSyncAndAsync](https://dany-fedorov.github.io/pojo-constructor/classes/PojoConstructorSyncAndAsync.html)
 
 Can operate in both sync mode and async mode.<br>
-Constructor methods for each of properties returns an object with either one of `sync`, `promise` methods or both.
+Constructor methods for each of properties returns an object with either one of `sync`, `async` methods or both.
 
 All of these are valid:<br>
 
-- `{ sync, promise }`.
+- `{ sync, async }`.
 - `{ sync }`.
-- `{ promise }`.
+- `{ async }`.
 
 Where
 
-- `promise` - returns promise for `{ value }` object
+- `async` - returns promise for `{ value }` object
 - `sync` - returns `{ value }` object synchronously
 
-If you only specify `sync` methods, you can use them for "async mode" (calling `PojoConstructorSyncAndAsync#new().async()`),
-but you cannot use "sync mode" (calling `PojoConstructorSyncAndAsync#new().sync()`) if you only specify `promise` methods.
+If you only specify `sync` methods, you can use them for "async mode" (
+calling `PojoConstructorSyncAndAsync#new().async()`),
+but you cannot use "sync mode" (calling `PojoConstructorSyncAndAsync#new().sync()`) if you only specify `promise`
+methods.
 
-You can specify `promise` methods for some fields and still construct an object in "sync mode" if you also specify
+You can specify `async` methods for some fields and still construct an object in "sync mode" if you also specify
 a `catch` option.
 `catch` will be called each time constructing a property fails, but all properties that do not fail will be added to
 resulting object.
