@@ -18,6 +18,7 @@
     "type": "git",
     "url": "git://github.com/dany-fedorov/pojo-constructor.git"
   },
+  "homepage": "https://dany-fedorov.github.io/pojo-constructor",
   "publishConfig": {
     "access": "public"
   },
