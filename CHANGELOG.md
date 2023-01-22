@@ -1,3 +1,5 @@
+## [6.0.1](https://github.com/dany-fedorov/pojo-constructor/compare/v6.0.0...v6.0.1) (2023-01-22)
+
 # [6.0.0](https://github.com/dany-fedorov/pojo-constructor/compare/v5.0.0...v6.0.0) (2023-01-22)
 
 
