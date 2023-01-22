@@ -1,3 +1,10 @@
+# [6.1.0](https://github.com/dany-fedorov/pojo-constructor/compare/v6.0.3...v6.1.0) (2023-01-22)
+
+
+### Features
+
+* Allow CtorInput type parameter for adapters from plain-object ([13e891b](https://github.com/dany-fedorov/pojo-constructor/commit/13e891bb1e2daaf36fc03bf4beeca681d5f069f3))
+
 ## [6.0.3](https://github.com/dany-fedorov/pojo-constructor/compare/v6.0.2...v6.0.3) (2023-01-22)
 
 ## [6.0.2](https://github.com/dany-fedorov/pojo-constructor/compare/v6.0.1...v6.0.2) (2023-01-22)
