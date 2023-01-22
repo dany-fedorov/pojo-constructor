@@ -76,14 +76,14 @@ type ProxyAdapterFunction<
       ? PojoConstructorSyncAndAsyncProxy<Pojo, CtorInput>
       : never
   : SrcType extends 'plain-object'
-  ? <Pojo extends object>(
+  ? <Pojo extends object, CtorInput = unknown>(
       srcInstance: Pojo,
     ) => DstType extends 'sync'
-      ? PojoConstructorSyncProxy<Pojo>
+      ? PojoConstructorSyncProxy<Pojo, CtorInput>
       : DstType extends 'async'
-      ? PojoConstructorAsyncProxy<Pojo>
+      ? PojoConstructorAsyncProxy<Pojo, CtorInput>
       : DstType extends 'sync-and-async'
-      ? PojoConstructorSyncAndAsyncProxy<Pojo>
+      ? PojoConstructorSyncAndAsyncProxy<Pojo, CtorInput>
       : never
   : never;
 
@@ -119,14 +119,14 @@ type PropsAdapterFunction<
       ? PojoConstructorSyncAndAsyncProps<Pojo, CtorInput>
       : never
   : SrcType extends 'plain-object'
-  ? <Pojo extends object>(
+  ? <Pojo extends object, CtorInput = unknown>(
       srcInstance: Pojo,
     ) => DstType extends 'sync'
-      ? PojoConstructorSyncProps<Pojo>
+      ? PojoConstructorSyncProps<Pojo, CtorInput>
       : DstType extends 'async'
-      ? PojoConstructorAsyncProps<Pojo>
+      ? PojoConstructorAsyncProps<Pojo, CtorInput>
       : DstType extends 'sync-and-async'
-      ? PojoConstructorSyncAndAsyncProps<Pojo>
+      ? PojoConstructorSyncAndAsyncProps<Pojo, CtorInput>
       : never
   : never;
 
@@ -162,14 +162,14 @@ type PojoConstructorAdapterFunction<
       ? PojoConstructorSyncAndAsync<Pojo, CtorInput>
       : never
   : SrcType extends 'plain-object'
-  ? <Pojo extends object>(
+  ? <Pojo extends object, CtorInput = unknown>(
       srcInstance: Pojo,
     ) => DstType extends 'sync'
-      ? PojoConstructorSync<Pojo>
+      ? PojoConstructorSync<Pojo, CtorInput>
       : DstType extends 'async'
-      ? PojoConstructorAsync<Pojo>
+      ? PojoConstructorAsync<Pojo, CtorInput>
       : DstType extends 'sync-and-async'
-      ? PojoConstructorSyncAndAsync<Pojo>
+      ? PojoConstructorSyncAndAsync<Pojo, CtorInput>
       : never
   : never;
 
@@ -468,13 +468,19 @@ export class PojoConstructorAdapters {
         const adaptedProps = adapt(srcInstance);
         switch (cfg.dst) {
           case 'async': {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             return new PojoConstructorAsync(adaptedProps);
           }
           case 'sync': {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             return new PojoConstructorSync(adaptedProps);
           }
           case 'sync-and-async':
           default: {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             return new PojoConstructorSyncAndAsync(adaptedProps);
           }
         }
@@ -491,13 +497,19 @@ export class PojoConstructorAdapters {
       const options = srcInstance.options;
       switch (cfg.dst) {
         case 'async': {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
           return new PojoConstructorAsync(adaptedProps, options);
         }
         case 'sync': {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
           return new PojoConstructorSync(adaptedProps, options);
         }
         case 'sync-and-async':
         default: {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
           return new PojoConstructorSyncAndAsync(adaptedProps, options);
         }
       }
