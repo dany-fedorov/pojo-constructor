@@ -52,7 +52,7 @@ type AppCfg = {
 type Env = 'dev' | 'staging' | 'production';
 
 /**
- * Define configuration properties in methods of a class.
+ * Define configuration properties in methods.
  */
 const appCfgCtor = new PojoConstructorSync<AppCfg, Env>({
   appName(env: Env) {
