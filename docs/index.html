@@ -129,21 +129,23 @@ an object with value <code>undefined</code> and not having a property on an obje
   <h2><a href="https://dany-fedorov.github.io/pojo-constructor/classes/PojoConstructorSyncAndAsync.html">PojoConstructorSyncAndAsync</a></h2>
 </a>
 <p>Can operate in both sync mode and async mode.<br>
-Constructor methods for each of properties returns an object with either one of <code>sync</code>, <code>promise</code> methods or both.</p>
+Constructor methods for each of properties returns an object with either one of <code>sync</code>, <code>async</code> methods or both.</p>
 <p>All of these are valid:<br></p>
 <ul>
-<li><code>{ sync, promise }</code>.</li>
+<li><code>{ sync, async }</code>.</li>
 <li><code>{ sync }</code>.</li>
-<li><code>{ promise }</code>.</li>
+<li><code>{ async }</code>.</li>
 </ul>
 <p>Where</p>
 <ul>
-<li><code>promise</code> - returns promise for <code>{ value }</code> object</li>
+<li><code>async</code> - returns promise for <code>{ value }</code> object</li>
 <li><code>sync</code> - returns <code>{ value }</code> object synchronously</li>
 </ul>
-<p>If you only specify <code>sync</code> methods, you can use them for &quot;async mode&quot; (calling <code>PojoConstructorSyncAndAsync#new().async()</code>),
-but you cannot use &quot;sync mode&quot; (calling <code>PojoConstructorSyncAndAsync#new().sync()</code>) if you only specify <code>promise</code> methods.</p>
-<p>You can specify <code>promise</code> methods for some fields and still construct an object in &quot;sync mode&quot; if you also specify
+<p>If you only specify <code>sync</code> methods, you can use them for &quot;async mode&quot; (
+calling <code>PojoConstructorSyncAndAsync#new().async()</code>),
+but you cannot use &quot;sync mode&quot; (calling <code>PojoConstructorSyncAndAsync#new().sync()</code>) if you only specify <code>promise</code>
+methods.</p>
+<p>You can specify <code>async</code> methods for some fields and still construct an object in &quot;sync mode&quot; if you also specify
 a <code>catch</code> option.
 <code>catch</code> will be called each time constructing a property fails, but all properties that do not fail will be added to
 resulting object.</p>
