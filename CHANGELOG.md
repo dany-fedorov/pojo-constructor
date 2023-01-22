@@ -1,3 +1,16 @@
+# [6.0.0](https://github.com/dany-fedorov/pojo-constructor/compare/v5.0.0...v6.0.0) (2023-01-22)
+
+
+### Features
+
+* Add .pojoConstructor to PojoConstructorAdapters ([e849c51](https://github.com/dany-fedorov/pojo-constructor/commit/e849c51257eb1d2a5c2af92fb791b2af2e46ef15))
+* Rename `promise` to `async` field in combined result type ([d680303](https://github.com/dany-fedorov/pojo-constructor/commit/d680303aa47a1928a16905dbcc44f02c7c324b6e))
+
+
+### BREAKING CHANGES
+
+* Rename `promise` to `async` field in combined result type
+
 # [5.0.0](https://github.com/dany-fedorov/pojo-constructor/compare/v4.3.0...v5.0.0) (2023-01-21)
 
 
