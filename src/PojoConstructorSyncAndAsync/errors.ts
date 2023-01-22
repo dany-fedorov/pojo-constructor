@@ -45,7 +45,7 @@ export class PojoConstructorCannotSyncResolveError extends PojoConstructorError 
 export type PojoKeyProcessingStage =
   | 'key-method'
   | 'glue-code'
-  | 'promise-result-method'
+  | 'async-result-method'
   | 'sync-result-method'
   | 'promise-resolution'
   | 'unknown';

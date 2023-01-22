@@ -3,7 +3,7 @@ import type { PojoConstructorSyncAndAsyncHelpersHost } from './PojoConstructorSy
 export type PojoKeyProcessingStage =
   | 'key-method'
   | 'glue-code'
-  | 'promise-result-method'
+  | 'async-result-method'
   | 'sync-result-method'
   | 'promise';
 

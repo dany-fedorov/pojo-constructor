@@ -28,7 +28,7 @@ const appCfgCtor = new PojoConstructorSyncAndAsync<AppCfg, Env>({
   },
 
   featureFlags(env: Env) {
-    const promise = async () => {
+    const async = async () => {
       const GET_0_OR_1 = `https://www.random.org/integers/?num=1&min=0&max=1&col=1&base=2&format=plain&rnd=id.${env}`;
       const feature1Flag = Boolean(
         Number((await axios.get(GET_0_OR_1 + 'feature1')).data),
@@ -43,7 +43,7 @@ const appCfgCtor = new PojoConstructorSyncAndAsync<AppCfg, Env>({
         },
       };
     };
-    return { promise };
+    return { async };
   },
 });
 

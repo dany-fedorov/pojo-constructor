@@ -1,18 +1,9 @@
 import { PojoConstructorSyncAndAsync } from '../PojoConstructorSyncAndAsync/PojoConstructorSyncAndAsync';
 import type { PojoConstructorSyncOptions } from './PojoConstructorSyncOptions';
-import type {
-  PojoConstructorSyncProxy,
-  PojoConstructorSyncProps,
-} from './PojoConstructorSyncProps';
-import type {
-  PojoConstructorSyncAndAsyncProxy,
-  PojoConstructorSyncAndAsyncProps,
-} from '../PojoConstructorSyncAndAsync/PojoConstructorSyncAndAsyncProps';
-import { decoratePojoConstructorMethods } from '../PojoConstructorSyncAndAsync/PojoConstructorSyncAndAsyncProxiesHost';
-import type { PojoConstructorSyncAndAsyncHelpersHost } from '../PojoConstructorSyncAndAsync/PojoConstructorSyncAndAsyncHelpersHost';
-import { PojoConstructorSyncHelpersHost } from './PojoConstructorSyncHelpersHost';
+import type { PojoConstructorSyncProps } from './PojoConstructorSyncProps';
+import { PojoConstructorAdapters } from '../PojoConstructorAdapters';
 
-function cachingProxy2Sync<Pojo extends object, CtorInput = unknown>(
+/*function cachingProxy2Sync<Pojo extends object, CtorInput = unknown>(
   cachingProxy: PojoConstructorSyncAndAsyncProxy<Pojo, CtorInput>,
 ) {
   return decoratePojoConstructorMethods(cachingProxy, (target, key) => {
@@ -22,9 +13,9 @@ function cachingProxy2Sync<Pojo extends object, CtorInput = unknown>(
       return (target as any)[key](input).sync();
     };
   }) as PojoConstructorSyncProxy<Pojo, CtorInput>;
-}
+}*/
 
-function syncProps2Props<Pojo extends object, CtorInput = unknown>(
+/*function syncProps2Props<Pojo extends object, CtorInput = unknown>(
   constructorProps: PojoConstructorSyncProps<Pojo, CtorInput>,
 ): PojoConstructorSyncAndAsyncProps<Pojo, CtorInput> {
   return decoratePojoConstructorMethods(constructorProps, (target, key) => {
@@ -56,7 +47,7 @@ function syncProps2Props<Pojo extends object, CtorInput = unknown>(
       };
     };
   }) as PojoConstructorSyncAndAsyncProps<Pojo, CtorInput>;
-}
+}*/
 
 /**
  * Constructor methods for each of properties returns `{ value }` object synchronously.
@@ -72,15 +63,14 @@ export class PojoConstructorSync<Pojo extends object, CtorInput = unknown> {
   public readonly pojoConstructor: PojoConstructorSyncAndAsync<Pojo, CtorInput>;
 
   constructor(
-    public readonly constructorProps: PojoConstructorSyncProps<Pojo, CtorInput>,
-    public readonly constructorOptions?: PojoConstructorSyncOptions<
-      Pojo,
-      CtorInput
-    >,
+    public readonly props: PojoConstructorSyncProps<Pojo, CtorInput>,
+    public readonly options?: PojoConstructorSyncOptions<Pojo, CtorInput>,
   ) {
     this.pojoConstructor = new PojoConstructorSyncAndAsync<Pojo, CtorInput>(
-      syncProps2Props(this.constructorProps),
-      this.constructorOptions,
+      PojoConstructorAdapters.props({ src: 'sync', dst: 'sync-and-async' })(
+        this.props,
+      ),
+      this.options,
     );
   }
 

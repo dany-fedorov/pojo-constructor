@@ -1831,7 +1831,7 @@ describe('PojoConstructorProps + pojoFrom', function () {
             "keysStack": Array [
               Object {
                 "key": "b",
-                "stage": "promise-result-method",
+                "stage": "async-result-method",
               },
             ],
           },
@@ -1984,7 +1984,7 @@ describe('PojoConstructorProps + pojoFrom', function () {
             "keysStack": Array [
               Object {
                 "key": "a",
-                "stage": "promise-result-method",
+                "stage": "async-result-method",
               },
             ],
           },
@@ -1997,7 +1997,7 @@ describe('PojoConstructorProps + pojoFrom', function () {
             "keysStack": Array [
               Object {
                 "key": "b",
-                "stage": "promise-result-method",
+                "stage": "async-result-method",
               },
             ],
           },
@@ -2071,7 +2071,7 @@ describe('PojoConstructorProps + pojoFrom', function () {
             "keysStack": Array [
               Object {
                 "key": "b",
-                "stage": "promise-result-method",
+                "stage": "async-result-method",
               },
             ],
           },

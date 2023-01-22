@@ -162,7 +162,7 @@ export function makeErrorCatchingProxy<Pojo extends object, CtorInput>(
               } catch (caught: unknown) {
                 throw processCaughtInCachingProxy(caught, {
                   key,
-                  stage: 'promise-result-method',
+                  stage: 'async-result-method',
                 });
               }
               try {

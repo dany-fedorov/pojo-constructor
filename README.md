@@ -35,7 +35,7 @@ Example use cases
 
 # Examples
 
-## 1. [Simple server-side config, sync mode](./examples/example-1-simple-server-side-config-sync-mode.ts)
+## 1. [Simple server-side config, sync mode](https://github.com/dany-fedorov/pojo-constructor/blob/main/examples/example-1-simple-server-side-config-sync-mode.ts)
 
 <sub>(Run with `npm run ts-file ./examples/example-1-simple-server-side-config-sync-mode.ts`)</sub>
 
@@ -97,7 +97,7 @@ prints
 }
 ```
 
-## 2. [Server-side config with feature flags, async mode](./examples/example-2-simple-server-side-config-async-mode.ts)
+## 2. [Server-side config with feature flags, async mode](https://github.com/dany-fedorov/pojo-constructor/blob/main/examples/example-2-simple-server-side-config-async-mode.ts)
 
 <sub>(Run with `npm run ts-file ./examples/example-2-simple-server-side-config-async-mode.ts`)</sub>
 
@@ -158,7 +158,7 @@ prints
 }
 ```
 
-## 3. [Using combined sync + async mode declaration](./examples/example-3-simple-server-side-config-combined-mode.ts)
+## 3. [Using combined sync + async mode declaration](https://github.com/dany-fedorov/pojo-constructor/blob/main/examples/example-3-simple-server-side-config-combined-mode.ts)
 
 <sub>(Run with `npm run ts-file ./examples/example-3-simple-server-side-config-combined-mode.ts`)</sub>
 
@@ -179,7 +179,7 @@ type AppCfg = {
 
 type Env = 'dev' | 'staging' | 'production';
 
-const appCfgCtor = new PojoConstructor<AppCfg, Env>({
+const appCfgCtor = new PojoConstructorSyncAndAsync<AppCfg, Env>({
   appName(env: Env) {
     const sync = () => {
       return { value: `awesome-app-in-${env}` };
@@ -194,11 +194,8 @@ const appCfgCtor = new PojoConstructor<AppCfg, Env>({
     return { sync };
   },
 
-  /**
-   * Emulates fetching feature flags from database or a CMS.
-   */
   featureFlags(env: Env) {
-    const promise = async () => {
+    const async = async () => {
       const GET_0_OR_1 = `https://www.random.org/integers/?num=1&min=0&max=1&col=1&base=2&format=plain&rnd=id.${env}`;
       const feature1Flag = Boolean(
         Number((await axios.get(GET_0_OR_1 + 'feature1')).data),
@@ -213,7 +210,7 @@ const appCfgCtor = new PojoConstructor<AppCfg, Env>({
         },
       };
     };
-    return { promise };
+    return { async };
   },
 });
 
@@ -234,7 +231,7 @@ console.log(configDev);
 })();
 ```
 
-## 4. [Optional properties vs undefined value](./examples/example-4-optional-fields.ts)
+## 4. [Optional properties vs undefined value](https://github.com/dany-fedorov/pojo-constructor/blob/main/examples/example-4-optional-fields.ts)
 
 <sub>(Run with `npm run ts-file ./examples/example-4-optional-fields.ts`)</sub>
 
@@ -283,7 +280,7 @@ produces
 { prod_option: 'prodOption value' }
 ```
 
-## 5. [Using cache](./examples/example-5-cache.ts)
+## 5. [Using cache](https://github.com/dany-fedorov/pojo-constructor/blob/main/examples/example-5-cache.ts)
 
 <sub>(Run with `npm run ts-file ./examples/example-5-cache.ts`)</sub>
 

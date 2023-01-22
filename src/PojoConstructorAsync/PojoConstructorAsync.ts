@@ -1,53 +1,7 @@
 import { PojoConstructorSyncAndAsync } from '../PojoConstructorSyncAndAsync/PojoConstructorSyncAndAsync';
 import type { PojoConstructorAsyncOptions } from './PojoConstructorAsyncOptions';
-import type {
-  PojoConstructorAsyncProxy,
-  PojoConstructorAsyncProps,
-} from './PojoConstructorAsyncProps';
-import type {
-  PojoConstructorSyncAndAsyncProxy,
-  PojoConstructorSyncAndAsyncProps,
-} from '../PojoConstructorSyncAndAsync/PojoConstructorSyncAndAsyncProps';
-import { PojoConstructorAsyncHelpersHost } from './PojoConstructorAsyncHelpersHost';
-import { decoratePojoConstructorMethods } from '../PojoConstructorSyncAndAsync/PojoConstructorSyncAndAsyncProxiesHost';
-import type { PojoConstructorSyncAndAsyncHelpersHost } from '../PojoConstructorSyncAndAsync/PojoConstructorSyncAndAsyncHelpersHost';
-
-function cachingProxy2Async<Pojo extends object, CtorInput = unknown>(
-  cachingProxy: PojoConstructorSyncAndAsyncProxy<Pojo, CtorInput>,
-) {
-  return decoratePojoConstructorMethods(cachingProxy, (target, key) => {
-    return function PojoConstructor_cachingProxy2Async_decoratorFn(
-      input: CtorInput,
-    ) {
-      return (target as any)[key](input).async();
-    };
-  }) as PojoConstructorAsyncProxy<Pojo, CtorInput>;
-}
-
-function asyncProps2Props<Pojo extends object, CtorInput = unknown>(
-  constructorProps: PojoConstructorAsyncProps<Pojo, CtorInput>,
-) {
-  return decoratePojoConstructorMethods(constructorProps, (target, key) => {
-    return function PojoConstructor_asyncProps2Props_decoratorFn(
-      input: CtorInput,
-      helpers: PojoConstructorSyncAndAsyncHelpersHost<Pojo, CtorInput>,
-    ) {
-      return {
-        async: () => {
-          return (target as any)[key](
-            input,
-            new PojoConstructorAsyncHelpersHost(
-              target,
-              helpers.key,
-              cachingProxy2Async<Pojo, CtorInput>(helpers.cache),
-              cachingProxy2Async<Pojo, CtorInput>(helpers.proxy),
-            ),
-          );
-        },
-      };
-    };
-  }) as PojoConstructorSyncAndAsyncProps<Pojo, CtorInput>;
-}
+import type { PojoConstructorAsyncProps } from './PojoConstructorAsyncProps';
+import { PojoConstructorAdapters } from '../PojoConstructorAdapters';
 
 /**
  * Constructor methods for each of properties returns promise for `{ value }` object.
@@ -63,18 +17,17 @@ export class PojoConstructorAsync<Pojo extends object, CtorInput = unknown> {
   public readonly pojoConstructor: PojoConstructorSyncAndAsync<Pojo, CtorInput>;
 
   constructor(
-    public readonly constructorProps: PojoConstructorAsyncProps<
-      Pojo,
-      CtorInput
-    >,
-    public readonly constructorOptions?: PojoConstructorAsyncOptions<
+    public readonly props: PojoConstructorAsyncProps<Pojo, CtorInput>,
+    public readonly options?: PojoConstructorAsyncOptions<
       Pojo,
       CtorInput
     >,
   ) {
     this.pojoConstructor = new PojoConstructorSyncAndAsync<Pojo, CtorInput>(
-      asyncProps2Props(this.constructorProps),
-      this.constructorOptions,
+      PojoConstructorAdapters.props({ src: 'async', dst: 'sync-and-async' })(
+        this.props,
+      ),
+      this.options,
     );
   }
 

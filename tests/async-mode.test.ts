@@ -1060,7 +1060,7 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
             "keysStack": Array [
               Object {
                 "key": "a",
-                "stage": "promise-result-method",
+                "stage": "async-result-method",
               },
             ],
           },
