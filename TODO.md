@@ -5,7 +5,7 @@
 - [ ] Add a decorator option to decorate all methods.
 - [ ] Add metadata option returned from method with { value }
 - [ ] Make .new return `PojoHost` with `{ value, metadata }` fields, but also with `get` method that can fetch `{ value, metadata }` for path like `['a', 0]`
-- [ ] Allow to create objects in parallel with `{ value, metadata, pojos: { parallelObj: { value, metadata } } }`
+- [ ] Allow to create objects in parallel with `{ value, metadata, variants: { parallelObj: { value, metadata } } }`
 - [ ] Update adapter to take into account `metadata` and `pojos`
 - [ ] Site. Now, same README can be found in several places - npm, github, typedoc. I'd like to make it one place.
   Options
