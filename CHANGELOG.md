@@ -1,3 +1,10 @@
+# [6.2.0](https://github.com/dany-fedorov/pojo-constructor/compare/v6.1.0...v6.2.0) (2023-02-07)
+
+
+### Features
+
+* Add metadata feature, add PojoHost#get ([5c9852a](https://github.com/dany-fedorov/pojo-constructor/commit/5c9852ad8025e927005c5ff01c3ab1b99f32040c))
+
 # [6.1.0](https://github.com/dany-fedorov/pojo-constructor/compare/v6.0.3...v6.1.0) (2023-01-22)
 
 
