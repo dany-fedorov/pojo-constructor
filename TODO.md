@@ -8,6 +8,7 @@
 - [ ] (feat) Allow to create alternative objects (variants) with `{ value, metadata, variants: { obj_1: { value, metadata }, ... } }`
 - [ ] (feat) Update adapter to take into account `metadata` and `pojos`
 - [ ] (chore) Get rid of ts-toolbelt dependency
+- [ ] (feat) Allow to parametrize metadata type
 - [ ] (dist,docs) Site. Now, same README can be found in several places - npm, github, typedoc. I'd like to make it one place.
   Options
   - Try out typedoc markdown, typeodoc hugo etc plugins, or maybe it is wotrth creating your own plugin?
