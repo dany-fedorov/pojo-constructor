@@ -7,33 +7,46 @@ export type PojoKeyProcessingStage =
   | 'sync-result-method'
   | 'promise';
 
-export type PojoConstructorPropMethodValue<T> = undefined extends T
-  ? {
-      value?: T;
-    }
-  : {
-      value: T;
-    };
+export type PojoConstructorPropMetadataType = unknown;
 
-export type PojoSyncAndAsyncResult<T> = {
-  sync: () => T;
-  async: () => Promise<T>;
+export type PojoMetadata<Pojo extends object> = Partial<
+  Record<keyof Pojo, PojoConstructorPropMetadataType>
+>;
+
+export type PojoConstructorResult<Pojo extends object> = {
+  value: Pojo;
+  metadata?: PojoMetadata<Pojo>;
 };
 
-export type PojoSyncResult<T> = {
-  sync: () => T;
+export type PojoConstructorPropMethodResult<V> = undefined extends V
+  ? {
+      value?: V;
+      metadata?: PojoConstructorPropMetadataType;
+    }
+  : {
+      value: V;
+      metadata?: PojoConstructorPropMetadataType;
+    };
+
+export type PojoSyncAndAsyncResult<V> = {
+  sync: () => V;
+  async: () => Promise<V>;
+};
+
+export type PojoSyncResult<V> = {
+  sync: () => V;
   async?: never;
 };
 
-export type PojoAsyncResult<T> = {
+export type PojoAsyncResult<V> = {
   sync?: never;
-  async: () => Promise<T>;
+  async: () => Promise<V>;
 };
 
-export type PojoSyncOrPromiseResult<T> =
-  | PojoSyncAndAsyncResult<T>
-  | PojoSyncResult<T>
-  | PojoAsyncResult<T>;
+export type PojoSyncOrPromiseResult<V> =
+  | PojoSyncAndAsyncResult<V>
+  | PojoSyncResult<V>
+  | PojoAsyncResult<V>;
 
 export type PojoConstructorSyncAndAsyncProxy<
   Pojo extends object,
@@ -42,7 +55,7 @@ export type PojoConstructorSyncAndAsyncProxy<
   [K in keyof Pojo]: K extends string
     ? (
         input?: CtorInput,
-      ) => PojoSyncOrPromiseResult<PojoConstructorPropMethodValue<Pojo[K]>>
+      ) => PojoSyncOrPromiseResult<PojoConstructorPropMethodResult<Pojo[K]>>
     : never;
 };
 
@@ -54,6 +67,6 @@ export type PojoConstructorSyncAndAsyncProps<
     ? (
         input: CtorInput,
         helpers: PojoConstructorSyncAndAsyncHelpersHost<Pojo, CtorInput>,
-      ) => PojoSyncOrPromiseResult<PojoConstructorPropMethodValue<Pojo[K]>>
+      ) => PojoSyncOrPromiseResult<PojoConstructorPropMethodResult<Pojo[K]>>
     : unknown;
 };

@@ -9,6 +9,7 @@ import type {
 import type {
   PojoConstructorSyncAndAsyncProps,
   PojoConstructorSyncAndAsyncProxy,
+  PojoMetadata,
 } from './PojoConstructorSyncAndAsync/PojoConstructorSyncAndAsyncProps';
 import {
   decoratePojoConstructorMethods,
@@ -24,7 +25,7 @@ import { PojoConstructorAsync } from './PojoConstructorAsync/PojoConstructorAsyn
 type PojoConstructorAdapterSrc = PojoConstructorAdapterDst | 'plain-object';
 type PojoConstructorAdapterDst = 'sync' | 'async' | 'sync-and-async';
 
-export function decoratePlainObjet<T extends object>(
+export function decoratePlainObject<T extends object>(
   obj: T,
   makeDecorator: (
     target: T,
@@ -78,6 +79,7 @@ type ProxyAdapterFunction<
   : SrcType extends 'plain-object'
   ? <Pojo extends object, CtorInput = unknown>(
       srcInstance: Pojo,
+      extra?: { metadata?: PojoMetadata<Pojo> },
     ) => DstType extends 'sync'
       ? PojoConstructorSyncProxy<Pojo, CtorInput>
       : DstType extends 'async'
@@ -121,6 +123,7 @@ type PropsAdapterFunction<
   : SrcType extends 'plain-object'
   ? <Pojo extends object, CtorInput = unknown>(
       srcInstance: Pojo,
+      extra?: { metadata?: PojoMetadata<Pojo> },
     ) => DstType extends 'sync'
       ? PojoConstructorSyncProps<Pojo, CtorInput>
       : DstType extends 'async'
@@ -164,6 +167,7 @@ type PojoConstructorAdapterFunction<
   : SrcType extends 'plain-object'
   ? <Pojo extends object, CtorInput = unknown>(
       srcInstance: Pojo,
+      extra?: { metadata?: PojoMetadata<Pojo> },
     ) => DstType extends 'sync'
       ? PojoConstructorSync<Pojo, CtorInput>
       : DstType extends 'async'
@@ -185,7 +189,7 @@ function pojoConstructorAdapt<
     srcInstance: any,
     args: any[],
   ) => any[],
-): (srcInstance: any) => any {
+): (srcInstance: any, extra?: any) => any {
   switch (src) {
     case 'sync': {
       switch (dst) {
@@ -311,12 +315,14 @@ function pojoConstructorAdapt<
             );
           };
         }
-        case 'sync-and-async':
-        default: {
+        case 'sync-and-async': {
           return ((srcInstance: any) => srcInstance) as ProxyAdapterFunction<
             SrcType,
             DstType
           >;
+        }
+        default: {
+          throw new Error(`unknown dst ${dst}`);
         }
       }
     }
@@ -324,17 +330,30 @@ function pojoConstructorAdapt<
     default: {
       switch (dst) {
         case 'sync': {
-          return (srcInstance: any) => {
-            return decoratePlainObjet(srcInstance, (target, key) => {
+          return (srcInstance: any, extra: any) => {
+            return decoratePlainObject(srcInstance, (target, key) => {
               return function PojoConstructorAdapters_plainObject2Sync_decoratorFn() {
-                return { value: target[key] };
+                const r = { value: target[key] };
+                if (
+                  extra &&
+                  typeof extra === 'object' &&
+                  'metadata' in extra &&
+                  extra.metadata &&
+                  typeof extra.metadata === 'object' &&
+                  key in extra.metadata
+                ) {
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore
+                  r.metadata = extra.metadata[key];
+                }
+                return r;
               };
             });
           };
         }
         case 'async': {
           return (srcInstance: any) => {
-            return decoratePlainObjet(srcInstance, (target, key) => {
+            return decoratePlainObject(srcInstance, (target, key) => {
               return function PojoConstructorAdapters_plainObject2Async_decoratorFn() {
                 return Promise.resolve({ value: target[key] });
               };
@@ -344,7 +363,7 @@ function pojoConstructorAdapt<
         case 'sync-and-async':
         default: {
           return (srcInstance: any) => {
-            return decoratePlainObjet(srcInstance, (target, key) => {
+            return decoratePlainObject(srcInstance, (target, key) => {
               return function PojoConstructorAdapters_plainObject2SyncAndAsync_decoratorFn() {
                 function sync() {
                   return { value: target[key] };
@@ -462,10 +481,10 @@ export class PojoConstructorAdapters {
         src: cfg.src,
         dst: cfg.dst,
       });
-      return ((srcInstance: any) => {
+      return ((srcInstance: any, extra?: any) => {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        const adaptedProps = adapt(srcInstance);
+        const adaptedProps = adapt(srcInstance, extra);
         switch (cfg.dst) {
           case 'async': {
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -490,10 +509,10 @@ export class PojoConstructorAdapters {
       src: cfg.src,
       dst: cfg.dst,
     });
-    return ((srcInstance: any) => {
+    return ((srcInstance: any, extra: any) => {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      const adaptedProps = adapt(srcInstance.props);
+      const adaptedProps = adapt(srcInstance.props, extra);
       const options = srcInstance.options;
       switch (cfg.dst) {
         case 'async': {

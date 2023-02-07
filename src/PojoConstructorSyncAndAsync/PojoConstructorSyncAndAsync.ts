@@ -3,10 +3,13 @@ import { getSortedKeysForPojoConstructorSyncAndAsyncProps } from './getSortedKey
 import type {
   PojoConstructorSyncAndAsyncProps,
   PojoSyncAndAsyncResult,
+  PojoMetadata,
+  PojoConstructorResult,
 } from './PojoConstructorSyncAndAsyncProps';
 import type { PojoConstructorSyncAndAsyncOptions } from './PojoConstructorSyncAndAsyncOptions';
 import { PojoConstructorSyncAndAsyncProxiesHost } from './PojoConstructorSyncAndAsyncProxiesHost';
 import { PojoConstructorHelpersHostBase } from './PojoConstructorSyncAndAsyncHelpersHost';
+import { PojoHost } from './PojoHost';
 
 function makePojoSyncConstructor<Pojo extends object, CtorInput>(
   proxiesHost: PojoConstructorSyncAndAsyncProxiesHost<Pojo, CtorInput>,
@@ -14,8 +17,10 @@ function makePojoSyncConstructor<Pojo extends object, CtorInput>(
   input: CtorInput | undefined,
   doCatch: (caught: unknown, i: number | null, key: string) => void,
 ) {
-  return function constructPojoSync() {
+  return function constructPojoSync(): PojoHost<Pojo> {
     const pojo: any = {};
+    const metadata: any = {};
+    let hasMetadata = false;
     let i = 0;
     for (const k of sortedKeys) {
       let v;
@@ -28,12 +33,26 @@ function makePojoSyncConstructor<Pojo extends object, CtorInput>(
       } catch (caught: unknown) {
         doCatch(caught, i, k);
       }
-      if (setv && 'value' in v) {
-        pojo[k] = v.value;
+      if (setv) {
+        if ('value' in v) {
+          pojo[k] = v.value;
+        }
+        if ('metadata' in v) {
+          hasMetadata = true;
+          metadata[k] = v.metadata;
+        }
       }
       i++;
     }
-    return pojo as Pojo;
+    const res: PojoConstructorResult<Pojo> = {
+      value: pojo as Pojo,
+    };
+    if (hasMetadata) {
+      res.metadata = metadata as PojoMetadata<Pojo>;
+    }
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    return new PojoHost(res);
   };
 }
 
@@ -44,39 +63,52 @@ function makePojoPromiseConstructor<Pojo extends object, CtorInput>(
   doCatch: (caught: unknown, i: number | null, key: string) => void,
   effectiveOptions: PojoConstructorSyncAndAsyncOptions<Pojo, CtorInput>,
 ) {
-  return async function constructPojoPromise() {
+  return async function constructPojoPromise(): Promise<PojoHost<Pojo>> {
     const concurrency = effectiveOptions?.concurrency;
     if (concurrency) {
-      const pojo = Object.fromEntries(
-        (
-          await pMap(
-            sortedKeys,
-            async (k) => {
-              let v;
-              let setv = false;
-              try {
-                v = await (proxiesHost.cachingProxy as any)[k]
-                  .call(proxiesHost.errorCatchingProxy, input)
-                  .async();
-                setv = true;
-              } catch (caught) {
-                await doCatch(caught, null, k);
-              }
-              if (setv && 'value' in v) {
-                return [[k, v.value]];
-              } else {
-                return [];
-              }
-            },
-            {
-              concurrency,
-            },
-          )
-        ).flat(),
+      const entries = (
+        await pMap(
+          sortedKeys,
+          async (k) => {
+            let v;
+            let setv = false;
+            try {
+              v = await (proxiesHost.cachingProxy as any)[k]
+                .call(proxiesHost.errorCatchingProxy, input)
+                .async();
+              setv = true;
+            } catch (caught) {
+              await doCatch(caught, null, k);
+            }
+            if (setv) {
+              return [[k, v]];
+            } else {
+              return [];
+            }
+          },
+          {
+            concurrency,
+          },
+        )
+      ).flat();
+      const metadataEntries = entries.flatMap(([k, v]) =>
+        'metadata' in v ? [[k, v.metadata]] : [],
       );
-      return pojo as Pojo;
+      const res: PojoConstructorResult<Pojo> = {
+        value: Object.fromEntries(
+          entries.flatMap(([k, v]) => ('value' in v ? [[k, v.value]] : [])),
+        ) as Pojo,
+      };
+      if (metadataEntries.length > 0) {
+        res.metadata = Object.fromEntries(
+          metadataEntries,
+        ) as PojoMetadata<Pojo>;
+      }
+      return new PojoHost(res);
     } else {
       const pojo: any = {};
+      const metadata: any = {};
+      const hasMetadata = false;
       let i = 0;
       for (const k of sortedKeys) {
         let v;
@@ -89,12 +121,25 @@ function makePojoPromiseConstructor<Pojo extends object, CtorInput>(
         } catch (caught) {
           await doCatch(caught, i, k);
         }
-        if (setv && 'value' in v) {
-          pojo[k] = v.value;
+        if (setv) {
+          if ('value' in v) {
+            pojo[k] = v.value;
+          }
+          if ('metadata' in v) {
+            metadata[k] = v.metadata;
+          }
         }
         i++;
       }
-      return pojo as Pojo;
+      const res: PojoConstructorResult<Pojo> = {
+        value: pojo as Pojo,
+      };
+      if (hasMetadata) {
+        res.metadata = metadata as PojoMetadata<Pojo>;
+      }
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      return new PojoHost(res);
     }
   };
 }
@@ -150,7 +195,7 @@ export class PojoConstructorSyncAndAsync<
   new(
     input?: CtorInput,
     options?: PojoConstructorSyncAndAsyncOptions<Pojo, CtorInput>,
-  ): PojoSyncAndAsyncResult<Pojo> {
+  ): PojoSyncAndAsyncResult<PojoHost<Pojo>> {
     const effectiveOptions: PojoConstructorSyncAndAsyncOptions<
       Pojo,
       CtorInput

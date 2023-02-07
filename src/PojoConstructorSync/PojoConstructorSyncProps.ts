@@ -1,4 +1,4 @@
-import type { PojoConstructorPropMethodValue } from '../PojoConstructorSyncAndAsync/PojoConstructorSyncAndAsyncProps';
+import type { PojoConstructorPropMethodResult } from '../PojoConstructorSyncAndAsync/PojoConstructorSyncAndAsyncProps';
 import type { PojoConstructorSyncHelpersHost } from './PojoConstructorSyncHelpersHost';
 
 export type PojoConstructorSyncProxy<
@@ -6,7 +6,7 @@ export type PojoConstructorSyncProxy<
   CtorInput = unknown,
 > = {
   [K in keyof Pojo]: K extends string
-    ? (input?: CtorInput) => PojoConstructorPropMethodValue<Pojo[K]>
+    ? (input?: CtorInput) => PojoConstructorPropMethodResult<Pojo[K]>
     : never;
 };
 
@@ -18,6 +18,6 @@ export type PojoConstructorSyncProps<
     ? (
         input: CtorInput,
         helpers: PojoConstructorSyncHelpersHost<Pojo, CtorInput>,
-      ) => PojoConstructorPropMethodValue<Pojo[K]>
+      ) => PojoConstructorPropMethodResult<Pojo[K]>
     : unknown;
 };

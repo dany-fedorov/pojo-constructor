@@ -3,9 +3,9 @@
   calls. Make a "catchingProxy" that will allow to track nested calls made with "this.field"
 - [x] (refactor) Change readme to present a more convenient OO pattern with new PojoConstructor
 - [ ] (feat) Add a decorator option to decorate all methods.
-- [ ] (feat) Add metadata option returned from method with { value }
-- [ ] (feat) Make .new return `PojoHost` with `{ value, metadata }` fields, but also with `get` method that can fetch `{ value, metadata }` for path like `['a', 0]`
-- [ ] (feat) Allow to create objects in parallel with `{ value, metadata, variants: { obj_1: { value, metadata }, ... } }`
+- [x] (feat) Add metadata option returned from method with { value }
+- [x] (feat) Make .new return `PojoHost` with `{ value, metadata }` fields, but also with `get` method that can fetch `{ value, metadata }` for path like `['a', 0]`
+- [ ] (feat) Allow to create alternative objects (variants) with `{ value, metadata, variants: { obj_1: { value, metadata }, ... } }`
 - [ ] (feat) Update adapter to take into account `metadata` and `pojos`
 - [ ] (dist,docs) Site. Now, same README can be found in several places - npm, github, typedoc. I'd like to make it one place.
   Options

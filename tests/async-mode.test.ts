@@ -13,9 +13,11 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
     };
     const pojo = await constructPojoFromInstanceAsync(c);
     expect(pojo).toMatchInlineSnapshot(`
-      Object {
-        "a": "a-string",
-        "b": 123,
+      PojoHost {
+        "value": Object {
+          "a": "a-string",
+          "b": 123,
+        },
       }
     `);
   });
@@ -34,9 +36,11 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
     const c = new C();
     const pojo = await constructPojoFromInstanceAsync(c);
     expect(pojo).toMatchInlineSnapshot(`
-      Object {
-        "a": "a-string",
-        "b": 123,
+      PojoHost {
+        "value": Object {
+          "a": "a-string",
+          "b": 123,
+        },
       }
     `);
   });
@@ -59,9 +63,11 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
     const c = new C();
     const pojo = await constructPojoFromInstanceAsync(c);
     expect(pojo).toMatchInlineSnapshot(`
-      Object {
-        "a": "a-string",
-        "b": 123,
+      PojoHost {
+        "value": Object {
+          "a": "a-string",
+          "b": 123,
+        },
       }
     `);
   });
@@ -75,16 +81,20 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
     };
     const pojo1 = await constructPojoFromInstanceAsync(c, true);
     expect(pojo1).toMatchInlineSnapshot(`
-      Object {
-        "a": "a-string-truthy-variant",
-        "b": 123,
+      PojoHost {
+        "value": Object {
+          "a": "a-string-truthy-variant",
+          "b": 123,
+        },
       }
     `);
     const pojo2 = await constructPojoFromInstanceAsync(c, false);
     expect(pojo2).toMatchInlineSnapshot(`
-      Object {
-        "a": "a-string-falsy-variant",
-        "b": 321,
+      PojoHost {
+        "value": Object {
+          "a": "a-string-falsy-variant",
+          "b": 321,
+        },
       }
     `);
   });
@@ -116,10 +126,12 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
     const c = new C();
     const pojo = await constructPojoFromInstanceAsync(c);
     expect(pojo).toMatchInlineSnapshot(`
-      Object {
-        "a": "a-string",
-        "b": "a-string",
-        "c": "a-string",
+      PojoHost {
+        "value": Object {
+          "a": "a-string",
+          "b": "a-string",
+          "c": "a-string",
+        },
       }
     `);
     expect(acounter).toBe(3);
@@ -160,10 +172,12 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
     const c = new C();
     const pojo = await constructPojoFromInstanceAsync(c);
     expect(pojo).toMatchInlineSnapshot(`
-      Object {
-        "a": "a-string",
-        "b": "a-string",
-        "c": "a-string",
+      PojoHost {
+        "value": Object {
+          "a": "a-string",
+          "b": "a-string",
+          "c": "a-string",
+        },
       }
     `);
     expect(acounter).toBe(1);
@@ -193,10 +207,12 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
     };
     const pojo = await constructPojoFromInstanceAsync(c);
     expect(pojo).toMatchInlineSnapshot(`
-      Object {
-        "a": "a-string",
-        "b": "a-string",
-        "c": "a-string",
+      PojoHost {
+        "value": Object {
+          "a": "a-string",
+          "b": "a-string",
+          "c": "a-string",
+        },
       }
     `);
     expect(acount).toBe(1);
@@ -229,19 +245,23 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
     };
     const pojo1 = await constructPojoFromInstanceAsync(c, true);
     expect(pojo1).toMatchInlineSnapshot(`
-      Object {
-        "a": "a-string-truthy-variant",
-        "b": "a-string-falsy-variant",
-        "c": "a-string-truthy-variant",
+      PojoHost {
+        "value": Object {
+          "a": "a-string-truthy-variant",
+          "b": "a-string-falsy-variant",
+          "c": "a-string-truthy-variant",
+        },
       }
     `);
     expect(acounter).toBe(2);
     const pojo2 = await constructPojoFromInstanceAsync(c, false);
     expect(pojo2).toMatchInlineSnapshot(`
-      Object {
-        "a": "a-string-falsy-variant",
-        "b": "a-string-truthy-variant",
-        "c": "a-string-falsy-variant",
+      PojoHost {
+        "value": Object {
+          "a": "a-string-falsy-variant",
+          "b": "a-string-truthy-variant",
+          "c": "a-string-falsy-variant",
+        },
       }
     `);
     expect(acounter).toBe(4);
@@ -282,11 +302,13 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
     };
     const pojo = await constructPojoFromInstanceAsync(c, true);
     expect(pojo).toMatchInlineSnapshot(`
-      Object {
-        "a": "a-string-true",
-        "b": "a-string-null",
-        "c": "a-string-false",
-        "d": "a-string-true",
+      PojoHost {
+        "value": Object {
+          "a": "a-string-true",
+          "b": "a-string-null",
+          "c": "a-string-false",
+          "d": "a-string-true",
+        },
       }
     `);
     expect(acounter).toBe(3); // true, false, null
@@ -301,9 +323,11 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
       concurrency: 100,
     });
     expect(pojo).toMatchInlineSnapshot(`
-      Object {
-        "a": "a-string",
-        "b": 123,
+      PojoHost {
+        "value": Object {
+          "a": "a-string",
+          "b": 123,
+        },
       }
     `);
   });
@@ -343,10 +367,12 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
       concurrency: 100,
     });
     expect(pojo).toMatchInlineSnapshot(`
-      Object {
-        "a": "a-string",
-        "b": "a-string",
-        "c": "a-string",
+      PojoHost {
+        "value": Object {
+          "a": "a-string",
+          "b": "a-string",
+          "c": "a-string",
+        },
       }
     `);
     expect(acounter).toBe(1);
@@ -440,13 +466,15 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
 
     const pojo = await constructPojoFromInstanceAsync(new C(), true);
     expect(pojo).toMatchInlineSnapshot(`
-      Object {
-        "a": "a-string-true",
-        "b": "a-string-true",
-        "c": "a-string-true",
-        "d10": "a-string-true",
-        "d101": "a-string-true",
-        "d99": "a-string-true",
+      PojoHost {
+        "value": Object {
+          "a": "a-string-true",
+          "b": "a-string-true",
+          "c": "a-string-true",
+          "d10": "a-string-true",
+          "d101": "a-string-true",
+          "d99": "a-string-true",
+        },
       }
     `);
     expect(evalOrder).toMatchInlineSnapshot(`
@@ -559,13 +587,15 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
       sortKeys: (keys) => keys.slice().sort((a, b) => (a > b ? -1 : 1)),
     });
     expect(pojo).toMatchInlineSnapshot(`
-      Object {
-        "a": "a-string-true",
-        "b": "a-string-true",
-        "c": "a-string-true",
-        "d10": "a-string-true",
-        "d101": "a-string-true",
-        "d99": "a-string-true",
+      PojoHost {
+        "value": Object {
+          "a": "a-string-true",
+          "b": "a-string-true",
+          "c": "a-string-true",
+          "d10": "a-string-true",
+          "d101": "a-string-true",
+          "d99": "a-string-true",
+        },
       }
     `);
     expect(evalOrder).toMatchInlineSnapshot(`
@@ -602,8 +632,10 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
       keys: () => ['a'],
     });
     expect(pojo).toMatchInlineSnapshot(`
-      Object {
-        "a": "a-string",
+      PojoHost {
+        "value": Object {
+          "a": "a-string",
+        },
       }
     `);
   });
@@ -637,11 +669,13 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
     };
     const pojoControl = await constructPojoFromInstanceAsync(c, { key: true });
     expect(pojoControl).toMatchInlineSnapshot(`
-      Object {
-        "a": "a-true",
-        "b": "a-false",
-        "c": "a-true",
-        "d": "a-false",
+      PojoHost {
+        "value": Object {
+          "a": "a-true",
+          "b": "a-false",
+          "c": "a-true",
+          "d": "a-false",
+        },
       }
     `);
     expect(counters).toMatchInlineSnapshot(`
@@ -664,11 +698,13 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
       },
     );
     expect(pojoTest).toMatchInlineSnapshot(`
-      Object {
-        "a": "a-true",
-        "b": "a-false",
-        "c": "a-true",
-        "d": "a-false",
+      PojoHost {
+        "value": Object {
+          "a": "a-true",
+          "b": "a-false",
+          "c": "a-true",
+          "d": "a-false",
+        },
       }
     `);
     expect(counters).toMatchInlineSnapshot(`
@@ -817,16 +853,20 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
     };
     const pojo1 = await constructPojoFromInstanceAsync(c, true);
     expect(pojo1).toMatchInlineSnapshot(`
-      Object {
-        "a": "a-string-true",
-        "b": "a-string-true",
+      PojoHost {
+        "value": Object {
+          "a": "a-string-true",
+          "b": "a-string-true",
+        },
       }
     `);
     const pojo2 = await constructPojoFromInstanceAsync(c, false);
     expect(pojo2).toMatchInlineSnapshot(`
-      Object {
-        "a": "a-string-false",
-        "b": "a-string-false",
+      PojoHost {
+        "value": Object {
+          "a": "a-string-false",
+          "b": "a-string-false",
+        },
       }
     `);
   });
@@ -846,9 +886,11 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
 
     const pojo = await constructPojoAsync(C, 321);
     expect(pojo).toMatchInlineSnapshot(`
-      Object {
-        "a": "a-field-321",
-        "b": "a-field-321",
+      PojoHost {
+        "value": Object {
+          "a": "a-field-321",
+          "b": "a-field-321",
+        },
       }
     `);
   });
@@ -881,9 +923,11 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
 
     const pojo = await constructPojoAsync(C, 3212);
     expect(pojo).toMatchInlineSnapshot(`
-      Object {
-        "a": "a-field-3212---private-method-by-symbol-result---private-value-by-symbol-result---private-method-by-symbol-result---private-value-by-symbol-result",
-        "b": "a-field-3212---private-method-by-symbol-result---private-value-by-symbol-result---private-method-by-symbol-result---private-value-by-symbol-result",
+      PojoHost {
+        "value": Object {
+          "a": "a-field-3212---private-method-by-symbol-result---private-value-by-symbol-result---private-method-by-symbol-result---private-value-by-symbol-result",
+          "b": "a-field-3212---private-method-by-symbol-result---private-value-by-symbol-result---private-method-by-symbol-result---private-value-by-symbol-result",
+        },
       }
     `);
   });
@@ -909,9 +953,11 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
     // @ts-expect-error
     const pojo = await constructPojoAsync(C, 321);
     expect(pojo).toMatchInlineSnapshot(`
-      Object {
-        "a": "a-field-321---simple-prop-value---simple-prop-value",
-        "b": "a-field-321---simple-prop-value---simple-prop-value",
+      PojoHost {
+        "value": Object {
+          "a": "a-field-321---simple-prop-value---simple-prop-value",
+          "b": "a-field-321---simple-prop-value---simple-prop-value",
+        },
       }
     `);
   });
@@ -991,8 +1037,10 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
       },
     });
     expect(pojo).toMatchInlineSnapshot(`
-      Object {
-        "c": "c-string",
+      PojoHost {
+        "value": Object {
+          "c": "c-string",
+        },
       }
     `);
     expect(savedCaught).toMatchInlineSnapshot(`
@@ -1046,8 +1094,10 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
       },
     });
     expect(pojo).toMatchInlineSnapshot(`
-      Object {
-        "c": "c-string",
+      PojoHost {
+        "value": Object {
+          "c": "c-string",
+        },
       }
     `);
     expect(savedCaught).toMatchInlineSnapshot(`
@@ -1102,8 +1152,10 @@ describe('PojoConstructorPropsAsync + pojoFromAsync', function () {
       },
     });
     expect(pojo).toMatchInlineSnapshot(`
-      Object {
-        "c": "c-string",
+      PojoHost {
+        "value": Object {
+          "c": "c-string",
+        },
       }
     `);
     expect(savedCaught).toMatchInlineSnapshot(`

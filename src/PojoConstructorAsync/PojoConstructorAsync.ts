@@ -2,6 +2,7 @@ import { PojoConstructorSyncAndAsync } from '../PojoConstructorSyncAndAsync/Pojo
 import type { PojoConstructorAsyncOptions } from './PojoConstructorAsyncOptions';
 import type { PojoConstructorAsyncProps } from './PojoConstructorAsyncProps';
 import { PojoConstructorAdapters } from '../PojoConstructorAdapters';
+import type { PojoHost } from '../PojoConstructorSyncAndAsync/PojoHost';
 
 /**
  * Constructor methods for each of properties returns promise for `{ value }` object.
@@ -18,10 +19,7 @@ export class PojoConstructorAsync<Pojo extends object, CtorInput = unknown> {
 
   constructor(
     public readonly props: PojoConstructorAsyncProps<Pojo, CtorInput>,
-    public readonly options?: PojoConstructorAsyncOptions<
-      Pojo,
-      CtorInput
-    >,
+    public readonly options?: PojoConstructorAsyncOptions<Pojo, CtorInput>,
   ) {
     this.pojoConstructor = new PojoConstructorSyncAndAsync<Pojo, CtorInput>(
       PojoConstructorAdapters.props({ src: 'async', dst: 'sync-and-async' })(
@@ -34,7 +32,7 @@ export class PojoConstructorAsync<Pojo extends object, CtorInput = unknown> {
   new(
     input?: CtorInput,
     options?: PojoConstructorAsyncOptions<Pojo, CtorInput>,
-  ): Promise<Pojo> {
+  ): Promise<PojoHost<Pojo>> {
     return this.pojoConstructor.new(input, options).async!();
   }
 }

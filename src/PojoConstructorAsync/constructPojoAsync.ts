@@ -1,6 +1,7 @@
 import type { PojoConstructorAsyncProps } from './PojoConstructorAsyncProps';
 import type { PojoConstructorAsyncOptions } from './PojoConstructorAsyncOptions';
 import { PojoConstructorAsync } from './PojoConstructorAsync';
+import type { PojoHost } from '../PojoConstructorSyncAndAsync/PojoHost';
 
 /**
  * Wrapper for {@link PojoConstructorAsyncProps}.
@@ -12,7 +13,7 @@ export function constructPojoFromInstanceAsync<
   ctorProps: PojoConstructorAsyncProps<Pojo, CtorInput>,
   pojoConstructorInput?: CtorInput,
   pojoConstructorOptions?: PojoConstructorAsyncOptions<Pojo, CtorInput>,
-): Promise<Pojo> {
+): Promise<PojoHost<Pojo>> {
   const ctor = new PojoConstructorAsync<Pojo, CtorInput>(
     ctorProps,
     pojoConstructorOptions,
@@ -30,7 +31,9 @@ export function constructPojoAsync<Pojo extends object, CtorInput = unknown>(
   },
   pojoConstructorInput?: CtorInput,
   pojoConstructorOptions?: PojoConstructorAsyncOptions<Pojo, CtorInput>,
-): Promise<Pojo> {
+): Promise<PojoHost<Pojo>> {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   return constructPojoFromInstanceAsync(
     new CTorPropsAsyncClass(pojoConstructorInput),
     pojoConstructorInput,

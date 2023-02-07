@@ -38,15 +38,21 @@ class AppCfgCtor implements PojoConstructorSyncProps<AppCfg, Env> {
 }
 
 console.log('- dev:');
-const configDev = constructPojoSync(AppCfgCtor, 'dev' as Env);
+const { value: configDev } = constructPojoSync(AppCfgCtor, 'dev' as Env);
 console.log(configDev);
 
 console.log();
 console.log('- staging:');
-const configStaging = constructPojoSync(AppCfgCtor, 'staging' as Env);
+const { value: configStaging } = constructPojoSync(
+  AppCfgCtor,
+  'staging' as Env,
+);
 console.log(configStaging);
 
 console.log();
 console.log('- production:');
-const configProduction = constructPojoSync(AppCfgCtor, 'production' as Env);
+const { value: configProduction } = constructPojoSync(
+  AppCfgCtor,
+  'production' as Env,
+);
 console.log(configProduction);

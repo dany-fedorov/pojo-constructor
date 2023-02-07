@@ -13,9 +13,11 @@ describe('PojoConstructorProps + pojoFrom', function () {
     };
     const pojo = constructPojoFromInstance(c).sync();
     expect(pojo).toMatchInlineSnapshot(`
-      Object {
-        "a": "a-string",
-        "b": 123,
+      PojoHost {
+        "value": Object {
+          "a": "a-string",
+          "b": 123,
+        },
       }
     `);
   });
@@ -36,9 +38,11 @@ describe('PojoConstructorProps + pojoFrom', function () {
     const c = new C();
     const pojo = constructPojoFromInstance(c).sync();
     expect(pojo).toMatchInlineSnapshot(`
-      Object {
-        "a": "a-string",
-        "b": 123,
+      PojoHost {
+        "value": Object {
+          "a": "a-string",
+          "b": 123,
+        },
       }
     `);
   });
@@ -61,9 +65,11 @@ describe('PojoConstructorProps + pojoFrom', function () {
     const c = new C();
     const pojo = constructPojoFromInstance(c).sync();
     expect(pojo).toMatchInlineSnapshot(`
-      Object {
-        "a": "a-string",
-        "b": 123,
+      PojoHost {
+        "value": Object {
+          "a": "a-string",
+          "b": 123,
+        },
       }
     `);
   });
@@ -82,16 +88,20 @@ describe('PojoConstructorProps + pojoFrom', function () {
     };
     const pojo1 = constructPojoFromInstance(c, true).sync();
     expect(pojo1).toMatchInlineSnapshot(`
-      Object {
-        "a": "a-string-truthy-variant",
-        "b": 123,
+      PojoHost {
+        "value": Object {
+          "a": "a-string-truthy-variant",
+          "b": 123,
+        },
       }
     `);
     const pojo2 = constructPojoFromInstance(c, false).sync();
     expect(pojo2).toMatchInlineSnapshot(`
-      Object {
-        "a": "a-string-falsy-variant",
-        "b": 321,
+      PojoHost {
+        "value": Object {
+          "a": "a-string-falsy-variant",
+          "b": 321,
+        },
       }
     `);
   });
@@ -103,9 +113,11 @@ describe('PojoConstructorProps + pojoFrom', function () {
     };
     const pojo = await constructPojoFromInstance(c).async();
     expect(pojo).toMatchInlineSnapshot(`
-      Object {
-        "a": "a-string",
-        "b": 123,
+      PojoHost {
+        "value": Object {
+          "a": "a-string",
+          "b": 123,
+        },
       }
     `);
   });
@@ -159,10 +171,12 @@ describe('PojoConstructorProps + pojoFrom', function () {
     const c = new C();
     const pojo = constructPojoFromInstance(c).sync();
     expect(pojo).toMatchInlineSnapshot(`
-      Object {
-        "a": "a-string",
-        "b": "a-string",
-        "c": "a-string",
+      PojoHost {
+        "value": Object {
+          "a": "a-string",
+          "b": "a-string",
+          "c": "a-string",
+        },
       }
     `);
     expect(acounter).toBe(1);
@@ -210,10 +224,12 @@ describe('PojoConstructorProps + pojoFrom', function () {
     const c = new C();
     const pojo = constructPojoFromInstance(c).sync();
     expect(pojo).toMatchInlineSnapshot(`
-      Object {
-        "a": "a-string",
-        "b": "a-string",
-        "c": "a-string",
+      PojoHost {
+        "value": Object {
+          "a": "a-string",
+          "b": "a-string",
+          "c": "a-string",
+        },
       }
     `);
     expect(acounter).toBe(3);
@@ -270,10 +286,12 @@ describe('PojoConstructorProps + pojoFrom', function () {
     const c = new C();
     const pojo = await constructPojoFromInstance(c).async();
     expect(pojo).toMatchInlineSnapshot(`
-      Object {
-        "a": "a-string",
-        "b": "a-string",
-        "c": "a-string",
+      PojoHost {
+        "value": Object {
+          "a": "a-string",
+          "b": "a-string",
+          "c": "a-string",
+        },
       }
     `);
     expect(acounter).toBe(1);
@@ -321,10 +339,12 @@ describe('PojoConstructorProps + pojoFrom', function () {
     const c = new C();
     const pojo = await constructPojoFromInstance(c).async();
     expect(pojo).toMatchInlineSnapshot(`
-      Object {
-        "a": "a-string",
-        "b": "a-string",
-        "c": "a-string",
+      PojoHost {
+        "value": Object {
+          "a": "a-string",
+          "b": "a-string",
+          "c": "a-string",
+        },
       }
     `);
     expect(acounter).toBe(3);
@@ -363,19 +383,23 @@ describe('PojoConstructorProps + pojoFrom', function () {
     };
     const pojo1 = constructPojoFromInstance(c, true).sync();
     expect(pojo1).toMatchInlineSnapshot(`
-      Object {
-        "a": "a-string-truthy-variant",
-        "b": "a-string-falsy-variant",
-        "c": "a-string-truthy-variant",
+      PojoHost {
+        "value": Object {
+          "a": "a-string-truthy-variant",
+          "b": "a-string-falsy-variant",
+          "c": "a-string-truthy-variant",
+        },
       }
     `);
     expect(acounter).toBe(2);
     const pojo2 = constructPojoFromInstance(c, false).sync();
     expect(pojo2).toMatchInlineSnapshot(`
-      Object {
-        "a": "a-string-falsy-variant",
-        "b": "a-string-truthy-variant",
-        "c": "a-string-falsy-variant",
+      PojoHost {
+        "value": Object {
+          "a": "a-string-falsy-variant",
+          "b": "a-string-truthy-variant",
+          "c": "a-string-falsy-variant",
+        },
       }
     `);
     expect(acounter).toBe(4);
@@ -501,13 +525,15 @@ describe('PojoConstructorProps + pojoFrom', function () {
 
     const pojo = await constructPojoFromInstance(new C(), true).async();
     expect(pojo).toMatchInlineSnapshot(`
-      Object {
-        "a": "a-string-true",
-        "b": "a-string-true",
-        "c": "a-string-true",
-        "d10": "a-string-true",
-        "d101": "a-string-true",
-        "d99": "a-string-true",
+      PojoHost {
+        "value": Object {
+          "a": "a-string-true",
+          "b": "a-string-true",
+          "c": "a-string-true",
+          "d10": "a-string-true",
+          "d101": "a-string-true",
+          "d99": "a-string-true",
+        },
       }
     `);
     expect(evalOrder).toMatchInlineSnapshot(`
@@ -629,13 +655,15 @@ describe('PojoConstructorProps + pojoFrom', function () {
       sortKeys: (keys) => keys.slice().sort((a, b) => (a > b ? -1 : 1)),
     }).async();
     expect(pojo).toMatchInlineSnapshot(`
-      Object {
-        "a": "a",
-        "b": "b",
-        "c": "c",
-        "d10": "d10",
-        "d101": "d101",
-        "d99": "d99",
+      PojoHost {
+        "value": Object {
+          "a": "a",
+          "b": "b",
+          "c": "c",
+          "d10": "d10",
+          "d101": "d101",
+          "d99": "d99",
+        },
       }
     `);
     expect(evalOrder).toMatchInlineSnapshot(`
@@ -780,13 +808,15 @@ describe('PojoConstructorProps + pojoFrom', function () {
 
     const pojo = await constructPojoFromInstance(new C(), true).async();
     expect(pojo).toMatchInlineSnapshot(`
-      Object {
-        "a": "a-string-true",
-        "b": "a-string-true",
-        "c": "a-string-true",
-        "d10": "a-string-true",
-        "d101": "a-string-true",
-        "d99": "a-string-true",
+      PojoHost {
+        "value": Object {
+          "a": "a-string-true",
+          "b": "a-string-true",
+          "c": "a-string-true",
+          "d10": "a-string-true",
+          "d101": "a-string-true",
+          "d99": "a-string-true",
+        },
       }
     `);
     expect(evalOrder).toMatchInlineSnapshot(`
@@ -905,13 +935,15 @@ describe('PojoConstructorProps + pojoFrom', function () {
       sortKeys: (keys) => keys.slice().sort((a, b) => (a > b ? -1 : 1)),
     }).async();
     expect(pojo).toMatchInlineSnapshot(`
-      Object {
-        "a": "a",
-        "b": "b",
-        "c": "c",
-        "d10": "d10",
-        "d101": "d101",
-        "d99": "d99",
+      PojoHost {
+        "value": Object {
+          "a": "a",
+          "b": "b",
+          "c": "c",
+          "d10": "d10",
+          "d101": "d101",
+          "d99": "d99",
+        },
       }
     `);
     expect(evalOrder).toMatchInlineSnapshot(`
@@ -1058,13 +1090,15 @@ describe('PojoConstructorProps + pojoFrom', function () {
       sortKeys: (keys) => keys.slice().sort((a, b) => (a > b ? -1 : 1)),
     }).sync();
     expect(pojo).toMatchInlineSnapshot(`
-      Object {
-        "a": "a-string-true",
-        "b": "a-string-true",
-        "c": "a-string-true",
-        "d10": "a-string-true",
-        "d101": "a-string-true",
-        "d99": "a-string-true",
+      PojoHost {
+        "value": Object {
+          "a": "a-string-true",
+          "b": "a-string-true",
+          "c": "a-string-true",
+          "d10": "a-string-true",
+          "d101": "a-string-true",
+          "d99": "a-string-true",
+        },
       }
     `);
     expect(evalOrder).toMatchInlineSnapshot(`
@@ -1119,11 +1153,13 @@ describe('PojoConstructorProps + pojoFrom', function () {
     const c = new C();
     const pojo = constructPojoFromInstance(c, true).sync();
     expect(pojo).toMatchInlineSnapshot(`
-      Object {
-        "a": "a-true",
-        "b": "a-true",
-        "c": "a-false",
-        "d": "a-true",
+      PojoHost {
+        "value": Object {
+          "a": "a-true",
+          "b": "a-true",
+          "c": "a-false",
+          "d": "a-true",
+        },
       }
     `);
   });
@@ -1152,11 +1188,13 @@ describe('PojoConstructorProps + pojoFrom', function () {
     const c = new C();
     const pojo = constructPojoFromInstance(c, true).sync();
     expect(pojo).toMatchInlineSnapshot(`
-      Object {
-        "a": "a-true",
-        "b": "a-true",
-        "c": "a-false",
-        "d": "a-true",
+      PojoHost {
+        "value": Object {
+          "a": "a-true",
+          "b": "a-true",
+          "c": "a-false",
+          "d": "a-true",
+        },
       }
     `);
   });
@@ -1170,9 +1208,11 @@ describe('PojoConstructorProps + pojoFrom', function () {
       concurrency: 100,
     }).async();
     expect(pojo).toMatchInlineSnapshot(`
-      Object {
-        "a": "a-string",
-        "b": 123,
+      PojoHost {
+        "value": Object {
+          "a": "a-string",
+          "b": 123,
+        },
       }
     `);
   });
@@ -1218,10 +1258,12 @@ describe('PojoConstructorProps + pojoFrom', function () {
       concurrency: 100,
     }).async();
     expect(pojo).toMatchInlineSnapshot(`
-      Object {
-        "a": "a-string",
-        "b": "a-string",
-        "c": "a-string",
+      PojoHost {
+        "value": Object {
+          "a": "a-string",
+          "b": "a-string",
+          "c": "a-string",
+        },
       }
     `);
     expect(acounter).toBe(1);
@@ -1271,10 +1313,12 @@ describe('PojoConstructorProps + pojoFrom', function () {
       concurrency: 100,
     }).async();
     expect(pojo).toMatchInlineSnapshot(`
-      Object {
-        "a": "a-string",
-        "b": "a-string",
-        "c": "a-string",
+      PojoHost {
+        "value": Object {
+          "a": "a-string",
+          "b": "a-string",
+          "c": "a-string",
+        },
       }
     `);
     expect(acounter).toBe(3);
@@ -1313,8 +1357,10 @@ describe('PojoConstructorProps + pojoFrom', function () {
       keys: () => ['a'],
     }).sync();
     expect(pojo).toMatchInlineSnapshot(`
-      Object {
-        "a": "a-string",
+      PojoHost {
+        "value": Object {
+          "a": "a-string",
+        },
       }
     `);
   });
@@ -1357,11 +1403,13 @@ describe('PojoConstructorProps + pojoFrom', function () {
     };
     const pojoControl = constructPojoFromInstance(c, { key: true }).sync();
     expect(pojoControl).toMatchInlineSnapshot(`
-      Object {
-        "a": "a-true",
-        "b": "a-false",
-        "c": "a-true",
-        "d": "a-false",
+      PojoHost {
+        "value": Object {
+          "a": "a-true",
+          "b": "a-false",
+          "c": "a-true",
+          "d": "a-false",
+        },
       }
     `);
     expect(counters).toMatchInlineSnapshot(`
@@ -1384,11 +1432,13 @@ describe('PojoConstructorProps + pojoFrom', function () {
       },
     ).sync();
     expect(pojoTest).toMatchInlineSnapshot(`
-      Object {
-        "a": "a-true",
-        "b": "a-false",
-        "c": "a-true",
-        "d": "a-false",
+      PojoHost {
+        "value": Object {
+          "a": "a-true",
+          "b": "a-false",
+          "c": "a-true",
+          "d": "a-false",
+        },
       }
     `);
     expect(counters).toMatchInlineSnapshot(`
@@ -1413,9 +1463,11 @@ describe('PojoConstructorProps + pojoFrom', function () {
       concurrency: 10,
     }).async();
     expect(pojo).toMatchInlineSnapshot(`
-      Object {
-        "a": "a-string",
-        "b": "a-string",
+      PojoHost {
+        "value": Object {
+          "a": "a-string",
+          "b": "a-string",
+        },
       }
     `);
   });
@@ -1856,9 +1908,11 @@ describe('PojoConstructorProps + pojoFrom', function () {
 
     const pojo = constructPojoSyncAndAsync(C, 321).sync();
     expect(pojo).toMatchInlineSnapshot(`
-      Object {
-        "a": "a-field-321",
-        "b": "a-field-321",
+      PojoHost {
+        "value": Object {
+          "a": "a-field-321",
+          "b": "a-field-321",
+        },
       }
     `);
   });
@@ -1894,9 +1948,11 @@ describe('PojoConstructorProps + pojoFrom', function () {
 
     const pojo = constructPojoSyncAndAsync(C, 321).sync();
     expect(pojo).toMatchInlineSnapshot(`
-      Object {
-        "a": "a-field-321---private-method-by-symbol-result---private-value-by-symbol-result---private-method-by-symbol-result---private-value-by-symbol-result",
-        "b": "a-field-321---private-method-by-symbol-result---private-value-by-symbol-result---private-method-by-symbol-result---private-value-by-symbol-result",
+      PojoHost {
+        "value": Object {
+          "a": "a-field-321---private-method-by-symbol-result---private-value-by-symbol-result---private-method-by-symbol-result---private-value-by-symbol-result",
+          "b": "a-field-321---private-method-by-symbol-result---private-value-by-symbol-result---private-method-by-symbol-result---private-value-by-symbol-result",
+        },
       }
     `);
   });
@@ -1925,9 +1981,11 @@ describe('PojoConstructorProps + pojoFrom', function () {
     // @ts-expect-error
     const pojo = constructPojoSyncAndAsync(C, 321).sync();
     expect(pojo).toMatchInlineSnapshot(`
-      Object {
-        "a": "a-field-321---simple-prop-value---simple-prop-value",
-        "b": "a-field-321---simple-prop-value---simple-prop-value",
+      PojoHost {
+        "value": Object {
+          "a": "a-field-321---simple-prop-value---simple-prop-value",
+          "b": "a-field-321---simple-prop-value---simple-prop-value",
+        },
       }
     `);
   });
@@ -1970,8 +2028,10 @@ describe('PojoConstructorProps + pojoFrom', function () {
       },
     }).async();
     expect(pojo).toMatchInlineSnapshot(`
-      Object {
-        "c": "c-string",
+      PojoHost {
+        "value": Object {
+          "c": "c-string",
+        },
       }
     `);
     expect(savedCaught).toMatchInlineSnapshot(`
@@ -2044,8 +2104,10 @@ describe('PojoConstructorProps + pojoFrom', function () {
       },
     }).async();
     expect(pojo).toMatchInlineSnapshot(`
-      Object {
-        "c": "c-string",
+      PojoHost {
+        "value": Object {
+          "c": "c-string",
+        },
       }
     `);
     expect(savedCaught).toMatchInlineSnapshot(`

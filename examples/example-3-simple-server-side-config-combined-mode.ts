@@ -1,5 +1,8 @@
 import axios from 'axios';
-import { PojoConstructorSyncAndAsync, PojoConstructorOptionsCatchFn } from '../src';
+import {
+  PojoConstructorSyncAndAsync,
+  PojoConstructorOptionsCatchFn,
+} from '../src';
 
 type AppCfg = {
   appName: string;
@@ -73,16 +76,20 @@ console.log(configProduction);
 
 (async () => {
   console.log('- dev (async mode):');
-  const configDev = await appCfgCtor.new('dev' as Env).async();
+  const { value: configDev } = await appCfgCtor.new('dev' as Env).async();
   console.log(configDev);
 
   console.log();
   console.log('- staging (async mode):');
-  const configStaging = await appCfgCtor.new('staging' as Env).async();
+  const { value: configStaging } = await appCfgCtor
+    .new('staging' as Env)
+    .async();
   console.log(configStaging);
 
   console.log();
   console.log('- production (async mode):');
-  const configProduction = await appCfgCtor.new('production' as Env).async();
+  const { value: configProduction } = await appCfgCtor
+    .new('production' as Env)
+    .async();
   console.log(configProduction);
 })();

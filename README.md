@@ -3,7 +3,6 @@
 ![Jest coverage](https://raw.githubusercontent.com/dany-fedorov/pojo-constructor/main/badges/coverage-jest%20coverage.svg)
 [![semantic-release: angular](https://img.shields.io/badge/semantic--release-angular-e10079?logo=semantic-release)](https://github.com/semantic-release/semantic-release)
 [![Code Style by Prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
-[![Strictest TypeScript Config](https://badgen.net/badge/typescript/strictest "Strictest TypeScript Config")](https://www.npmjs.com/package/@tsconfig/strictest)
 [![Package License MIT](https://img.shields.io/npm/l/pojo-constructor.svg)](https://www.npmjs.org/package/pojo-constructor)
 [![Npm Version](https://img.shields.io/npm/v/pojo-constructor.svg)](https://www.npmjs.org/package/pojo-constructor)
 
@@ -79,7 +78,7 @@ const appCfgCtor = new PojoConstructorSync<AppCfg, Env>({
 /**
  * Produce configuration for dev env.
  */
-const configDev = appCfgCtor.new('dev' as Env);
+const { value: configDev } = appCfgCtor.new('dev' as Env);
 
 /**
  * Print result.
@@ -143,7 +142,7 @@ const appCfgCtor = new PojoConstructorAsync<AppCfg, Env>({
 });
 
 (async () => {
-  const configDev = await appCfgCtor.new('dev' as Env);
+  const { value: configDev } = await appCfgCtor.new('dev' as Env);
   console.log(JSON.stringify(configDev, null, 2));
 })();
 ```
@@ -221,12 +220,12 @@ function handler(caught: unknown, { key }: PojoConstructorOptionsCatchFn) {
 }
 
 console.log('- dev (sync mode):');
-const configDev = appCfgCtor.new('dev' as Env, { catch: handler }).sync();
+const { value: configDev } = appCfgCtor.new('dev' as Env, { catch: handler }).sync();
 console.log(configDev);
 
 (async () => {
   console.log('- dev (async mode):');
-  const configDev = await appCfgCtor.new('dev' as Env).async();
+  const { value: configDev } = await appCfgCtor.new('dev' as Env).async();
   console.log(configDev);
 })();
 ```
@@ -322,7 +321,7 @@ const appCfgCtor = new PojoConstructorAsync<AppCfg>({
 });
 
 (async () => {
-  const cfg = await appCfgCtor.new();
+  const { value: cfg } = await appCfgCtor.new();
   console.log(cfg);
   console.log({ remoteCalls });
 })();
