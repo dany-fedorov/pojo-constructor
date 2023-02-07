@@ -56,13 +56,13 @@
     "semantic-release": "^19.0.5",
     "ts-jest": "^28.0.5",
     "ts-node": "^10.8.2",
-    "ts-toolbelt": "^9.6.0",
     "tsconfig-paths": "^4.1.0",
     "typedoc": "^0.23.23",
     "typescript": "^4.7.4"
   },
   "dependencies": {
     "@esm2cjs/p-map": "^5.5.0",
-    "safe-stable-stringify": "^2.4.1"
+    "safe-stable-stringify": "^2.4.1",
+    "ts-toolbelt": "^9.6.0"
   }
 }
