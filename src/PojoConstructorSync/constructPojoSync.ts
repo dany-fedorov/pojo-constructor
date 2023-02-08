@@ -18,7 +18,7 @@ export function constructPojoFromInstanceSync<
     ctorProps,
     pojoConstructorOptions,
   );
-  return ctor.new(pojoConstructorInput);
+  return ctor.pojo(pojoConstructorInput);
 }
 
 /**

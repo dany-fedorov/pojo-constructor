@@ -78,7 +78,7 @@ const appCfgCtor = new PojoConstructorSync<AppCfg, Env>({
 /**
  * Produce configuration for dev env.
  */
-const { value: configDev } = appCfgCtor.new('dev' as Env);
+const { value: configDev } = appCfgCtor.pojo('dev' as Env);
 
 /**
  * Print result.
@@ -142,7 +142,7 @@ const appCfgCtor = new PojoConstructorAsync<AppCfg, Env>({
 });
 
 (async () => {
-  const { value: configDev } = await appCfgCtor.new('dev' as Env);
+  const { value: configDev } = await appCfgCtor.pojo('dev' as Env);
   console.log(JSON.stringify(configDev, null, 2));
 })();
 ```
@@ -220,12 +220,12 @@ function handler(caught: unknown, { key }: PojoConstructorOptionsCatchFn) {
 }
 
 console.log('- dev (sync mode):');
-const { value: configDev } = appCfgCtor.new('dev' as Env, { catch: handler }).sync();
+const { value: configDev } = appCfgCtor.pojo('dev' as Env, { catch: handler }).sync();
 console.log(configDev);
 
 (async () => {
   console.log('- dev (async mode):');
-  const { value: configDev } = await appCfgCtor.new('dev' as Env).async();
+  const { value: configDev } = await appCfgCtor.pojo('dev' as Env).async();
   console.log(configDev);
 })();
 ```
@@ -321,7 +321,7 @@ const appCfgCtor = new PojoConstructorAsync<AppCfg>({
 });
 
 (async () => {
-  const { value: cfg } = await appCfgCtor.new();
+  const { value: cfg } = await appCfgCtor.pojo();
   console.log(cfg);
   console.log({ remoteCalls });
 })();

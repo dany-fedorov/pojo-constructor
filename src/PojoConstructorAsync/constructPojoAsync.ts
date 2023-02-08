@@ -18,7 +18,7 @@ export function constructPojoFromInstanceAsync<
     ctorProps,
     pojoConstructorOptions,
   );
-  return ctor.new(pojoConstructorInput);
+  return ctor.pojo(pojoConstructorInput);
 }
 
 /**

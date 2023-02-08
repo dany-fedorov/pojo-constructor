@@ -11,8 +11,8 @@ import { PojoConstructorSyncAndAsyncCacheMap } from './PojoConstructorSyncAndAsy
 import type { PojoConstructorSyncAndAsyncOptions } from './PojoConstructorSyncAndAsyncOptions';
 import {
   PojoConstructorSyncAndAsyncHelpersHost,
-  PojoConstructorHelpersHostBase,
-  PojoConstructorHelpersHostForKey,
+  PojoConstructorSyncAndAsyncHelpersHostBase,
+  PojoConstructorSyncAndAsyncHelpersHostForKey,
 } from './PojoConstructorSyncAndAsyncHelpersHost';
 
 export function isPropNameProxiable(propName: string | symbol): boolean {
@@ -32,7 +32,7 @@ export function isMethodPropProxiable(
 
 export function decoratePojoConstructorMethods<T extends object>(
   obj: T,
-  makeDecorator: (
+  decorate: (
     target: T,
     key: Extract<keyof T, string>,
   ) => (...args: any[]) => unknown,
@@ -44,16 +44,16 @@ export function decoratePojoConstructorMethods<T extends object>(
         // @ts-ignore
         return target[propName];
       }
-      return makeDecorator(target, propName as Extract<keyof T, string>);
+      return decorate(target, propName as Extract<keyof T, string>);
     },
   });
   return proxy;
 }
 
 function resolveHelpers<Pojo extends object, CtorInput>(
-  helpers: PojoConstructorHelpersHostBase<Pojo, CtorInput>,
+  helpers: PojoConstructorSyncAndAsyncHelpersHostBase<Pojo, CtorInput>,
   interceptedHelpersArg:
-    | PojoConstructorHelpersHostBase<Pojo, CtorInput>
+    | PojoConstructorSyncAndAsyncHelpersHostBase<Pojo, CtorInput>
     | undefined,
   key: Extract<keyof Pojo, string>,
   target?: PojoConstructorSyncAndAsyncProps<Pojo, CtorInput>,
@@ -62,14 +62,19 @@ function resolveHelpers<Pojo extends object, CtorInput>(
   if (interceptedHelpersArg instanceof PojoConstructorSyncAndAsyncHelpersHost) {
     return interceptedHelpersArg;
   }
-  if (interceptedHelpersArg instanceof PojoConstructorHelpersHostForKey) {
+  if (
+    interceptedHelpersArg instanceof
+    PojoConstructorSyncAndAsyncHelpersHostForKey
+  ) {
     if (target === undefined) {
       return interceptedHelpersArg;
     }
     return interceptedHelpersArg.forTarget(target);
   }
   // The least specific
-  if (interceptedHelpersArg instanceof PojoConstructorHelpersHostBase) {
+  if (
+    interceptedHelpersArg instanceof PojoConstructorSyncAndAsyncHelpersHostBase
+  ) {
     const forKeyHelpers = interceptedHelpersArg.forKey(key);
     if (target === undefined) {
       return forKeyHelpers;
@@ -87,7 +92,7 @@ function resolveHelpers<Pojo extends object, CtorInput>(
 export function makeErrorCatchingProxy<Pojo extends object, CtorInput>(
   constructorProps: PojoConstructorSyncAndAsyncProps<Pojo, CtorInput>,
   input: CtorInput | undefined,
-  helpers: PojoConstructorHelpersHostBase<Pojo, CtorInput>,
+  helpers: PojoConstructorSyncAndAsyncHelpersHostBase<Pojo, CtorInput>,
 ) {
   const errorCatchingProxy = decoratePojoConstructorMethods(
     constructorProps,
@@ -204,7 +209,7 @@ export function makeErrorCatchingProxy<Pojo extends object, CtorInput>(
 export function makeCachingProxy<Pojo extends object, CtorInput>(
   errorCatchingProxy: PojoConstructorSyncAndAsyncProxy<Pojo, CtorInput>,
   input: CtorInput | undefined,
-  helpers: PojoConstructorHelpersHostBase<Pojo, CtorInput>,
+  helpers: PojoConstructorSyncAndAsyncHelpersHostBase<Pojo, CtorInput>,
   options: Pick<
     PojoConstructorSyncAndAsyncOptions<Pojo, CtorInput>,
     'cacheKeyFromConstructorInput'
@@ -280,7 +285,7 @@ export class PojoConstructorSyncAndAsyncProxiesHost<
       CtorInput
     >,
     input: CtorInput | undefined,
-    helpers: PojoConstructorHelpersHostBase<Pojo, CtorInput>,
+    helpers: PojoConstructorSyncAndAsyncHelpersHostBase<Pojo, CtorInput>,
     options: Pick<
       PojoConstructorSyncAndAsyncOptions<Pojo, CtorInput>,
       'cacheKeyFromConstructorInput'

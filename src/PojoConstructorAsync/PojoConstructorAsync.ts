@@ -10,7 +10,7 @@ import type { PojoHost } from '../PojoConstructorSyncAndAsync/PojoHost';
  * @usage
  * ```typescript
  * const ctor = new PojoConstructorAsync<{ field: number }, number>({ field: async (input) => ({ value: input + 2 }) })
- * const obj = await ctor.new(2);
+ * const obj = await ctor.pojo(2);
  * assert.strictEqual(obj.field, 4);
  * ```
  */
@@ -29,10 +29,18 @@ export class PojoConstructorAsync<Pojo extends object, CtorInput = unknown> {
     );
   }
 
-  new(
+  static create<Pojo extends object, CtorInput = unknown>(
+    options: PojoConstructorAsyncOptions<Pojo, CtorInput> | null,
+    props: PojoConstructorAsyncProps<Pojo, CtorInput>,
+  ): PojoConstructorAsync<Pojo, CtorInput> {
+    const effectiveOptions = options === null ? {} : options;
+    return new PojoConstructorAsync<Pojo, CtorInput>(props, effectiveOptions);
+  }
+
+  pojo(
     input?: CtorInput,
     options?: PojoConstructorAsyncOptions<Pojo, CtorInput>,
   ): Promise<PojoHost<Pojo>> {
-    return this.pojoConstructor.new(input, options).async!();
+    return this.pojoConstructor.pojo(input, options).async!();
   }
 }

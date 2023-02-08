@@ -1,7 +1,7 @@
 import { PojoConstructorAdapters } from '../src';
 
 const adapt = PojoConstructorAdapters.pojoConstructor({
-  src: 'plain-object',
+  src: 'plain',
   dst: 'sync',
 });
 
@@ -17,6 +17,6 @@ const con = adapt(
   },
 );
 
-const r = con.new();
+const r = con.pojo();
 
 console.log(r);

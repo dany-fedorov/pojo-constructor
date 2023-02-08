@@ -43,16 +43,16 @@ const appCfgCtor = new PojoConstructorAsync<AppCfg, Env>({
 
 (async () => {
   console.log('- dev:');
-  const { value: configDev } = await appCfgCtor.new('dev' as Env);
+  const { value: configDev } = await appCfgCtor.pojo('dev' as Env);
   console.log(configDev);
 
   console.log();
   console.log('- staging:');
-  const { value: configStaging } = await appCfgCtor.new('staging' as Env);
+  const { value: configStaging } = await appCfgCtor.pojo('staging' as Env);
   console.log(configStaging);
 
   console.log();
   console.log('- production:');
-  const { value: configProduction } = await appCfgCtor.new('production' as Env);
+  const { value: configProduction } = await appCfgCtor.pojo('production' as Env);
   console.log(configProduction);
 })();

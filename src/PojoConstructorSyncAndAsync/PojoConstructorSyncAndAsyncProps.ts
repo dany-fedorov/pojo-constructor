@@ -1,4 +1,5 @@
 import type { PojoConstructorSyncAndAsyncHelpersHost } from './PojoConstructorSyncAndAsyncHelpersHost';
+import type { PojoConstructorSyncAndAsyncUnboxedHelpersHost } from './PojoConstructorSyncAndAsyncHelpersHost';
 
 export type PojoKeyProcessingStage =
   | 'key-method'
@@ -59,14 +60,47 @@ export type PojoConstructorSyncAndAsyncProxy<
     : never;
 };
 
+export type PojoConstructorSyncAndAsyncUnboxedProxy<
+  Pojo extends object,
+  CtorInput = unknown,
+> = {
+  [K in keyof Pojo]: K extends string
+    ? (input?: CtorInput) => PojoSyncOrPromiseResult<Pojo[K]>
+    : never;
+};
+
+export type PojoConstructorSyncAndAsyncPropFn<
+  Pojo extends object,
+  V,
+  CtorInput = unknown,
+> = (
+  input: CtorInput,
+  helpers: PojoConstructorSyncAndAsyncHelpersHost<Pojo, CtorInput>,
+) => PojoSyncOrPromiseResult<PojoConstructorPropMethodResult<V>>;
+
 export type PojoConstructorSyncAndAsyncProps<
   Pojo extends object,
   CtorInput = unknown,
 > = {
   [K in keyof Pojo]: K extends string
-    ? (
-        input: CtorInput,
-        helpers: PojoConstructorSyncAndAsyncHelpersHost<Pojo, CtorInput>,
-      ) => PojoSyncOrPromiseResult<PojoConstructorPropMethodResult<Pojo[K]>>
+    ? PojoConstructorSyncAndAsyncPropFn<Pojo, Pojo[K], CtorInput>
+    : unknown;
+};
+
+export type PojoConstructorSyncAndAsyncUnboxedPropFn<
+  Pojo extends object,
+  V,
+  CtorInput = unknown,
+> = (
+  input: CtorInput,
+  helpers: PojoConstructorSyncAndAsyncUnboxedHelpersHost<Pojo, CtorInput>,
+) => PojoSyncOrPromiseResult<V>;
+
+export type PojoConstructorSyncAndAsyncUnboxedProps<
+  Pojo extends object,
+  CtorInput = unknown,
+> = {
+  [K in keyof Pojo]: K extends string
+    ? PojoConstructorSyncAndAsyncUnboxedPropFn<Pojo, Pojo[K], CtorInput>
     : unknown;
 };

@@ -57,39 +57,39 @@ function handler(caught: unknown, { key }: PojoConstructorOptionsCatchFn) {
 }
 
 console.log('- dev (sync mode):');
-const configDev = appCfgCtor.new('dev' as Env, { catch: handler }).sync();
+const configDev = appCfgCtor.pojo('dev' as Env, { catch: handler }).sync();
 console.log(configDev);
 
 console.log();
 console.log('- staging (sync mode):');
 const configStaging = appCfgCtor
-  .new('staging' as Env, { catch: handler })
+  .pojo('staging' as Env, { catch: handler })
   .sync();
 console.log(configStaging);
 
 console.log();
 console.log('- production (sync mode):');
 const configProduction = appCfgCtor
-  .new('production' as Env, { catch: handler })
+  .pojo('production' as Env, { catch: handler })
   .sync();
 console.log(configProduction);
 
 (async () => {
   console.log('- dev (async mode):');
-  const { value: configDev } = await appCfgCtor.new('dev' as Env).async();
+  const { value: configDev } = await appCfgCtor.pojo('dev' as Env).async();
   console.log(configDev);
 
   console.log();
   console.log('- staging (async mode):');
   const { value: configStaging } = await appCfgCtor
-    .new('staging' as Env)
+    .pojo('staging' as Env)
     .async();
   console.log(configStaging);
 
   console.log();
   console.log('- production (async mode):');
   const { value: configProduction } = await appCfgCtor
-    .new('production' as Env)
+    .pojo('production' as Env)
     .async();
   console.log(configProduction);
 })();

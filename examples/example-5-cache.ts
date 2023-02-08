@@ -36,7 +36,7 @@ const appCfgCtor = new PojoConstructorAsync<AppCfg>({
 });
 
 (async () => {
-  const { value: cfg } = await appCfgCtor.new();
+  const { value: cfg } = await appCfgCtor.pojo();
   console.log(cfg);
   console.log({ remoteCalls });
 })();

@@ -8,7 +8,7 @@ import type {
 } from './PojoConstructorSyncAndAsyncProps';
 import type { PojoConstructorSyncAndAsyncOptions } from './PojoConstructorSyncAndAsyncOptions';
 import { PojoConstructorSyncAndAsyncProxiesHost } from './PojoConstructorSyncAndAsyncProxiesHost';
-import { PojoConstructorHelpersHostBase } from './PojoConstructorSyncAndAsyncHelpersHost';
+import { PojoConstructorSyncAndAsyncHelpersHostBase } from './PojoConstructorSyncAndAsyncHelpersHost';
 import { PojoHost } from './PojoHost';
 
 function makePojoSyncConstructor<Pojo extends object, CtorInput>(
@@ -169,14 +169,14 @@ function makePojoPromiseConstructor<Pojo extends object, CtorInput>(
  * ```typescript
  * // Sync mode
  * const ctor = new PojoConstructor<{ field: number }, number>({ field: (input) => ({ sync: () => ({ value: input + 2 })}) })
- * const obj = ctor.new(2).sync();
+ * const obj = ctor.pojo(2).sync();
  * assert.strictEqual(obj.field, 4);
  * ```
  *
  * ```typescript
  * // Async mode
  * const ctor = new PojoConstructor<{ field: number }, number>({ field: (input) => ({ async: () => ({ value: input + 2 })}) })
- * const obj = await ctor.new(2).async();
+ * const obj = await ctor.pojo(2).async();
  * assert.strictEqual(obj.field, 4);
  * ```
  */
@@ -192,7 +192,18 @@ export class PojoConstructorSyncAndAsync<
     >,
   ) {}
 
-  new(
+  static create<Pojo extends object, CtorInput = unknown>(
+    options: PojoConstructorSyncAndAsyncOptions<Pojo, CtorInput> | null,
+    props: PojoConstructorSyncAndAsyncProps<Pojo, CtorInput>,
+  ): PojoConstructorSyncAndAsync<Pojo, CtorInput> {
+    const effectiveOptions = options === null ? {} : options;
+    return new PojoConstructorSyncAndAsync<Pojo, CtorInput>(
+      props,
+      effectiveOptions,
+    );
+  }
+
+  pojo(
     input?: CtorInput,
     options?: PojoConstructorSyncAndAsyncOptions<Pojo, CtorInput>,
   ): PojoSyncAndAsyncResult<PojoHost<Pojo>> {
@@ -207,7 +218,7 @@ export class PojoConstructorSyncAndAsync<
       this.props,
       effectiveOptions,
     );
-    const helpersHost = Object.create(null) as PojoConstructorHelpersHostBase<
+    const helpersHost = Object.create(null) as PojoConstructorSyncAndAsyncHelpersHostBase<
       Pojo,
       CtorInput
     >;
@@ -222,7 +233,7 @@ export class PojoConstructorSyncAndAsync<
               effectiveOptions.cacheKeyFromConstructorInput,
           },
     );
-    const helpersHostPrototype = new PojoConstructorHelpersHostBase(
+    const helpersHostPrototype = new PojoConstructorSyncAndAsyncHelpersHostBase(
       proxiesHost.cachingProxy,
       proxiesHost.errorCatchingProxy,
     );

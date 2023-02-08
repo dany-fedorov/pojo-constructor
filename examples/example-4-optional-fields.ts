@@ -25,17 +25,17 @@ const appCfgCtor = new PojoConstructorSync<AppCfg, Input>({
 });
 
 console.log('- dev:');
-const { value: configDev } = appCfgCtor.new({ env: 'dev' as Env });
+const { value: configDev } = appCfgCtor.pojo({ env: 'dev' as Env });
 console.log(configDev);
 
 console.log();
 console.log('- staging:');
-const { value: configStaging } = appCfgCtor.new({ env: 'staging' as Env });
+const { value: configStaging } = appCfgCtor.pojo({ env: 'staging' as Env });
 console.log(configStaging);
 
 console.log();
 console.log('- production:');
-const { value: configProduction } = appCfgCtor.new({
+const { value: configProduction } = appCfgCtor.pojo({
   env: 'production' as Env,
   prodOption: 'prodOption value',
 });

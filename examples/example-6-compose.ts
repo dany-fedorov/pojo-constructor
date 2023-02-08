@@ -24,11 +24,11 @@ const acon = new PojoConstructorSync<Top['a']>({
 
 const top = new PojoConstructorSync<Top>({
   a() {
-    return acon.new();
+    return acon.pojo();
   },
 });
 
-const r = top.new();
+const r = top.pojo();
 
 const rr = r.get(['a', 'b'] as const);
 const rrr = rr.value;

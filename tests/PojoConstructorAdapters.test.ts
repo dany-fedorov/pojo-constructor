@@ -172,7 +172,7 @@ describe('PojoConstructorAdapters.proxy', function () {
 
   test('plain-object 2 sync', () => {
     const adapter = PojoConstructorAdapters.proxy({
-      src: 'plain-object',
+      src: 'plain',
       dst: 'sync',
     });
     const fieldVal = Math.random();
@@ -184,7 +184,7 @@ describe('PojoConstructorAdapters.proxy', function () {
 
   test('plain-object 2 async', async () => {
     const adapter = PojoConstructorAdapters.proxy({
-      src: 'plain-object',
+      src: 'plain',
       dst: 'async',
     });
     const fieldVal = Math.random();
@@ -196,7 +196,7 @@ describe('PojoConstructorAdapters.proxy', function () {
 
   test('plain-object 2 sync-and-async', async () => {
     const adapter = PojoConstructorAdapters.proxy({
-      src: 'plain-object',
+      src: 'plain',
       dst: 'sync-and-async',
     });
     const fieldVal = Math.random();
@@ -234,7 +234,7 @@ describe('PojoConstructorAdapters.props', function () {
     };
     const adapted = adapter(orig);
     const ctor = new PojoConstructorAsync(adapted);
-    const res = await ctor.new();
+    const res = await ctor.pojo();
     expect(res).toMatchObject({ value: { field: fieldVal } });
   });
 
@@ -249,9 +249,9 @@ describe('PojoConstructorAdapters.props', function () {
     };
     const adapted = adapter(orig);
     const ctor = new PojoConstructorSyncAndAsync(adapted);
-    const resAsync = await ctor.new().async();
+    const resAsync = await ctor.pojo().async();
     expect(resAsync).toMatchObject({ value: { field: fieldVal } });
-    const resSync = ctor.new().sync();
+    const resSync = ctor.pojo().sync();
     expect(resSync).toMatchObject({ value: { field: fieldVal } });
   });
 
@@ -293,7 +293,7 @@ describe('PojoConstructorAdapters.props', function () {
     };
     const adapted = adapter(orig);
     const ctor = new PojoConstructorSyncAndAsync(adapted);
-    const resAsync = await ctor.new().async();
+    const resAsync = await ctor.pojo().async();
     expect(resAsync).toMatchObject({ value: { field: fieldVal } });
   });
 
@@ -308,7 +308,7 @@ describe('PojoConstructorAdapters.props', function () {
     };
     const adapted = adapter(orig);
     const ctor = new PojoConstructorSync(adapted);
-    const res = ctor.new();
+    const res = ctor.pojo();
     expect(res).toMatchObject({ value: { field: fieldVal } });
   });
 
@@ -323,7 +323,7 @@ describe('PojoConstructorAdapters.props', function () {
     };
     const adapted = adapter(orig);
     const ctor = new PojoConstructorAsync(adapted);
-    const res = await ctor.new();
+    const res = await ctor.pojo();
     expect(res).toMatchObject({ value: { field: fieldVal } });
   });
 
@@ -338,7 +338,7 @@ describe('PojoConstructorAdapters.props', function () {
     };
     const adapted = adapter(orig);
     const ctor = new PojoConstructorAsync(adapted);
-    const res = await ctor.new();
+    const res = await ctor.pojo();
     expect(res).toMatchObject({ value: { field: fieldVal } });
   });
 
@@ -354,7 +354,7 @@ describe('PojoConstructorAdapters.props', function () {
     const adapted = adapter(orig);
     expect(adapted).toBe(orig);
     const ctor = new PojoConstructorSyncAndAsync(adapted);
-    const resSync = ctor.new().sync();
+    const resSync = ctor.pojo().sync();
     expect(resSync).toMatchObject({ value: { field: fieldVal } });
   });
 
@@ -370,48 +370,48 @@ describe('PojoConstructorAdapters.props', function () {
     const adapted = adapter(orig);
     expect(adapted).toBe(orig);
     const ctor = new PojoConstructorSyncAndAsync(adapted);
-    const resAsync = await ctor.new().async();
+    const resAsync = await ctor.pojo().async();
     expect(resAsync).toMatchObject({ value: { field: fieldVal } });
   });
 
   test('plain-object 2 sync', () => {
     const adapter = PojoConstructorAdapters.props({
-      src: 'plain-object',
+      src: 'plain',
       dst: 'sync',
     });
     const fieldVal = Math.random();
     const orig = { field: fieldVal };
     const adapted = adapter(orig);
     const ctor = new PojoConstructorSync(adapted);
-    const res = ctor.new();
+    const res = ctor.pojo();
     expect(res).toMatchObject({ value: orig });
   });
 
   test('plain-object 2 async', async () => {
     const adapter = PojoConstructorAdapters.props({
-      src: 'plain-object',
+      src: 'plain',
       dst: 'async',
     });
     const fieldVal = Math.random();
     const orig = { field: fieldVal };
     const adapted = adapter(orig);
     const ctor = new PojoConstructorAsync(adapted);
-    const res = await ctor.new();
+    const res = await ctor.pojo();
     expect(res).toMatchObject({ value: orig });
   });
 
   test('plain-object 2 sync-and-async', async () => {
     const adapter = PojoConstructorAdapters.props({
-      src: 'plain-object',
+      src: 'plain',
       dst: 'sync-and-async',
     });
     const fieldVal = Math.random();
     const orig = { field: fieldVal };
     const adapted = adapter(orig);
     const ctor = new PojoConstructorSyncAndAsync(adapted);
-    const resAsync = await ctor.new().async();
+    const resAsync = await ctor.pojo().async();
     expect(resAsync).toMatchObject({ value: orig });
-    const resSync = ctor.new().sync();
+    const resSync = ctor.pojo().sync();
     expect(resSync).toMatchObject({ value: orig });
   });
 });
@@ -440,7 +440,7 @@ describe('PojoConstructorAdapters.pojoConstructor', function () {
       field: () => ({ value: fieldVal }),
     });
     const adapted = adapter(orig);
-    const res = await adapted.new();
+    const res = await adapted.pojo();
     expect(res).toMatchObject({ value: { field: fieldVal } });
   });
 
@@ -454,9 +454,9 @@ describe('PojoConstructorAdapters.pojoConstructor', function () {
       field: () => ({ value: fieldVal }),
     });
     const adapted = adapter(orig);
-    const resAsync = await adapted.new().async();
+    const resAsync = await adapted.pojo().async();
     expect(resAsync).toMatchObject({ value: { field: fieldVal } });
-    const resSync = adapted.new().sync();
+    const resSync = adapted.pojo().sync();
     expect(resSync).toMatchObject({ value: { field: fieldVal } });
   });
 
@@ -497,7 +497,7 @@ describe('PojoConstructorAdapters.pojoConstructor', function () {
       field: () => Promise.resolve({ value: fieldVal }),
     });
     const adapted = adapter(orig);
-    const resAsync = await adapted.new().async();
+    const resAsync = await adapted.pojo().async();
     expect(resAsync).toMatchObject({ value: { field: fieldVal } });
   });
 
@@ -511,7 +511,7 @@ describe('PojoConstructorAdapters.pojoConstructor', function () {
       field: () => ({ sync: () => ({ value: fieldVal }) }),
     });
     const adapted = adapter(orig);
-    const res = adapted.new();
+    const res = adapted.pojo();
     expect(res).toMatchObject({ value: { field: fieldVal } });
   });
 
@@ -525,7 +525,7 @@ describe('PojoConstructorAdapters.pojoConstructor', function () {
       field: () => ({ sync: () => ({ value: fieldVal }) }),
     });
     const adapted = adapter(orig);
-    const res = await adapted.new();
+    const res = await adapted.pojo();
     expect(res).toMatchObject({ value: { field: fieldVal } });
   });
 
@@ -539,7 +539,7 @@ describe('PojoConstructorAdapters.pojoConstructor', function () {
       field: () => ({ async: () => Promise.resolve({ value: fieldVal }) }),
     });
     const adapted = adapter(orig);
-    const res = await adapted.new();
+    const res = await adapted.pojo();
     expect(res).toMatchObject({ value: { field: fieldVal } });
   });
 
@@ -554,7 +554,7 @@ describe('PojoConstructorAdapters.pojoConstructor', function () {
     });
     const adapted = adapter(orig);
     expect(adapted).toBe(orig);
-    const resSync = adapted.new().sync();
+    const resSync = adapted.pojo().sync();
     expect(resSync).toMatchObject({ value: { field: fieldVal } });
   });
 
@@ -569,45 +569,45 @@ describe('PojoConstructorAdapters.pojoConstructor', function () {
     });
     const adapted = adapter(orig);
     expect(adapted).toBe(orig);
-    const resAsync = await adapted.new().async();
+    const resAsync = await adapted.pojo().async();
     expect(resAsync).toMatchObject({ value: { field: fieldVal } });
   });
 
   test('plain-object 2 sync', () => {
     const adapter = PojoConstructorAdapters.pojoConstructor({
-      src: 'plain-object',
+      src: 'plain',
       dst: 'sync',
     });
     const fieldVal = Math.random();
     const orig = { field: fieldVal };
     const adapted = adapter(orig);
-    const res = adapted.new();
+    const res = adapted.pojo();
     expect(res).toMatchObject({ value: orig });
   });
 
   test('plain-object 2 async', async () => {
     const adapter = PojoConstructorAdapters.pojoConstructor({
-      src: 'plain-object',
+      src: 'plain',
       dst: 'async',
     });
     const fieldVal = Math.random();
     const orig = { field: fieldVal };
     const adapted = adapter(orig);
-    const res = await adapted.new();
+    const res = await adapted.pojo();
     expect(res).toMatchObject({ value: orig });
   });
 
   test('plain-object 2 sync-and-async', async () => {
     const adapter = PojoConstructorAdapters.pojoConstructor({
-      src: 'plain-object',
+      src: 'plain',
       dst: 'sync-and-async',
     });
     const fieldVal = Math.random();
     const orig = { field: fieldVal };
     const adapted = adapter(orig);
-    const resAsync = await adapted.new().async();
+    const resAsync = await adapted.pojo().async();
     expect(resAsync).toMatchObject({ value: orig });
-    const resSync = adapted.new().sync();
+    const resSync = adapted.pojo().sync();
     expect(resSync).toMatchObject({ value: orig });
   });
 });
