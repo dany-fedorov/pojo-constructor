@@ -1,3 +1,15 @@
+# [7.0.0](https://github.com/dany-fedorov/pojo-constructor/compare/v6.2.0...v7.0.0) (2023-02-08)
+
+
+### Features
+
+* Add decorator, unboxed adapters, change constructor API ([93b8b56](https://github.com/dany-fedorov/pojo-constructor/commit/93b8b5649779ed1883195e2d378537e0b6ed223e))
+
+
+### BREAKING CHANGES
+
+* .new becomes .pojo
+
 # [6.2.0](https://github.com/dany-fedorov/pojo-constructor/compare/v6.1.0...v6.2.0) (2023-02-07)
 
 
