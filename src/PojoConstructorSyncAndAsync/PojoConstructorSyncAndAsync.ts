@@ -278,4 +278,21 @@ export class PojoConstructorSyncAndAsync<
       `${PojoConstructorSyncAndAsync.name}.exec: No "async" or "sync" functions in passed object`,
     );
   }
+
+  static withAsync<T>(sync: () => T): PojoSyncAndAsyncResult<T> {
+    return {
+      sync,
+      async: () => Promise.resolve(sync()),
+    };
+  }
+
+  static both<T>(value: T): PojoSyncAndAsyncResult<T> {
+    const sync = function sync() {
+      return value;
+    };
+    return {
+      sync,
+      async: () => Promise.resolve(sync()),
+    };
+  }
 }
