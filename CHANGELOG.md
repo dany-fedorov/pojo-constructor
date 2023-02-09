@@ -1,3 +1,15 @@
+# [8.0.0](https://github.com/dany-fedorov/pojo-constructor/compare/v7.0.0...v8.0.0) (2023-02-09)
+
+
+### Features
+
+* Add static method to eval either async or sync, change type name ([8219d61](https://github.com/dany-fedorov/pojo-constructor/commit/8219d61383b72bb9494f5f5e78d780ca78863d1e))
+
+
+### BREAKING CHANGES
+
+* Change type name
+
 # [7.0.0](https://github.com/dany-fedorov/pojo-constructor/compare/v6.2.0...v7.0.0) (2023-02-08)
 
 
