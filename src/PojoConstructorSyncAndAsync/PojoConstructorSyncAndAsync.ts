@@ -280,11 +280,12 @@ export class PojoConstructorSyncAndAsync<
   }
 
   static bothFromSync<T>(sync: () => T): PojoSyncAndAsyncResult<T> {
+    const async = function async() {
+      return Promise.resolve(sync());
+    };
     return {
       sync,
-      async: function async() {
-        return Promise.resolve(sync());
-      },
+      async,
     };
   }
 
@@ -293,7 +294,7 @@ export class PojoConstructorSyncAndAsync<
       return value;
     };
     const async = function async() {
-      return sync();
+      return Promise.resolve(sync());
     };
     return {
       sync,
