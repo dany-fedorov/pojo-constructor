@@ -5,6 +5,7 @@ import type {
   PojoSyncAndAsyncResult,
   PojoMetadata,
   PojoConstructorResult,
+  PojoSyncOrAsyncResult,
 } from './PojoConstructorSyncAndAsyncProps';
 import type { PojoConstructorSyncAndAsyncOptions } from './PojoConstructorSyncAndAsyncOptions';
 import { PojoConstructorSyncAndAsyncProxiesHost } from './PojoConstructorSyncAndAsyncProxiesHost';
@@ -218,10 +219,9 @@ export class PojoConstructorSyncAndAsync<
       this.props,
       effectiveOptions,
     );
-    const helpersHost = Object.create(null) as PojoConstructorSyncAndAsyncHelpersHostBase<
-      Pojo,
-      CtorInput
-    >;
+    const helpersHost = Object.create(
+      null,
+    ) as PojoConstructorSyncAndAsyncHelpersHostBase<Pojo, CtorInput>;
     const proxiesHost = new PojoConstructorSyncAndAsyncProxiesHost(
       this.props,
       input,
@@ -263,5 +263,19 @@ export class PojoConstructorSyncAndAsync<
         effectiveOptions,
       ),
     };
+  }
+
+  static async exec<T>(syncOrAsync: PojoSyncOrAsyncResult<T>): Promise<T> {
+    if ('async' in syncOrAsync && typeof syncOrAsync.async === 'function') {
+      return await syncOrAsync.async();
+    } else if (
+      'sync' in syncOrAsync &&
+      typeof syncOrAsync.sync === 'function'
+    ) {
+      return syncOrAsync.sync();
+    }
+    throw new Error(
+      `${PojoConstructorSyncAndAsync.name}.exec: No "async" or "sync" functions in passed object`,
+    );
   }
 }
