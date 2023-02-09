@@ -279,20 +279,25 @@ export class PojoConstructorSyncAndAsync<
     );
   }
 
-  static withAsync<T>(sync: () => T): PojoSyncAndAsyncResult<T> {
+  static bothFromSync<T>(sync: () => T): PojoSyncAndAsyncResult<T> {
     return {
       sync,
-      async: () => Promise.resolve(sync()),
+      async: function async() {
+        return Promise.resolve(sync());
+      },
     };
   }
 
-  static both<T>(value: T): PojoSyncAndAsyncResult<T> {
+  static bothFromValue<T>(value: T): PojoSyncAndAsyncResult<T> {
     const sync = function sync() {
       return value;
     };
+    const async = function async() {
+      return sync();
+    };
     return {
       sync,
-      async: () => Promise.resolve(sync()),
+      async,
     };
   }
 }
