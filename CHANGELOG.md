@@ -1,3 +1,11 @@
+# [8.2.0](https://github.com/dany-fedorov/pojo-constructor/compare/v8.1.0...v8.2.0) (2023-02-09)
+
+
+### Features
+
+* refactoring ([1c119b9](https://github.com/dany-fedorov/pojo-constructor/commit/1c119b966a3405792b6aa9793080d65626f9491d))
+* refactoring ([74e0fc7](https://github.com/dany-fedorov/pojo-constructor/commit/74e0fc7dd3b559e3009157540b21627006438732))
+
 # [8.1.0](https://github.com/dany-fedorov/pojo-constructor/compare/v8.0.0...v8.1.0) (2023-02-09)
 
 
