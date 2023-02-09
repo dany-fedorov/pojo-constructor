@@ -1,3 +1,10 @@
+# [8.1.0](https://github.com/dany-fedorov/pojo-constructor/compare/v8.0.0...v8.1.0) (2023-02-09)
+
+
+### Features
+
+* Add helper static methods ([9b890f9](https://github.com/dany-fedorov/pojo-constructor/commit/9b890f94b0631aae64b633cf7917a169cac44a76))
+
 # [8.0.0](https://github.com/dany-fedorov/pojo-constructor/compare/v7.0.0...v8.0.0) (2023-02-09)
 
 
