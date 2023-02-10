@@ -1,3 +1,10 @@
+# [8.3.0](https://github.com/dany-fedorov/pojo-constructor/compare/v8.2.0...v8.3.0) (2023-02-10)
+
+
+### Features
+
+* Add static .new constructor ([b8c0e2f](https://github.com/dany-fedorov/pojo-constructor/commit/b8c0e2fd5997e0900125cc6b24c460f2ddd74b43))
+
 # [8.2.0](https://github.com/dany-fedorov/pojo-constructor/compare/v8.1.0...v8.2.0) (2023-02-09)
 
 
