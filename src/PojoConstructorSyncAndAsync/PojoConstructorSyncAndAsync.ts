@@ -193,6 +193,13 @@ export class PojoConstructorSyncAndAsync<
     >,
   ) {}
 
+  static new<Pojo extends object, CtorInput = unknown>(
+    props: PojoConstructorSyncAndAsyncProps<Pojo, CtorInput>,
+    options?: PojoConstructorSyncAndAsyncOptions<Pojo, CtorInput>,
+  ): PojoConstructorSyncAndAsync<Pojo, CtorInput> {
+    return new PojoConstructorSyncAndAsync<Pojo, CtorInput>(props, options);
+  }
+
   static create<Pojo extends object, CtorInput = unknown>(
     options: PojoConstructorSyncAndAsyncOptions<Pojo, CtorInput> | null,
     props: PojoConstructorSyncAndAsyncProps<Pojo, CtorInput>,

@@ -29,6 +29,13 @@ export class PojoConstructorAsync<Pojo extends object, CtorInput = unknown> {
     );
   }
 
+  static new<Pojo extends object, CtorInput = unknown>(
+    props: PojoConstructorAsyncProps<Pojo, CtorInput>,
+    options?: PojoConstructorAsyncOptions<Pojo, CtorInput>,
+  ): PojoConstructorAsync<Pojo, CtorInput> {
+    return new PojoConstructorAsync<Pojo, CtorInput>(props, options);
+  }
+
   static create<Pojo extends object, CtorInput = unknown>(
     options: PojoConstructorAsyncOptions<Pojo, CtorInput> | null,
     props: PojoConstructorAsyncProps<Pojo, CtorInput>,

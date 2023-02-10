@@ -29,6 +29,13 @@ export class PojoConstructorSync<Pojo extends object, CtorInput = unknown> {
     );
   }
 
+  static new<Pojo extends object, CtorInput = unknown>(
+    props: PojoConstructorSyncProps<Pojo, CtorInput>,
+    options?: PojoConstructorSyncOptions<Pojo, CtorInput>,
+  ): PojoConstructorSync<Pojo, CtorInput> {
+    return new PojoConstructorSync<Pojo, CtorInput>(props, options);
+  }
+
   static create<Pojo extends object, CtorInput = unknown>(
     options: PojoConstructorSyncOptions<Pojo, CtorInput> | null,
     props: PojoConstructorSyncProps<Pojo, CtorInput>,
