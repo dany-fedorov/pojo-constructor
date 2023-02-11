@@ -1,3 +1,10 @@
+# [8.8.0](https://github.com/dany-fedorov/pojo-constructor/compare/v8.7.0...v8.8.0) (2023-02-11)
+
+
+### Features
+
+* Add helpers ([7ce5558](https://github.com/dany-fedorov/pojo-constructor/commit/7ce5558383a4ba2bc9ee8bbd2cf7067d206f7d19))
+
 # [8.7.0](https://github.com/dany-fedorov/pojo-constructor/compare/v8.6.0...v8.7.0) (2023-02-11)
 
 
