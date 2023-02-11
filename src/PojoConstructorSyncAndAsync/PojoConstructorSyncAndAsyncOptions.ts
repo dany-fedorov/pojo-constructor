@@ -47,4 +47,5 @@ export type PojoConstructorSyncAndAsyncOptions<Pojo extends object, CtorInput> =
    * Is called when property constructor method throws an error.
    */
   catch?: (caught: unknown, options: PojoConstructorOptionsCatchFn) => unknown;
+  name?: string;
 };

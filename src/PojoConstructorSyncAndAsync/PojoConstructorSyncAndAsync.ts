@@ -11,14 +11,19 @@ import type { PojoConstructorSyncAndAsyncOptions } from './PojoConstructorSyncAn
 import { PojoConstructorSyncAndAsyncProxiesHost } from './PojoConstructorSyncAndAsyncProxiesHost';
 import { PojoConstructorSyncAndAsyncHelpersHostBase } from './PojoConstructorSyncAndAsyncHelpersHost';
 import { PojoHost } from './PojoHost';
+import { debugMe } from './utils';
 
 function makePojoSyncConstructor<Pojo extends object, CtorInput>(
+  constructorName: string | undefined,
   proxiesHost: PojoConstructorSyncAndAsyncProxiesHost<Pojo, CtorInput>,
   sortedKeys: string[],
   input: CtorInput | undefined,
   doCatch: (caught: unknown, i: number | null, key: string) => void,
 ) {
   return function constructPojoSync(): PojoHost<Pojo> {
+    const debugHere = debugMe.extend(
+      `sync:${constructorName ?? `(anonymous-${Date.now()})`}`,
+    );
     const pojo: any = {};
     const metadata: any = {};
     let hasMetadata = false;
@@ -31,12 +36,16 @@ function makePojoSyncConstructor<Pojo extends object, CtorInput>(
           .call(proxiesHost.errorCatchingProxy, input)
           .sync();
         setv = true;
+        debugHere(`Constructed "${k}". (i = ${i})`);
       } catch (caught: unknown) {
+        debugHere(`Failed to construct "${k}". (i = ${i})`);
         doCatch(caught, i, k);
       }
       if (setv) {
         if ('value' in v) {
           pojo[k] = v.value;
+        } else {
+          debugHere(`Constructed "${k}" without value.`);
         }
         if ('metadata' in v) {
           hasMetadata = true;
@@ -57,7 +66,8 @@ function makePojoSyncConstructor<Pojo extends object, CtorInput>(
   };
 }
 
-function makePojoPromiseConstructor<Pojo extends object, CtorInput>(
+function makePojoAsyncConstructor<Pojo extends object, CtorInput>(
+  constructorName: string | undefined,
   proxiesHost: PojoConstructorSyncAndAsyncProxiesHost<Pojo, CtorInput>,
   sortedKeys: string[],
   input: CtorInput | undefined,
@@ -65,7 +75,15 @@ function makePojoPromiseConstructor<Pojo extends object, CtorInput>(
   effectiveOptions: PojoConstructorSyncAndAsyncOptions<Pojo, CtorInput>,
 ) {
   return async function constructPojoPromise(): Promise<PojoHost<Pojo>> {
+    const debugHere = debugMe.extend(
+      `async:${constructorName ?? `(anonymous-${Date.now()})`}`,
+    );
     const concurrency = effectiveOptions?.concurrency;
+    debugHere(
+      concurrency
+        ? `Concurrent mode. Concurrency - ${concurrency}`
+        : `Sequential mode`,
+    );
     if (concurrency) {
       const entries = (
         await pMap(
@@ -78,7 +96,9 @@ function makePojoPromiseConstructor<Pojo extends object, CtorInput>(
                 .call(proxiesHost.errorCatchingProxy, input)
                 .async();
               setv = true;
+              debugHere(`Constructed "${k}".`);
             } catch (caught) {
+              debugHere(`Failed to construct "${k}".`);
               await doCatch(caught, null, k);
             }
             if (setv) {
@@ -92,12 +112,19 @@ function makePojoPromiseConstructor<Pojo extends object, CtorInput>(
           },
         )
       ).flat();
-      const metadataEntries = entries.flatMap(([k, v]) =>
-        'metadata' in v ? [[k, v.metadata]] : [],
-      );
+      const metadataEntries = entries.flatMap(([k, v]) => {
+        return 'metadata' in v ? [[k, v.metadata]] : [];
+      });
       const res: PojoConstructorResult<Pojo> = {
         value: Object.fromEntries(
-          entries.flatMap(([k, v]) => ('value' in v ? [[k, v.value]] : [])),
+          entries.flatMap(([k, v]) => {
+            if ('value' in v) {
+              return [[k, v.value]];
+            } else {
+              debugHere(`Constructed "${k}" without value.`);
+              return [];
+            }
+          }),
         ) as Pojo,
       };
       if (metadataEntries.length > 0) {
@@ -119,12 +146,16 @@ function makePojoPromiseConstructor<Pojo extends object, CtorInput>(
             .call(proxiesHost.errorCatchingProxy, input)
             .async();
           setv = true;
+          debugHere(`Constructed "${k}".`);
         } catch (caught) {
+          debugHere(`Failed to construct "${k}".`);
           await doCatch(caught, i, k);
         }
         if (setv) {
           if ('value' in v) {
             pojo[k] = v.value;
+          } else {
+            debugHere(`Constructed "${k}" without value.`);
           }
           if ('metadata' in v) {
             hasMetadata = true;
@@ -258,12 +289,14 @@ export class PojoConstructorSyncAndAsync<
     };
     return {
       sync: makePojoSyncConstructor<Pojo, CtorInput>(
+        effectiveOptions.name,
         proxiesHost,
         sortedKeys,
         input,
         doCatch,
       ),
-      async: makePojoPromiseConstructor<Pojo, CtorInput>(
+      async: makePojoAsyncConstructor<Pojo, CtorInput>(
+        effectiveOptions.name,
         proxiesHost,
         sortedKeys,
         input,

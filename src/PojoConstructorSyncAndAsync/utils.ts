@@ -1,4 +1,5 @@
 import { configure } from 'safe-stable-stringify';
+import debug from 'debug';
 
 const stringify = configure({
   circularValue: '[jsonStringifySafe: Circular]',
@@ -21,3 +22,5 @@ export function _pojo_jsonStringifySafe(
 export function plines(p: string, ...lines: string[]): string {
   return lines.map((l) => `${p}: ${l}`).join('\n');
 }
+
+export const debugMe = debug('pojo-constructor');
