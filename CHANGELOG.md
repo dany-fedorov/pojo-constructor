@@ -1,3 +1,10 @@
+# [8.7.0](https://github.com/dany-fedorov/pojo-constructor/compare/v8.6.0...v8.7.0) (2023-02-11)
+
+
+### Features
+
+* Add _experimental_syncAndAsyncPropsDecorators ([ede6ad4](https://github.com/dany-fedorov/pojo-constructor/commit/ede6ad4d42aa3e89720afba5a4a4a89195a1d106))
+
 # [8.6.0](https://github.com/dany-fedorov/pojo-constructor/compare/v8.5.0...v8.6.0) (2023-02-11)
 
 
