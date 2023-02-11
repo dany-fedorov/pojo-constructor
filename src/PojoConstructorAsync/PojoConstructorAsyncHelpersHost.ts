@@ -10,6 +10,7 @@ export class PojoConstructorAsyncHelpersHost<
   constructor(
     public readonly target: PojoConstructorAsyncProps<Pojo, CtorInput>,
     public readonly key: Extract<keyof Pojo, string>,
+    public readonly constructorName: string,
     public readonly cache: PojoConstructorAsyncProxy<Pojo, CtorInput>,
     public readonly proxy: PojoConstructorAsyncProxy<Pojo, CtorInput>,
   ) {}
@@ -22,6 +23,8 @@ export class PojoConstructorAsyncUnboxedHelpersHost<
   constructor(
     public readonly target: PojoConstructorAsyncUnboxedProps<Pojo, CtorInput>,
     public readonly key: Extract<keyof Pojo, string>,
+
+    public readonly constructorName: string,
     public readonly cache: PojoConstructorAsyncUnboxedProxy<Pojo, CtorInput>,
     public readonly proxy: PojoConstructorAsyncUnboxedProxy<Pojo, CtorInput>,
   ) {}

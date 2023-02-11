@@ -12,6 +12,7 @@ export class PojoConstructorSyncHelpersHost<
   constructor(
     public readonly target: PojoConstructorSyncProps<Pojo, CtorInput>,
     public readonly key: Extract<keyof Pojo, string>,
+    public readonly constructorName: string,
     public readonly cache: PojoConstructorSyncProxy<Pojo, CtorInput>,
     public readonly proxy: PojoConstructorSyncProxy<Pojo, CtorInput>,
   ) {}
@@ -24,6 +25,7 @@ export class PojoConstructorSyncUnboxedHelpersHost<
   constructor(
     public readonly target: PojoConstructorSyncUnboxedProps<Pojo, CtorInput>,
     public readonly key: Extract<keyof Pojo, string>,
+    public readonly constructorName: string,
     public readonly cache: PojoConstructorSyncUnboxedProxy<Pojo, CtorInput>,
     public readonly proxy: PojoConstructorSyncUnboxedProxy<Pojo, CtorInput>,
   ) {}

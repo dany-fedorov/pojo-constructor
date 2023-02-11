@@ -13,7 +13,7 @@ import { PojoConstructorSyncAndAsyncHelpersHostBase } from './PojoConstructorSyn
 import { PojoHost } from './PojoHost';
 import { debugMe } from './utils';
 
-function anonymousConstructorTag(): string {
+function anonymousConstructorName(): string {
   return `(anonymous-${new Date()
     .toISOString()
     .replace(/[^0-9A-z]/g, '-')
@@ -22,16 +22,14 @@ function anonymousConstructorTag(): string {
 }
 
 function makePojoSyncConstructor<Pojo extends object, CtorInput>(
-  constructorName: string | undefined,
+  constructorName: string,
   proxiesHost: PojoConstructorSyncAndAsyncProxiesHost<Pojo, CtorInput>,
   sortedKeys: string[],
   input: CtorInput | undefined,
   doCatch: (caught: unknown, i: number | null, key: string) => void,
 ) {
   return function constructPojoSync(): PojoHost<Pojo> {
-    const debugHere = debugMe.extend(
-      `sync:${constructorName ?? anonymousConstructorTag()}`,
-    );
+    const debugHere = debugMe.extend(`sync:${constructorName}`);
     const pojo: any = {};
     const metadata: any = {};
     let hasMetadata = false;
@@ -75,7 +73,7 @@ function makePojoSyncConstructor<Pojo extends object, CtorInput>(
 }
 
 function makePojoAsyncConstructor<Pojo extends object, CtorInput>(
-  constructorName: string | undefined,
+  constructorName: string,
   proxiesHost: PojoConstructorSyncAndAsyncProxiesHost<Pojo, CtorInput>,
   sortedKeys: string[],
   input: CtorInput | undefined,
@@ -83,9 +81,7 @@ function makePojoAsyncConstructor<Pojo extends object, CtorInput>(
   effectiveOptions: PojoConstructorSyncAndAsyncOptions<Pojo, CtorInput>,
 ) {
   return async function constructPojoPromise(): Promise<PojoHost<Pojo>> {
-    const debugHere = debugMe.extend(
-      `async:${constructorName ?? anonymousConstructorTag()}`,
-    );
+    const debugHere = debugMe.extend(`async:${constructorName}`);
     const concurrency = effectiveOptions?.concurrency;
     debugHere(
       concurrency
@@ -262,6 +258,10 @@ export class PojoConstructorSyncAndAsync<
       ...(this.options ?? {}),
       ...(options ?? {}),
     };
+    const constructorName =
+      typeof effectiveOptions.name === 'string'
+        ? effectiveOptions.name
+        : anonymousConstructorName();
     const sortedKeys = getSortedKeysForPojoConstructorSyncAndAsyncProps(
       this.props,
       effectiveOptions,
@@ -281,6 +281,7 @@ export class PojoConstructorSyncAndAsync<
           },
     );
     const helpersHostPrototype = new PojoConstructorSyncAndAsyncHelpersHostBase(
+      constructorName,
       proxiesHost.cachingProxy,
       proxiesHost.errorCatchingProxy,
     );
@@ -297,14 +298,14 @@ export class PojoConstructorSyncAndAsync<
     };
     return {
       sync: makePojoSyncConstructor<Pojo, CtorInput>(
-        effectiveOptions.name,
+        constructorName,
         proxiesHost,
         sortedKeys,
         input,
         doCatch,
       ),
       async: makePojoAsyncConstructor<Pojo, CtorInput>(
-        effectiveOptions.name,
+        constructorName,
         proxiesHost,
         sortedKeys,
         input,

@@ -10,6 +10,7 @@ export class PojoConstructorSyncAndAsyncHelpersHostBase<
   CtorInput = unknown,
 > {
   constructor(
+    public readonly constructorName: string,
     public readonly cache: PojoConstructorSyncAndAsyncProxy<Pojo, CtorInput>,
     public readonly proxy: PojoConstructorSyncAndAsyncProxy<Pojo, CtorInput>,
   ) {}
@@ -19,6 +20,7 @@ export class PojoConstructorSyncAndAsyncHelpersHostBase<
   ): PojoConstructorSyncAndAsyncHelpersHostForKey<Pojo, CtorInput> {
     return new PojoConstructorSyncAndAsyncHelpersHostForKey(
       key,
+      this.constructorName,
       this.cache,
       this.proxy,
     );
@@ -57,10 +59,11 @@ export class PojoConstructorSyncAndAsyncHelpersHostForKey<
 > extends PojoConstructorSyncAndAsyncHelpersHostBase<Pojo, CtorInput> {
   constructor(
     public readonly key: Extract<keyof Pojo, string>,
+    name: string,
     cache: PojoConstructorSyncAndAsyncProxy<Pojo, CtorInput>,
     proxy: PojoConstructorSyncAndAsyncProxy<Pojo, CtorInput>,
   ) {
-    super(cache, proxy);
+    super(name, cache, proxy);
   }
 
   forTarget(
@@ -69,12 +72,12 @@ export class PojoConstructorSyncAndAsyncHelpersHostForKey<
     return new PojoConstructorSyncAndAsyncHelpersHost(
       target,
       this.key,
+      this.constructorName,
       this.cache,
       this.proxy,
     );
   }
 }
-
 
 export class PojoConstructorSyncAndAsyncUnboxedHelpersHostForKey<
   Pojo extends object,
@@ -107,10 +110,11 @@ export class PojoConstructorSyncAndAsyncHelpersHost<
   constructor(
     public readonly target: PojoConstructorSyncAndAsyncProps<Pojo, CtorInput>,
     public readonly key: Extract<keyof Pojo, string>,
+    constructorName: string,
     cache: PojoConstructorSyncAndAsyncProxy<Pojo, CtorInput>,
     proxy: PojoConstructorSyncAndAsyncProxy<Pojo, CtorInput>,
   ) {
-    super(cache, proxy);
+    super(constructorName, cache, proxy);
   }
 }
 

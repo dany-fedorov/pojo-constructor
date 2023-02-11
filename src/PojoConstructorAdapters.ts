@@ -951,6 +951,9 @@ function pojoConstructorPropsAdaptProcessArgs<
       (helpersHost as any).key,
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
+      (helpersHost as any).constructorName,
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       PojoConstructorAdapters.proxy({ src: dst, dst: src })(
         (helpersHost as any).cache,
       ),
