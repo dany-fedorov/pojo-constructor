@@ -382,6 +382,21 @@ export class PojoConstructorSyncAndAsync<
     };
   }
 
+  static bothFromResult<T>(
+    result: PojoConstructorPropMethodResult<T>,
+  ): PojoSyncAndAsyncResult<PojoConstructorPropMethodResult<T>> {
+    const sync = function sync() {
+      return result;
+    };
+    const async = function async() {
+      return Promise.resolve(sync());
+    };
+    return {
+      sync,
+      async,
+    };
+  }
+
   static bothFromValue<T>(
     value: T,
   ): PojoSyncAndAsyncResult<PojoConstructorPropMethodResult<T>> {
