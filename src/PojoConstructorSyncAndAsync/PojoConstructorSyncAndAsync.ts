@@ -13,6 +13,14 @@ import { PojoConstructorSyncAndAsyncHelpersHostBase } from './PojoConstructorSyn
 import { PojoHost } from './PojoHost';
 import { debugMe } from './utils';
 
+function anonymousConstructorTag(): string {
+  return `(anonymous-${new Date()
+    .toISOString()
+    .replace(/[^0-9A-z]/g, '-')
+    .replace('T', '-')
+    .replace('Z', '')})`;
+}
+
 function makePojoSyncConstructor<Pojo extends object, CtorInput>(
   constructorName: string | undefined,
   proxiesHost: PojoConstructorSyncAndAsyncProxiesHost<Pojo, CtorInput>,
@@ -22,7 +30,7 @@ function makePojoSyncConstructor<Pojo extends object, CtorInput>(
 ) {
   return function constructPojoSync(): PojoHost<Pojo> {
     const debugHere = debugMe.extend(
-      `sync:${constructorName ?? `(anonymous-${Date.now()})`}`,
+      `sync:${constructorName ?? anonymousConstructorTag()}`,
     );
     const pojo: any = {};
     const metadata: any = {};
@@ -76,7 +84,7 @@ function makePojoAsyncConstructor<Pojo extends object, CtorInput>(
 ) {
   return async function constructPojoPromise(): Promise<PojoHost<Pojo>> {
     const debugHere = debugMe.extend(
-      `async:${constructorName ?? `(anonymous-${Date.now()})`}`,
+      `async:${constructorName ?? anonymousConstructorTag()}`,
     );
     const concurrency = effectiveOptions?.concurrency;
     debugHere(
