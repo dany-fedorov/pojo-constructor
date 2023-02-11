@@ -1,3 +1,10 @@
+# [8.6.0](https://github.com/dany-fedorov/pojo-constructor/compare/v8.5.0...v8.6.0) (2023-02-11)
+
+
+### Features
+
+* Pass constructor name to methods ([1f7d220](https://github.com/dany-fedorov/pojo-constructor/commit/1f7d220c3ac63291ff26ed97087b324e2c2bb882))
+
 # [8.5.0](https://github.com/dany-fedorov/pojo-constructor/compare/v8.4.0...v8.5.0) (2023-02-11)
 
 
