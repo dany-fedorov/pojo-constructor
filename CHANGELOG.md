@@ -1,3 +1,11 @@
+## [8.3.1](https://github.com/dany-fedorov/pojo-constructor/compare/v8.3.0...v8.3.1) (2023-02-11)
+
+
+### Bug Fixes
+
+* Fix hasMetadata var modifier ([ee3fa0e](https://github.com/dany-fedorov/pojo-constructor/commit/ee3fa0ed0cbfccf67f151900e3a75a272e90fa7d))
+* Fix not tracking metadata ([682ca78](https://github.com/dany-fedorov/pojo-constructor/commit/682ca784ce2b5ccd08b30434aa259b69b4f9337c))
+
 # [8.3.0](https://github.com/dany-fedorov/pojo-constructor/compare/v8.2.0...v8.3.0) (2023-02-10)
 
 
