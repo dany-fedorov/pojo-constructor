@@ -51,3 +51,5 @@ export class PojoConstructorAsync<Pojo extends object, CtorInput = unknown> {
     return this.pojoConstructor.pojo(input, options).async!();
   }
 }
+
+export const PCAS = PojoConstructorAsync;

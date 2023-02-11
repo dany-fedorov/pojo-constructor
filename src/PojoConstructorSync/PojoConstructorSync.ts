@@ -51,3 +51,5 @@ export class PojoConstructorSync<Pojo extends object, CtorInput = unknown> {
     return this.pojoConstructor.pojo(input, options).sync!();
   }
 }
+
+export const PCS = PojoConstructorSync;
