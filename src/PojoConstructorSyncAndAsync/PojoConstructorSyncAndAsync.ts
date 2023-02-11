@@ -109,7 +109,7 @@ function makePojoPromiseConstructor<Pojo extends object, CtorInput>(
     } else {
       const pojo: any = {};
       const metadata: any = {};
-      const hasMetadata = false;
+      let hasMetadata = false;
       let i = 0;
       for (const k of sortedKeys) {
         let v;
