@@ -1,3 +1,10 @@
+# [8.5.0](https://github.com/dany-fedorov/pojo-constructor/compare/v8.4.0...v8.5.0) (2023-02-11)
+
+
+### Features
+
+* Use ISO timestamp for anonymous constructor debug tag ([2ddb274](https://github.com/dany-fedorov/pojo-constructor/commit/2ddb274678946ff9934167ec4e8fbf694df95f77))
+
 # [8.4.0](https://github.com/dany-fedorov/pojo-constructor/compare/v8.3.1...v8.4.0) (2023-02-11)
 
 
