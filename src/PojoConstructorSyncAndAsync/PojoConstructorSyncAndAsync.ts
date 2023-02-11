@@ -127,6 +127,7 @@ function makePojoPromiseConstructor<Pojo extends object, CtorInput>(
             pojo[k] = v.value;
           }
           if ('metadata' in v) {
+            hasMetadata = true;
             metadata[k] = v.metadata;
           }
         }
