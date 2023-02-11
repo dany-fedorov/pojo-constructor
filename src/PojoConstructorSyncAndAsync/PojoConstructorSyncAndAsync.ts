@@ -181,6 +181,20 @@ function makePojoAsyncConstructor<Pojo extends object, CtorInput>(
   };
 }
 
+function applyPropsDecorators<T extends object>(
+  target: T,
+  decorators: ((x: T) => T)[] | undefined,
+): T {
+  if (!Array.isArray(decorators)) {
+    return target;
+  }
+  let cur: T = target;
+  for (const decorator of decorators) {
+    cur = decorator(target);
+  }
+  return cur;
+}
+
 /**
  * Can operate in both sync mode and async mode.<br>
  * Constructor methods for each of properties returns an object with either one of `sync`, `async` methods or both.
@@ -270,7 +284,10 @@ export class PojoConstructorSyncAndAsync<
       null,
     ) as PojoConstructorSyncAndAsyncHelpersHostBase<Pojo, CtorInput>;
     const proxiesHost = new PojoConstructorSyncAndAsyncProxiesHost(
-      this.props,
+      applyPropsDecorators(
+        this.props,
+        effectiveOptions?._experimental_syncAndAsyncPropsDecorators,
+      ),
       input,
       helpersHost,
       typeof effectiveOptions.cacheKeyFromConstructorInput !== 'function'

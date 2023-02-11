@@ -1,4 +1,7 @@
-import type { PojoKeyProcessingStage } from './PojoConstructorSyncAndAsyncProps';
+import type {
+  PojoConstructorSyncAndAsyncProps,
+  PojoKeyProcessingStage,
+} from './PojoConstructorSyncAndAsyncProps';
 
 export type PojoConstructorOptionsCatchFn = {
   key: string;
@@ -6,7 +9,10 @@ export type PojoConstructorOptionsCatchFn = {
   keySequentialIndex: number | null;
 };
 
-export type PojoConstructorSyncAndAsyncOptions<Pojo extends object, CtorInput> = {
+export type PojoConstructorSyncAndAsyncOptions<
+  Pojo extends object,
+  CtorInput,
+> = {
   /**
    * A function that produces a list of string property names that should be applied to the Pojo Constructor.
    *
@@ -48,4 +54,7 @@ export type PojoConstructorSyncAndAsyncOptions<Pojo extends object, CtorInput> =
    */
   catch?: (caught: unknown, options: PojoConstructorOptionsCatchFn) => unknown;
   name?: string;
+  _experimental_syncAndAsyncPropsDecorators?: ((
+    obj: PojoConstructorSyncAndAsyncProps<Pojo, CtorInput>,
+  ) => PojoConstructorSyncAndAsyncProps<Pojo, CtorInput>)[];
 };

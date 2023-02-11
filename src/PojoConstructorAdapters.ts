@@ -27,8 +27,14 @@ import {
   decoratePojoConstructorMethods,
   isPropNameProxiable,
 } from './PojoConstructorSyncAndAsync/PojoConstructorSyncAndAsyncProxiesHost';
-import { PojoConstructorSyncHelpersHost } from './PojoConstructorSync/PojoConstructorSyncHelpersHost';
-import { PojoConstructorAsyncHelpersHost } from './PojoConstructorAsync/PojoConstructorAsyncHelpersHost';
+import {
+  PojoConstructorSyncHelpersHost,
+  PojoConstructorSyncUnboxedHelpersHost,
+} from './PojoConstructorSync/PojoConstructorSyncHelpersHost';
+import {
+  PojoConstructorAsyncHelpersHost,
+  PojoConstructorAsyncUnboxedHelpersHost,
+} from './PojoConstructorAsync/PojoConstructorAsyncHelpersHost';
 import { PojoConstructorSyncAndAsyncHelpersHost } from './PojoConstructorSyncAndAsync/PojoConstructorSyncAndAsyncHelpersHost';
 import { PojoConstructorSync } from './PojoConstructorSync/PojoConstructorSync';
 import { PojoConstructorSyncAndAsync } from './PojoConstructorSyncAndAsync/PojoConstructorSyncAndAsync';
@@ -503,7 +509,12 @@ function pojoConstructorAdapt<
               ...rest
             ) {
               const value = (target as any)[key](
-                ...argumentsDecorator(src, dst, srcInstance, rest),
+                ...argumentsDecorator(
+                  src,
+                  'sync' as DstType,
+                  srcInstance,
+                  rest,
+                ),
               );
               if (value === undefined) {
                 return {};
@@ -611,7 +622,12 @@ function pojoConstructorAdapt<
               ...rest
             ) {
               const value = await (target as any)[key](
-                ...argumentsDecorator(src, dst, srcInstance, rest),
+                ...argumentsDecorator(
+                  src,
+                  'async' as DstType,
+                  srcInstance,
+                  rest,
+                ),
               );
               if (value === undefined) {
                 return {};
@@ -649,6 +665,8 @@ function pojoConstructorAdapt<
                 return function PojoConstructorAdapters_syncAndAsync2SyncUnboxed_decoratorFn(
                   ...rest
                 ) {
+                  // console.log('vvval',(target as any)
+                  //   [key](...argumentsDecorator(src, dst, srcInstance, rest)));
                   const res = (target as any)
                     [key](...argumentsDecorator(src, dst, srcInstance, rest))
                     .sync();
@@ -937,8 +955,12 @@ function pojoConstructorPropsAdaptProcessArgs<
   const HelpersHostCtor =
     src === 'sync'
       ? PojoConstructorSyncHelpersHost
+      : src === 'sync-unboxed'
+      ? PojoConstructorSyncUnboxedHelpersHost
       : src === 'async'
       ? PojoConstructorAsyncHelpersHost
+      : src === 'async-unboxed'
+      ? PojoConstructorAsyncUnboxedHelpersHost
       : PojoConstructorSyncAndAsyncHelpersHost;
   // const helpersHost = Object.create(null);
 
