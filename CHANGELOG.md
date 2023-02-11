@@ -1,3 +1,10 @@
+# [8.4.0](https://github.com/dany-fedorov/pojo-constructor/compare/v8.3.1...v8.4.0) (2023-02-11)
+
+
+### Features
+
+* Add debug lib (pojo-constructor:* prefix), add name option ([1ae25c6](https://github.com/dany-fedorov/pojo-constructor/commit/1ae25c610391a7996976d53f588760517f8fdd96))
+
 ## [8.3.1](https://github.com/dany-fedorov/pojo-constructor/compare/v8.3.0...v8.3.1) (2023-02-11)
 
 
