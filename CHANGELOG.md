@@ -1,3 +1,11 @@
+# [8.9.0](https://github.com/dany-fedorov/pojo-constructor/compare/v8.8.0...v8.9.0) (2023-02-11)
+
+
+### Features
+
+* Add aliases ([84a118a](https://github.com/dany-fedorov/pojo-constructor/commit/84a118a9acc2e24b313a362447bef3782b77980d))
+* Add PCSAS.bothFromResult helper ([fdf4143](https://github.com/dany-fedorov/pojo-constructor/commit/fdf414331b065f8ec0a3c6b0331ffbba86abd535))
+
 # [8.8.0](https://github.com/dany-fedorov/pojo-constructor/compare/v8.7.0...v8.8.0) (2023-02-11)
 
 
