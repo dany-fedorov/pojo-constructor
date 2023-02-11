@@ -6,6 +6,7 @@ import type {
   PojoMetadata,
   PojoConstructorResult,
   PojoSyncOrAsyncResult,
+  PojoConstructorPropMethodResult,
 } from './PojoConstructorSyncAndAsyncProps';
 import type { PojoConstructorSyncAndAsyncOptions } from './PojoConstructorSyncAndAsyncOptions';
 import { PojoConstructorSyncAndAsyncProxiesHost } from './PojoConstructorSyncAndAsyncProxiesHost';
@@ -346,7 +347,32 @@ export class PojoConstructorSyncAndAsync<
     );
   }
 
-  static bothFromSync<T>(sync: () => T): PojoSyncAndAsyncResult<T> {
+  static bothFromSyncUnboxed<T>(
+    syncUnboxed: () => T,
+  ): PojoSyncAndAsyncResult<PojoConstructorPropMethodResult<T>> {
+    const sync = function sync() {
+      const value = syncUnboxed();
+      if (value === undefined) {
+        return {};
+      }
+      return { value };
+    };
+    const async = function async() {
+      return Promise.resolve(sync());
+    };
+    return {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      sync,
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      async,
+    };
+  }
+
+  static bothFromSync<T>(
+    sync: () => PojoConstructorPropMethodResult<T>,
+  ): PojoSyncAndAsyncResult<PojoConstructorPropMethodResult<T>> {
     const async = function async() {
       return Promise.resolve(sync());
     };
@@ -356,16 +382,27 @@ export class PojoConstructorSyncAndAsync<
     };
   }
 
-  static bothFromValue<T>(value: T): PojoSyncAndAsyncResult<T> {
+  static bothFromValue<T>(
+    value: T,
+  ): PojoSyncAndAsyncResult<PojoConstructorPropMethodResult<T>> {
     const sync = function sync() {
-      return value;
+      if (value === undefined) {
+        return {};
+      }
+      return { value };
     };
     const async = function async() {
       return Promise.resolve(sync());
     };
     return {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       sync,
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       async,
     };
   }
 }
+
+export const PCSAS = PojoConstructorSyncAndAsync;
