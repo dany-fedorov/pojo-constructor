@@ -1,3 +1,15 @@
+# [9.0.0](https://github.com/dany-fedorov/pojo-constructor/compare/v8.9.0...v9.0.0) (2023-02-12)
+
+
+### Features
+
+* More comprehensive APIs ([d0f8321](https://github.com/dany-fedorov/pojo-constructor/commit/d0f8321b6345e6b61fe840d1c759b972d2732cf8))
+
+
+### BREAKING CHANGES
+
+* Changed helper APIs
+
 # [8.9.0](https://github.com/dany-fedorov/pojo-constructor/compare/v8.8.0...v8.9.0) (2023-02-11)
 
 
