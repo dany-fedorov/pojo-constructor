@@ -333,7 +333,9 @@ export class PojoConstructorSyncAndAsync<
     };
   }
 
-  static async exec<T>(syncOrAsync: PojoSyncOrAsyncResult<T>): Promise<T> {
+  static async resolveSasToResultAsync<T>(
+    syncOrAsync: PojoSyncOrAsyncResult<PojoConstructorPropMethodResult<T>>,
+  ): Promise<PojoConstructorPropMethodResult<T>> {
     if ('async' in syncOrAsync && typeof syncOrAsync.async === 'function') {
       return await syncOrAsync.async();
     } else if (
@@ -343,11 +345,58 @@ export class PojoConstructorSyncAndAsync<
       return syncOrAsync.sync();
     }
     throw new Error(
-      `${PojoConstructorSyncAndAsync.name}.exec: No "async" or "sync" functions in passed object`,
+      `${PojoConstructorSyncAndAsync.name}.resolveAsync: No "async" or "sync" functions.`,
     );
   }
 
-  static bothFromSyncUnboxed<T>(
+  static async resolveSasToValueAsync<T>(
+    syncOrAsync: PojoSyncOrAsyncResult<PojoConstructorPropMethodResult<T>>,
+  ): Promise<T> {
+    const r = await PojoConstructorSyncAndAsync.resolveSasToResultAsync(syncOrAsync);
+    if (!r || typeof r !== 'object') {
+      throw new Error(
+        `${PojoConstructorSyncAndAsync.name}.resolveAsyncValue: Result object is bad - ${r}`,
+      );
+    }
+    if ('value' in r) {
+      return r.value;
+    } else {
+      throw new Error(
+        `${PojoConstructorSyncAndAsync.name}.resolveSyncValue: No value in result.`,
+      );
+    }
+  }
+
+  static resolveSasToResultSync<T>(
+    syncOrAsync: PojoSyncOrAsyncResult<PojoConstructorPropMethodResult<T>>,
+  ): PojoConstructorPropMethodResult<T> {
+    if ('sync' in syncOrAsync && typeof syncOrAsync.sync === 'function') {
+      return syncOrAsync.sync();
+    }
+    throw new Error(
+      `${PojoConstructorSyncAndAsync.name}.resolveSync: No "async" or "sync" functions.`,
+    );
+  }
+
+  static resolveSasToValueSync<T>(
+    syncOrAsync: PojoSyncOrAsyncResult<PojoConstructorPropMethodResult<T>>,
+  ): T {
+    const r = PojoConstructorSyncAndAsync.resolveSasToResultSync(syncOrAsync);
+    if (!r || typeof r !== 'object') {
+      throw new Error(
+        `${PojoConstructorSyncAndAsync.name}.resolveSyncValue: Result object is bad - ${r}`,
+      );
+    }
+    if ('value' in r) {
+      return r.value;
+    } else {
+      throw new Error(
+        `${PojoConstructorSyncAndAsync.name}.resolveSyncValue: No value in result.`,
+      );
+    }
+  }
+
+  static sasFromSyncUnboxed<T>(
     syncUnboxed: () => T,
   ): PojoSyncAndAsyncResult<PojoConstructorPropMethodResult<T>> {
     const sync = function sync() {
@@ -370,7 +419,7 @@ export class PojoConstructorSyncAndAsync<
     };
   }
 
-  static bothFromSync<T>(
+  static sasFromSync<T>(
     sync: () => PojoConstructorPropMethodResult<T>,
   ): PojoSyncAndAsyncResult<PojoConstructorPropMethodResult<T>> {
     const async = function async() {
@@ -382,7 +431,7 @@ export class PojoConstructorSyncAndAsync<
     };
   }
 
-  static bothFromResult<T>(
+  static sasFromResult<T>(
     result: PojoConstructorPropMethodResult<T>,
   ): PojoSyncAndAsyncResult<PojoConstructorPropMethodResult<T>> {
     const sync = function sync() {
@@ -397,7 +446,7 @@ export class PojoConstructorSyncAndAsync<
     };
   }
 
-  static bothFromValue<T>(
+  static sasFromValue<T>(
     value: T,
   ): PojoSyncAndAsyncResult<PojoConstructorPropMethodResult<T>> {
     const sync = function sync() {

@@ -15,7 +15,7 @@ const ctor = PojoConstructorSyncAndAsync.create<Cfg>(
   PojoConstructorDecorators.props<PojoConstructorSyncAndAsyncProps<Cfg>>(
     (target, key) => {
       return function (...rest) {
-        return PojoConstructorSyncAndAsync.bothFromSync(() => {
+        return PojoConstructorSyncAndAsync.sasFromSync(() => {
           const res: any = (target as any)[key](...rest).sync();
           return {
             ...res,
@@ -51,7 +51,7 @@ const main = async () => {
         PojoConstructorDecorators.props<PojoConstructorSyncAndAsyncProps<Cfg>>(
           (target, key) => {
             return function (...rest) {
-              return PojoConstructorSyncAndAsync.bothFromSync(() => {
+              return PojoConstructorSyncAndAsync.sasFromSync(() => {
                 const res: any = (target as any)[key](...rest).sync();
                 return {
                   ...res,
