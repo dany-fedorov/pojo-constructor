@@ -43,7 +43,7 @@ function makePojoSyncConstructor<Pojo extends object, CtorInput>(
           .call(proxiesHost.errorCatchingProxy, input)
           .sync();
         setv = true;
-        debugHere(`Constructed "${k}". (i = ${i})`);
+        debugHere(`Constructed "${k}" prop. (i = ${i})`);
       } catch (caught: unknown) {
         debugHere(`Failed to construct "${k}". (i = ${i})`);
         doCatch(caught, i, k);
@@ -52,7 +52,7 @@ function makePojoSyncConstructor<Pojo extends object, CtorInput>(
         if ('value' in v) {
           pojo[k] = v.value;
         } else {
-          debugHere(`Constructed "${k}" without value.`);
+          debugHere(`Constructed "${k}" prop without value.`);
         }
         if ('metadata' in v) {
           hasMetadata = true;
@@ -86,8 +86,8 @@ function makePojoAsyncConstructor<Pojo extends object, CtorInput>(
     const concurrency = effectiveOptions?.concurrency;
     debugHere(
       concurrency
-        ? `Concurrent mode. Concurrency - ${concurrency}`
-        : `Sequential mode`,
+        ? `Concurrent mode. Concurrency - ${concurrency}. Constructors for individual properties will be called concurrently.`
+        : `Sequential mode. Constructors for individual properties will be called in sequence.`,
     );
     if (concurrency) {
       const entries = (
@@ -101,7 +101,7 @@ function makePojoAsyncConstructor<Pojo extends object, CtorInput>(
                 .call(proxiesHost.errorCatchingProxy, input)
                 .async();
               setv = true;
-              debugHere(`Constructed "${k}".`);
+              debugHere(`Constructed "${k}" prop.`);
             } catch (caught) {
               debugHere(`Failed to construct "${k}".`);
               await doCatch(caught, null, k);
@@ -126,7 +126,7 @@ function makePojoAsyncConstructor<Pojo extends object, CtorInput>(
             if ('value' in v) {
               return [[k, v.value]];
             } else {
-              debugHere(`Constructed "${k}" without value.`);
+              debugHere(`Constructed "${k}" prop without value.`);
               return [];
             }
           }),
@@ -151,7 +151,7 @@ function makePojoAsyncConstructor<Pojo extends object, CtorInput>(
             .call(proxiesHost.errorCatchingProxy, input)
             .async();
           setv = true;
-          debugHere(`Constructed "${k}".`);
+          debugHere(`Constructed "${k}" prop.`);
         } catch (caught) {
           debugHere(`Failed to construct "${k}".`);
           await doCatch(caught, i, k);
@@ -160,7 +160,7 @@ function makePojoAsyncConstructor<Pojo extends object, CtorInput>(
           if ('value' in v) {
             pojo[k] = v.value;
           } else {
-            debugHere(`Constructed "${k}" without value.`);
+            debugHere(`Constructed "${k}" prop without value.`);
           }
           if ('metadata' in v) {
             hasMetadata = true;
@@ -352,7 +352,9 @@ export class PojoConstructorSyncAndAsync<
   static async resolveSasToValueAsync<T>(
     syncOrAsync: PojoSyncOrAsyncResult<PojoConstructorPropMethodResult<T>>,
   ): Promise<T> {
-    const r = await PojoConstructorSyncAndAsync.resolveSasToResultAsync(syncOrAsync);
+    const r = await PojoConstructorSyncAndAsync.resolveSasToResultAsync(
+      syncOrAsync,
+    );
     if (!r || typeof r !== 'object') {
       throw new Error(
         `${PojoConstructorSyncAndAsync.name}.resolveAsyncValue: Result object is bad - ${r}`,
