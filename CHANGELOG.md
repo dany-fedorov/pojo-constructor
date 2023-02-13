@@ -1,3 +1,10 @@
+## [9.0.1](https://github.com/dany-fedorov/pojo-constructor/compare/v9.0.0...v9.0.1) (2023-02-13)
+
+
+### Bug Fixes
+
+* Better debug messages ([2a536fd](https://github.com/dany-fedorov/pojo-constructor/commit/2a536fd231acd9dec853cc8cc652feb0fd197885))
+
 # [9.0.0](https://github.com/dany-fedorov/pojo-constructor/compare/v8.9.0...v9.0.0) (2023-02-12)
 
 
