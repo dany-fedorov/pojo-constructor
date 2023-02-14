@@ -1,3 +1,10 @@
+# [9.1.0](https://github.com/dany-fedorov/pojo-constructor/compare/v9.0.1...v9.1.0) (2023-02-14)
+
+
+### Features
+
+* Add result parameter to pops decorator ([35bed38](https://github.com/dany-fedorov/pojo-constructor/commit/35bed38d1e28f42caee2c8578d3643627c539147))
+
 ## [9.0.1](https://github.com/dany-fedorov/pojo-constructor/compare/v9.0.0...v9.0.1) (2023-02-13)
 
 
