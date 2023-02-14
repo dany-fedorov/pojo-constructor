@@ -1,3 +1,10 @@
+## [9.1.1](https://github.com/dany-fedorov/pojo-constructor/compare/v9.1.0...v9.1.1) (2023-02-14)
+
+
+### Bug Fixes
+
+* Add asyn-ubboxed as source ([0ce3deb](https://github.com/dany-fedorov/pojo-constructor/commit/0ce3debcbee84f5c84a2d44cdb1a9b4d0e32c0ef))
+
 # [9.1.0](https://github.com/dany-fedorov/pojo-constructor/compare/v9.0.1...v9.1.0) (2023-02-14)
 
 
