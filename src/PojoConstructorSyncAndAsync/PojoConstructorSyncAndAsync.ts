@@ -434,7 +434,7 @@ export class PojoConstructorSyncAndAsync<
   }
 
   static sasFromAsyncUnboxed<T>(
-    asyncUnboxed: () => T,
+    asyncUnboxed: () => Promise<T>,
   ): PojoSyncAndAsyncResult<PojoConstructorPropMethodResult<T>> {
     const async = async function async() {
       const value = await asyncUnboxed();
@@ -443,21 +443,17 @@ export class PojoConstructorSyncAndAsync<
       }
       return { value };
     };
-    return {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      async,
-    };
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    return { async };
   }
 
   static sasFromAsync<T>(
-    async: () => PojoConstructorPropMethodResult<T>,
+    async: () => Promise<PojoConstructorPropMethodResult<T>>,
   ): PojoSyncAndAsyncResult<PojoConstructorPropMethodResult<T>> {
-    return {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      async,
-    };
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    return { async };
   }
 
   static sasFromResult<T>(
