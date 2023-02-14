@@ -1,3 +1,10 @@
+## [9.1.2](https://github.com/dany-fedorov/pojo-constructor/compare/v9.1.1...v9.1.2) (2023-02-14)
+
+
+### Bug Fixes
+
+* Add async methods ([40dc1c1](https://github.com/dany-fedorov/pojo-constructor/commit/40dc1c1785243e5dcd43f5d667892d3b04515336))
+
 ## [9.1.1](https://github.com/dany-fedorov/pojo-constructor/compare/v9.1.0...v9.1.1) (2023-02-14)
 
 
