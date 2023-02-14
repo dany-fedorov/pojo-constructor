@@ -282,6 +282,18 @@ type PropsAdapterFunction<
       : DstType extends 'sync-and-async-unboxed'
       ? PojoConstructorSyncAndAsyncUnboxedProps<Pojo, CtorInput>
       : never
+  : SrcType extends 'async-unboxed'
+  ? <Pojo extends object, CtorInput = unknown>(
+      srcInstance: PojoConstructorAsyncProps<Pojo, CtorInput>,
+    ) => DstType extends 'async'
+      ? PojoConstructorAsyncProps<Pojo, CtorInput>
+      : DstType extends 'async-unboxed'
+      ? PojoConstructorAsyncUnboxedProps<Pojo, CtorInput>
+      : DstType extends 'sync-and-async'
+      ? PojoConstructorSyncAndAsyncProps<Pojo, CtorInput>
+      : DstType extends 'sync-and-async-unboxed'
+      ? PojoConstructorSyncAndAsyncUnboxedProps<Pojo, CtorInput>
+      : never
   : SrcType extends 'sync-and-async'
   ? <Pojo extends object, CtorInput = unknown>(
       srcInstance: PojoConstructorSyncAndAsyncProps<Pojo, CtorInput>,
