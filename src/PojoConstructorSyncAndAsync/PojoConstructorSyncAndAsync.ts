@@ -433,6 +433,33 @@ export class PojoConstructorSyncAndAsync<
     };
   }
 
+  static sasFromAsyncUnboxed<T>(
+    asyncUnboxed: () => T,
+  ): PojoSyncAndAsyncResult<PojoConstructorPropMethodResult<T>> {
+    const async = async function async() {
+      const value = await asyncUnboxed();
+      if (value === undefined) {
+        return {};
+      }
+      return { value };
+    };
+    return {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      async,
+    };
+  }
+
+  static sasFromAsync<T>(
+    async: () => PojoConstructorPropMethodResult<T>,
+  ): PojoSyncAndAsyncResult<PojoConstructorPropMethodResult<T>> {
+    return {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      async,
+    };
+  }
+
   static sasFromResult<T>(
     result: PojoConstructorPropMethodResult<T>,
   ): PojoSyncAndAsyncResult<PojoConstructorPropMethodResult<T>> {
