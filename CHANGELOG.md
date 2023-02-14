@@ -1,3 +1,10 @@
+# [9.2.0](https://github.com/dany-fedorov/pojo-constructor/compare/v9.1.2...v9.2.0) (2023-02-14)
+
+
+### Features
+
+* Fix sasFromAsync input ([bdfecd4](https://github.com/dany-fedorov/pojo-constructor/commit/bdfecd45b44537b4acd432c72bd9c24b6ca8db90))
+
 ## [9.1.2](https://github.com/dany-fedorov/pojo-constructor/compare/v9.1.1...v9.1.2) (2023-02-14)
 
 
