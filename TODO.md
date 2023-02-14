@@ -1,3 +1,4 @@
+- [ ] Rename current constructors ot *Boxed, make Unboxed versions that will not have a prefix in the name
 - [ ] (refactor) Try make default input type = undefined, see test "cachingProxy access - only evaluated once - async
   concur"
 - [x] (refactor) pojoConstructorThrownIn does not fulfill its purpose when caching proxy is not used - there is no stack
